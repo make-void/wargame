@@ -6,19 +6,20 @@
       this.dialogs = [];
     }
     Map.prototype.get_center_and_zoom = function() {
+      console.log(localStorage.center_lat, localStorage.center_lng, localStorage.zoom);
       if (localStorage.center_lat && localStorage.center_lng) {
         this.center_lat = parseFloat(localStorage.center_lat);
         this.center_lng = parseFloat(localStorage.center_lng);
       } else {
-        this.center_lat = 22;
-        this.center_lng = 0;
+        this.center_lat = 47.2;
+        this.center_lng = 14.4;
         localStorage.center_lat = this.center_lat;
         localStorage.center_lng = this.center_lng;
       }
       if (localStorage.zoom) {
         return this.zoom = parseInt(localStorage.zoom);
       } else {
-        this.zoom = 2;
+        this.zoom = 4;
         return localStorage.zoom = this.zoom;
       }
     };
@@ -48,21 +49,13 @@
       var center;
       center = this.map.getCenter();
       return $.getJSON("/cities/" + center.Oa + "/" + center.Pa, __bind(function(datas) {
-        var id, loc, marker, markers, name, _i, _len, _ref;
+        var marker, markers, _i, _len, _ref;
         markers = [];
         _ref = datas.markers;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           marker = _ref[_i];
-          id = marker._id.$oid;
-          loc = marker.loc;
-          name = marker.name;
-          markers.push({
-            id: id,
-            loc: loc,
-            name: name,
-            likes: marker.likes,
-            fb_id: marker.fb_id
-          });
+          marker = marker.location;
+          markers.push(marker);
         }
         this.markers = markers;
         this.timer = new Date();

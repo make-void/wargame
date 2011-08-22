@@ -1,6 +1,20 @@
 # WarGame 
 ### the return
 
+### setup:
+
+- install rvm: 
+    execute this and follow the istructions:
+      bash < <(curl -s https://rvm.beginrescueend.com/install/rvm)
+
+- rvm install 1.9.2
+- gem i bundler
+- bundle
+- rake db:create
+- rake db:seed
+- rails server
+
+gg!
 
 
 ### notes

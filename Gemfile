@@ -14,6 +14,12 @@ gem "sass"
 
 gem "voidtools", git: "git://github.com/makevoid/voidtools"
 
+group :development do
+  gem "guard"
+  gem "guard-livereload"
+  gem "guard-coffeescript"
+end
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

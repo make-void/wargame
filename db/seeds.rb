@@ -23,6 +23,7 @@ CREATE TABLE `locations` (
   `lat` float DEFAULT NULL,
   `lng` float DEFAULT NULL,
   PRIMARY KEY (`id`),
+  # TODO: not sure if we also need single lat and lng indexes
   KEY `latlng` (`lat`,`lng`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "

@@ -4,19 +4,21 @@ class Map
     @dialogs = []
   
   get_center_and_zoom: ->
+    console.log(localStorage.center_lat, localStorage.center_lng, localStorage.zoom)
+    
     if localStorage.center_lat && localStorage.center_lng
       @center_lat = parseFloat localStorage.center_lat
       @center_lng = parseFloat localStorage.center_lng
     else
-      @center_lat = 22
-      @center_lng = 0
+      @center_lat = 47.2
+      @center_lng = 14.4
       localStorage.center_lat = @center_lat
       localStorage.center_lng = @center_lng
       
     if localStorage.zoom
       @zoom = parseInt localStorage.zoom
     else
-      @zoom = 2
+      @zoom = 4
       localStorage.zoom = @zoom
     
   draw: ->  
@@ -47,10 +49,8 @@ class Map
       
       # console.log datas.markers.length
       for marker in datas.markers
-        id = marker._id.$oid
-        loc =  marker.loc
-        name = marker.name
-        markers.push { id: id, loc: loc, name: name, likes: marker.likes, fb_id: marker.fb_id }
+        marker = marker.location
+        markers.push marker
       @markers = markers  
       
       @timer = new Date()    
