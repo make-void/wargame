@@ -17,6 +17,8 @@ gem "sass"
 
 gem "voidtools", git: "git://github.com/makevoid/voidtools"
 
+gem "exception_notifier"
+
 group :development do
   gem "guard"
   gem "guard-livereload"

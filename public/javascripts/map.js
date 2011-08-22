@@ -67,7 +67,7 @@
     Map.prototype.drawSimpleMarker = function(lat, lng) {
       var image, latLng, marker;
       latLng = new google.maps.LatLng(lat, lng);
-      image = "http://localhost:3000/images/cross_blue.png";
+      image = "http://" + http_host + "/images/cross_blue.png";
       return marker = new google.maps.Marker({
         position: latLng,
         map: this.map,
@@ -77,7 +77,7 @@
     Map.prototype.drawMarker = function(data) {
       var image, latLng, marker, that;
       latLng = new google.maps.LatLng(data.lat, data.lng);
-      image = "http://localhost:3000/images/cross_red.png";
+      image = "http://" + http_host + "/images/cross_red.png";
       marker = new google.maps.Marker({
         position: latLng,
         map: this.map,
