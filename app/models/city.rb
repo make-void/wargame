@@ -1,5 +1,12 @@
-# need city.csv
+class City < ActiveRecord::Base
+  
+  belongs_to :location
+  
+end
 
-# def self.seed
-#   File.read("lib/cities.csv") ....
-# end
+
+# properties:
+#
+# id
+# name
+# location_id

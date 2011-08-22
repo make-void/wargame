@@ -30,8 +30,8 @@ class Map
     @map = new google.maps.Map( mapDiv, {
       center: new google.maps.LatLng(@center_lat, @center_lng),
       zoom: @zoom,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-      #mapTypeId: google.maps.MapTypeId.TERRAIN,
+      #mapTypeId: google.maps.MapTypeId.ROADMAP,
+      mapTypeId: google.maps.MapTypeId.TERRAIN,
       disableDefaultUI: true
     })
 
@@ -41,11 +41,11 @@ class Map
 
   loadMarkers: (callback) ->
     center = @map.getCenter()    
-    console.log(center)
-    $.get("/markers/#{center.Oa}/#{center.Pa}", (datas) =>
-      datas = eval datas 
+    # console.log(center)
+    $.getJSON("/cities/#{center.Oa}/#{center.Pa}", (datas) =>
       markers = []
-      console.log datas.markers.length
+      
+      # console.log datas.markers.length
       for marker in datas.markers
         id = marker._id.$oid
         loc =  marker.loc
@@ -60,7 +60,7 @@ class Map
 
   drawSimpleMarker: (lat, lng) ->
     latLng = new google.maps.LatLng lat, lng
-    image = "http://localhost:3000/imgs/cross_blue.png"
+    image = "http://localhost:3000/images/cross_blue.png"
     marker = new google.maps.Marker({
       position: latLng,
       map: @map,
@@ -70,7 +70,7 @@ class Map
   drawMarker: (data) ->
     latLng = new google.maps.LatLng data.loc[0], data.loc[1]
     
-    image = "http://localhost:3000/imgs/cross_red.png"
+    image = "http://localhost:3000/images/cross_red.png"
     marker = new google.maps.Marker({
       position: latLng,
       map: @map,
@@ -124,7 +124,7 @@ class Map
   
   overlay: ->  
     boundaries = new google.maps.LatLngBounds(new google.maps.LatLng(43.273978,10.25124454498291), new google.maps.LatLng(44.273978,12.25124454498291));
-    overlay = new google.maps.GroundOverlay("/imgs/overlay.png", boundaries)
+    overlay = new google.maps.GroundOverlay("/images/overlay.png", boundaries)
     overlay.setMap @map
     
   clickInfo: ->

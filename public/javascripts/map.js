@@ -35,7 +35,7 @@
       return this.map = new google.maps.Map(mapDiv, {
         center: new google.maps.LatLng(this.center_lat, this.center_lng),
         zoom: this.zoom,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeId: google.maps.MapTypeId.TERRAIN,
         disableDefaultUI: true
       });
     };
@@ -47,12 +47,9 @@
     Map.prototype.loadMarkers = function(callback) {
       var center;
       center = this.map.getCenter();
-      console.log(center);
-      return $.get("/markers/" + center.Oa + "/" + center.Pa, __bind(function(datas) {
+      return $.getJSON("/cities/" + center.Oa + "/" + center.Pa, __bind(function(datas) {
         var id, loc, marker, markers, name, _i, _len, _ref;
-        datas = eval(datas);
         markers = [];
-        console.log(datas.markers.length);
         _ref = datas.markers;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           marker = _ref[_i];
@@ -75,7 +72,7 @@
     Map.prototype.drawSimpleMarker = function(lat, lng) {
       var image, latLng, marker;
       latLng = new google.maps.LatLng(lat, lng);
-      image = "http://localhost:3000/imgs/cross_blue.png";
+      image = "http://localhost:3000/images/cross_blue.png";
       return marker = new google.maps.Marker({
         position: latLng,
         map: this.map,
@@ -85,7 +82,7 @@
     Map.prototype.drawMarker = function(data) {
       var image, latLng, marker, that;
       latLng = new google.maps.LatLng(data.loc[0], data.loc[1]);
-      image = "http://localhost:3000/imgs/cross_red.png";
+      image = "http://localhost:3000/images/cross_red.png";
       marker = new google.maps.Marker({
         position: latLng,
         map: this.map,
@@ -141,7 +138,7 @@
     Map.prototype.overlay = function() {
       var boundaries, overlay;
       boundaries = new google.maps.LatLngBounds(new google.maps.LatLng(43.273978, 10.25124454498291), new google.maps.LatLng(44.273978, 12.25124454498291));
-      overlay = new google.maps.GroundOverlay("/imgs/overlay.png", boundaries);
+      overlay = new google.maps.GroundOverlay("/images/overlay.png", boundaries);
       return overlay.setMap(this.map);
     };
     Map.prototype.clickInfo = function() {

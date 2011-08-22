@@ -1,0 +1,19 @@
+%section
+  %h2 Join battle for the world's conquest!
+  %article
+    %p [World image - raphaeljs?]
+
+  #login_or_join
+  %h2 
+    %a.button{ href: "/game" } Go to game
+  
+  %h2 Login
+  %form{ action: "/login", method: "post" }
+    %input{ type: "text", name: "username" }
+    %input{ type: "password", name: "password" } 
+    %input{ type: "submit", value: "Login" }
+  %h2 Join
+  %form{ action: "/join", method: "post" }  
+    %input{ type: "text", name: "username" } 
+    %input{ type: "password", name: "password" }
+    %input{ type: "submit", value: "Join" }

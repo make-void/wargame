@@ -1,0 +1,7 @@
+- content_for :head do
+  %meta{ name: "viewport", content: "user-scalable=no" }
+- content_for :end do
+  %script{ src: "http://maps.googleapis.com/maps/api/js?sensor=true", type: "text/javascript"}
+  %script{ src: "/javascripts/map.js", type: "text/javascript"  }
+
+#map_canvas

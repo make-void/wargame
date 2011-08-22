@@ -7,6 +7,13 @@ gem 'rails', '3.0.10'
 
 gem 'mysql2', '~> 0.2.11'
 
+gem "geocoder"
+
+gem "haml"
+gem "sass"
+
+gem "voidtools", git: "git://github.com/makevoid/voidtools"
+
 # Use unicorn as the web server
 # gem 'unicorn'
 
