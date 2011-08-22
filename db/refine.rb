@@ -1,4 +1,6 @@
 # encoding: utf-8
+PATH = File.expand_path "../../", __FILE__
+
 
 require 'json'
 
@@ -14,12 +16,75 @@ require 'json'
 ccodes = JSON.parse File.read("country_codes.json")
 ccodes = ccodes.map{|c| c["code"]}.map{ |c| c.downcase }
 
-require 'fileutils'
-FileUtils.rm "europe_cities.txt"
-file = File.open("europe_cities.txt", "a:UTF-8")
+def step_1
+  require 'fileutils'
+  FileUtils.rm "europe_cities.txt"
+  file = File.open("europe_cities.txt", "a:UTF-8")
 
-File.open("worldcitiespop.txt", "r:UTF-8").each_line do |line|
-  file.write line if ccodes.include? line.split(/,/)[0]
+  File.open("worldcitiespop.txt", "r:UTF-8").each_line do |line|
+    file.write line if ccodes.include? line.split(/,/)[0]
+  end
+  puts `wc -l europe_cities.txt`
 end
 
-puts `wc -l europe_cities.txt`
+
+# batching FAIL
+#
+# def import(lines)
+#   cities = []
+#   locations = []
+#   lines.each do |line|
+#     # ad,aixas,Aix‡s,06,,42.4833333,1.4666667
+#     split = line.split(",")
+#     name, lat, lng = split[2], split[5], split[6]
+#     loc = Location.new lat: lat, lng: lng 
+#     city = City.new name: name, location_id: loc
+#     cities << city
+#     locations << loc
+#   end
+#   locs = Location.import locations
+#   raise locs.inspect
+# end
+# 
+# def batching(batch, lines, num)
+#   if batch * num <= 10
+#     lines << line
+#   else
+#     import lines
+#     lines = []
+#   end
+# end
+
+def import(line)
+  # ad,aixas,Aix‡s,06,,42.4833333,1.4666667
+  split = line.split(",")
+  ccode, name, lat, lng = split[0], split[2], split[5], split[6]
+  loc = Location.create lat: lat, lng: lng
+  loc.cities.create name: name, location_id: loc, ccode: ccode
+end
+
+# http://products.wolframalpha.com/api/explorer.html - 20k cities per account per month
+# population firenze, reggello, siena, roma, viterbo, terni, napoli, milano, campagnano di roma, lizzano
+
+
+def step_2
+  require "#{PATH}/config/environment"
+  require "#{PATH}/db/recreate_tables"
+  
+  # batch = 10
+  # lines = []
+  num = 0
+  File.open("europe_cities.txt").each_line do |line|
+    num += 1
+    #batching(batch, lines, num)
+    next unless num % 100 == 0
+    import line
+#    break if num == 50
+  end
+
+  
+end
+
+# step_1
+step_2
+

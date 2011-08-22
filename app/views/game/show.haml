@@ -4,4 +4,7 @@
   %script{ src: "http://maps.googleapis.com/maps/api/js?sensor=true", type: "text/javascript"}
   %script{ src: "/javascripts/map.js", type: "text/javascript"  }
 
+- content_for :debug do
+  #{Location.count} locations, #{City.count} cities
+  
 #map_canvas
