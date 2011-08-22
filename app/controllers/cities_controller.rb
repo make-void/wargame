@@ -6,7 +6,7 @@ class CitiesController < ApplicationController
   def index
     #lat, lng = [43.7687324, 11.2569013]
     lat, lng = [params[:lat].to_f, params[:lng].to_f]
-    radius = 100
+    radius = 50
     
     
 

@@ -93,7 +93,7 @@
           dia.close();
         }
         dialog = new google.maps.InfoWindow({
-          content: "<a href='http://www.facebook.com/pages/a/" + this.fb_id + "'>" + this.name + "</a><br>likes: " + this.likes
+          content: "<div class='dialog'>                    <p class='name'><a href='http://www.facebook.com/pages/a/" + this.fb_id + "'>" + this.name + "</a></p>                    <p>player: X</p>                    <p>population: y</p>                  </div>"
         });
         dialog.open(this.map, this);
         return that.dialogs.push(dialog);
