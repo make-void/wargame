@@ -11,7 +11,8 @@
 - gem i bundler
 - bundle
 - rake db:create
-- rake db:seed
+- rake db:seed (per un db vuoto asd)
+- ruby db/refine.rb  (per il db con le locazioni importate da db/european_cities.txt)
 - rails server
 
 gg!
