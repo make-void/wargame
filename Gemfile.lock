@@ -49,6 +49,7 @@ GEM
     erubis (2.6.6)
       abstract (>= 1.0.0)
     eventmachine (0.12.10)
+    exception_notifier (1.0.0)
     execjs (1.2.4)
       multi_json (~> 1.0)
     geocoder (1.0.2)
@@ -105,6 +106,7 @@ PLATFORMS
 
 DEPENDENCIES
   composite_primary_keys
+  exception_notifier
   geocoder
   guard
   guard-coffeescript
