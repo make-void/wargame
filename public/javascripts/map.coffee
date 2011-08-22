@@ -50,7 +50,7 @@ class Map
     $.getJSON("/cities/#{center.Oa}/#{center.Pa}", (datas) =>
       markers = []
       
-      # console.log datas.markers.length
+      console.log datas.markers.length
       for marker in datas.markers
         #console.log(marker)
         markers.push marker
@@ -126,7 +126,7 @@ class Map
       #   zoom = 10
         
       localStorage.zoom = zoom   
-      $(window).trigger "boundszoom_changed"
+      # $(window).trigger "boundszoom_changed"
     )
   
   overlay: ->  

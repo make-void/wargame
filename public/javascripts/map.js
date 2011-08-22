@@ -54,6 +54,7 @@
       return $.getJSON("/cities/" + center.Oa + "/" + center.Pa, __bind(function(datas) {
         var marker, markers, _i, _len, _ref;
         markers = [];
+        console.log(datas.markers.length);
         _ref = datas.markers;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           marker = _ref[_i];
@@ -124,8 +125,7 @@
       return google.maps.event.addListener(this.map, 'zoom_changed', __bind(function() {
         var zoom;
         zoom = this.map.getZoom();
-        localStorage.zoom = zoom;
-        return $(window).trigger("boundszoom_changed");
+        return localStorage.zoom = zoom;
       }, this));
     };
     Map.prototype.overlay = function() {

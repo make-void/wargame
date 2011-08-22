@@ -23,7 +23,7 @@ role :db,  domain, :primary => true
 
 after :deploy, "deploy:cleanup"
 # after :deploy, "deploy:link_uploads"
-after :deploy, "deploy:rename_db_configs"
+after :deploy, "db:rename_db_configs"
 
 namespace :deploy do
   
