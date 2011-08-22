@@ -19,6 +19,11 @@ gg!
 
 ### notes
 
+csvs:
+- http://askbahar.com/2010/07/02/world-city-locations-database/
+- http://www.maxmind.com/app/worldcities
+- http://earth-info.nga.mil/gns/html/cntry_files.html
+
 locations:
 
 firenze
