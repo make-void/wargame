@@ -35,5 +35,5 @@ production:
   database: wargame_production
   pool: 5
   username: root
-  password:
-  socket: /tmp/mysql.sock
+  password: final33man
+#  socket: /tmp/mysql.sock
