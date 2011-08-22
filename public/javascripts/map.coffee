@@ -2,6 +2,10 @@ class Map
   
   constructor: ->    
     @dialogs = []
+    
+  set_default_coords: ->
+    @center_lat = @default_center_lat = 47.2
+    @center_lng = @default_center_lng = 14.4
   
   get_center_and_zoom: ->
     console.log(localStorage.center_lat, localStorage.center_lng, localStorage.zoom)
@@ -10,8 +14,7 @@ class Map
       @center_lat = parseFloat localStorage.center_lat
       @center_lng = parseFloat localStorage.center_lng
     else
-      @center_lat = 47.2
-      @center_lng = 14.4
+      this.set_default_coords()
       localStorage.center_lat = @center_lat
       localStorage.center_lng = @center_lng
       
@@ -26,8 +29,8 @@ class Map
     
     mapDiv = document.getElementById 'map_canvas'
     # console.log "lat: ", @center_lat, "lng: ", @center_lng, "zoom: ", @zoom 
-    @center_lat = 0 unless @center_lat
-    @center_lng = 22 unless @center_lng
+    @center_lat = @default_center_lat unless @center_lat
+    @center_lng = @default_center_lng unless @center_lng
     # @zoom = 2
     @map = new google.maps.Map( mapDiv, {
       center: new google.maps.LatLng(@center_lat, @center_lng),
@@ -49,7 +52,7 @@ class Map
       
       # console.log datas.markers.length
       for marker in datas.markers
-        marker = marker.location
+        #console.log(marker)
         markers.push marker
       @markers = markers  
       
@@ -68,7 +71,7 @@ class Map
     })
     
   drawMarker: (data) ->
-    latLng = new google.maps.LatLng data.loc[0], data.loc[1]
+    latLng = new google.maps.LatLng data.lat, data.lng
     
     image = "http://localhost:3000/images/cross_red.png"
     marker = new google.maps.Marker({
@@ -76,9 +79,8 @@ class Map
       map: @map,
       icon: image
     })
-    marker.fb_id = data.fb_id
-    marker.name = data.name
-    marker.likes = data.likes
+    marker.name = data.city.name
+    # TODO: pass more datas
     
     that = this
     google.maps.event.addListener(marker, 'click', ->

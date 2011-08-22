@@ -13,7 +13,7 @@ cities = JSON.parse File.read("#{path}/db/cities.json")
 cities.each do |city|
   city.symbolize_keys!
   loc = Location.create lat: city[:lat], lng: city[:lng]
-  loc.cities.create name: city[:name], pts: 0
+  City.create name: city[:name], pts: 0, location_id: loc.id
 end
 
 

@@ -5,14 +5,17 @@
     function Map() {
       this.dialogs = [];
     }
+    Map.prototype.set_default_coords = function() {
+      this.center_lat = this.default_center_lat = 47.2;
+      return this.center_lng = this.default_center_lng = 14.4;
+    };
     Map.prototype.get_center_and_zoom = function() {
       console.log(localStorage.center_lat, localStorage.center_lng, localStorage.zoom);
       if (localStorage.center_lat && localStorage.center_lng) {
         this.center_lat = parseFloat(localStorage.center_lat);
         this.center_lng = parseFloat(localStorage.center_lng);
       } else {
-        this.center_lat = 47.2;
-        this.center_lng = 14.4;
+        this.set_default_coords();
         localStorage.center_lat = this.center_lat;
         localStorage.center_lng = this.center_lng;
       }
@@ -28,10 +31,10 @@
       this.get_center_and_zoom();
       mapDiv = document.getElementById('map_canvas');
       if (!this.center_lat) {
-        this.center_lat = 0;
+        this.center_lat = this.default_center_lat;
       }
       if (!this.center_lng) {
-        this.center_lng = 22;
+        this.center_lng = this.default_center_lng;
       }
       return this.map = new google.maps.Map(mapDiv, {
         center: new google.maps.LatLng(this.center_lat, this.center_lng),
@@ -54,7 +57,6 @@
         _ref = datas.markers;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           marker = _ref[_i];
-          marker = marker.location;
           markers.push(marker);
         }
         this.markers = markers;
@@ -74,16 +76,14 @@
     };
     Map.prototype.drawMarker = function(data) {
       var image, latLng, marker, that;
-      latLng = new google.maps.LatLng(data.loc[0], data.loc[1]);
+      latLng = new google.maps.LatLng(data.lat, data.lng);
       image = "http://localhost:3000/images/cross_red.png";
       marker = new google.maps.Marker({
         position: latLng,
         map: this.map,
         icon: image
       });
-      marker.fb_id = data.fb_id;
-      marker.name = data.name;
-      marker.likes = data.likes;
+      marker.name = data.city.name;
       that = this;
       return google.maps.event.addListener(marker, 'click', function() {
         var dia, dialog, _i, _len, _ref;

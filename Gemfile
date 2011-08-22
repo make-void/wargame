@@ -9,7 +9,8 @@ gem 'mysql2', '~> 0.2.11'
 
 gem "geocoder"
 
-gem "activerecord-import"
+gem "composite_primary_keys"
+#gem "activerecord-import"
 
 gem "haml"
 gem "sass"

@@ -13,15 +13,15 @@ require 'json'
 # { "code": "FI", "name": "Finland"                                     },
 # { "code": "TR",	"name": "Turkey"                                      },
 
-ccodes = JSON.parse File.read("country_codes.json")
+ccodes = JSON.parse File.read("#{PATH}/db/country_codes.json")
 ccodes = ccodes.map{|c| c["code"]}.map{ |c| c.downcase }
 
 def step_1
   require 'fileutils'
-  FileUtils.rm "europe_cities.txt"
-  file = File.open("europe_cities.txt", "a:UTF-8")
+  FileUtils.rm "#{PATH}/db/europe_cities.txt"
+  file = File.open("#{PATH}/db/europe_cities.txt", "a:UTF-8")
 
-  File.open("worldcitiespop.txt", "r:UTF-8").each_line do |line|
+  File.open("#{PATH}/db/worldcitiespop.txt", "r:UTF-8").each_line do |line|
     file.write line if ccodes.include? line.split(/,/)[0]
   end
   puts `wc -l europe_cities.txt`
@@ -60,7 +60,7 @@ def import(line)
   split = line.split(",")
   ccode, name, lat, lng = split[0], split[2], split[5], split[6]
   loc = Location.create lat: lat, lng: lng
-  loc.cities.create name: name, location_id: loc, ccode: ccode
+  City.create name: name, ccode: ccode, location_id: loc.id
 end
 
 # http://products.wolframalpha.com/api/explorer.html - 20k cities per account per month
@@ -74,7 +74,7 @@ def step_2
   # batch = 10
   # lines = []
   num = 0
-  File.open("europe_cities.txt").each_line do |line|
+  File.open("#{PATH}/db/europe_cities.txt").each_line do |line|
     num += 1
     #batching(batch, lines, num)
     next unless num % 100 == 0
