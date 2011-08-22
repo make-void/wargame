@@ -23,6 +23,7 @@ role :db,  domain, :primary => true
 
 after :deploy, "deploy:cleanup"
 # after :deploy, "deploy:link_uploads"
+after :deploy, "deploy:rename_db_configs"
 
 namespace :deploy do
   
@@ -51,6 +52,12 @@ namespace :deploy do
 end
 
 namespace :db do
+  
+  desc "rename database_deploy.yml"
+  task :rename_db_configs do
+    run "cd #{current_path}/config; mv database_deploy.yml database.yml"
+  end
+
   desc "Create database"
   task :create do
     run "mysql -u root --password=final33man -e 'CREATE DATABASE IF NOT EXISTS #{application}_production;'"
