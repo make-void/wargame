@@ -2,13 +2,13 @@
   %meta{ name: "viewport", content: "user-scalable=no" }
 - content_for :end do
   %script{ src: "http://maps.googleapis.com/maps/api/js?sensor=true", type: "text/javascript"}
-  %script{ src: "/javascripts/map.js", type: "text/javascript"  }
+  -# %script{ src: "/javascripts/map.js", type: "text/javascript"  }
 
 - content_for :debug do
   %p #{DB::Location.count} locations, #{DB::City.count} cities
   
   #centerMap.tool
-    %form
+    %form#latLng
       %label{ for: "lat_lng" } lat, lng: 
       %input{ type: "text", name: "lat_lng", id: "lat_lng" }
       %input{ type: "submit", value: "Go" }
@@ -17,8 +17,9 @@
   #cities.overlay
     
   #armies.overlay
-    %p #{DB::Army.first.attributes}
-    - loc = DB::Location.find(2403)
+    - army = DB::Army.first
+    %p #{army.attributes}
+    - loc = army.location
     %p [#{loc.latitude}, #{loc.longitude}]
   
 #map_canvas

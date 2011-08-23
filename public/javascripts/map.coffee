@@ -29,6 +29,14 @@ class Map
       @zoom = 4
       localStorage.zoom = @zoom
     
+  center: (lat, lng) ->
+    latLng = new google.maps.LatLng(lat, lng)
+    # @map.setCenter latLng
+    @map.panTo latLng
+    # panBy xy
+    # panToBounds latLngBounds
+    # infos: http://code.google.com/apis/maps/documentation/javascript/reference.html#LatLngBounds
+    
   draw: ->  
     this.get_center_and_zoom()
     mapDiv = document.getElementById 'map_canvas'
@@ -111,7 +119,7 @@ class Map
       dialog = new google.maps.InfoWindow({
         # TODO: use handlebars
         content: "<div class='dialog'>
-                    <p class='name'><a href='http://www.facebook.com/pages/a/#{this.fb_id}'>#{this.name}</a></p>
+                    <p class='name'>#{this.name}</p>
                     <p>player: X</p>
                     <p>population: y</p>
                   </div>"

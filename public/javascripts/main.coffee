@@ -1,22 +1,33 @@
-require 'map'
+#require 'map'
+
+utils = {}
+
+utils.parseCoords = (string) ->
+  split = string.replace(/\s/, '').split(",")
+  return [split[0], split[1]]
+  
 
 $( ->
   
-  '''
-  // use console.log safely
+  # use console.log safely
+  `
   (function(b){function c(){}for(var d="assert,count,debug,dir,dirxml,error,exception,group,groupCollapsed,groupEnd,info,log,timeStamp,profile,profileEnd,time,timeEnd,trace,warn".split(","),a;a=d.pop();){b[a]=b[a]||c}})((function(){try
   {console.log();return window.console;}catch(err){return window.console={};}})());
-  '''
+  `
   
   # debug
-  
-  $("#debug").hover(function(){
-      $("header").heigth(200)
-    }, function() {
-      $("header").heigth(30)
-    }
+  $("#debug").hover( ->
+      $("header").height(95)
+    , ->
+      $("header").height(50)
   )
   
+  $("#latLng").bind("submit", ->
+    coords = $(this).find("input").val()
+    coords = utils.parseCoords(coords)
+    map.center(coords[0], coords[1])
+    return false
+  )
   
   # map
   

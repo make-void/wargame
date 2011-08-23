@@ -12,7 +12,9 @@ class CitiesController < ApplicationController
     # TODO: uncomment when implementing location type (City, Army...)
     # type = { type: "City" }
     locs = LG::Location.get_near( type, {latitude: lat, longitude: lng, radius: radius} ).map do |loc| 
-      city = loc.city.attributes
+      
+      # TODO: continue here!!!
+      city = loc.city.try(:attributes)
       loc.attributes.merge(city: city) 
     end
     # location: {"bearing":"16.0","distance":0.00011124609308931382,"id":1,"lat":43.7687,"lng":11.2569}

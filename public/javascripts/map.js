@@ -28,6 +28,11 @@
         return localStorage.zoom = this.zoom;
       }
     };
+    Map.prototype.center = function(lat, lng) {
+      var latLng;
+      latLng = new google.maps.LatLng(lat, lng);
+      return this.map.setCenter(latLng);
+    };
     Map.prototype.draw = function() {
       var mapDiv;
       this.get_center_and_zoom();

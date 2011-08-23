@@ -139,11 +139,13 @@ end
 
 def create_default_vals_after_location
     
-  DB::Army.create location_id: DB::Location.first.id,
+  loc = DB::Location.create latitude: 43.7687324, longitude: 11.2569013  # firenze
+    
+  army = DB::Army.create location_id: loc.id,
                   player_id: 1,
-                  is_moving: 0
+                  is_moving: 0              
                   
-  DB::Army.create location_id: DB::Location.first.id,
+  DB::Army.create location_id: loc.id,
                   player_id: 1,
                   is_moving: 1,
                   destination_id: DB::Location.last.id

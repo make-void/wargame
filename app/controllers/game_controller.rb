@@ -1,11 +1,17 @@
 module ControllersUtils
   
+  COFFEE_FILES = %w(map main)
+  
   def coffee_installed
-    `coffee -v` =~ /CoffeeScript version/
+    !`which coffee`.blank?
   end
   
+  def cd_js
+    "cd #{Rails.root}/public/javascripts;"
+  end
+
   def do_compilation
-    
+    puts `#{cd_js} coffee -j main.js -c #{COFFEE_FILES.map{|c| "#{c}.coffee"}.join(" ")}`
   end
   
   def compile_coffeescripts
