@@ -11,7 +11,7 @@ module DB # Database
     def is_moving?
       return is_moving == 1
     end
-    
+
   end
 end
 
