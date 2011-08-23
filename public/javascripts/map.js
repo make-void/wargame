@@ -3,7 +3,10 @@
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   Map = (function() {
     function Map() {
+      this.markerZoomMin = 7;
+      this.max_simultaneous_markers = 600;
       this.dialogs = [];
+      this.markers = [];
     }
     Map.prototype.set_default_coords = function() {
       this.center_lat = this.default_center_lat = 47.2;
@@ -48,8 +51,24 @@
       height = $("body").height() - $("h1").height() - 30;
       return $("#container, #map_canvas").height(height);
     };
+    Map.prototype.markersCleanMax = function() {
+      var marker, max_markers, _i, _len, _ref;
+      max_markers = this.max_simultaneous_markers;
+      if (this.markers.length > max_markers) {
+        _ref = this.markers.slice(0, (-max_markers + 1 + 1) || 9e9);
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          marker = _ref[_i];
+          marker.setMap(null);
+        }
+        return this.markers = this.markers.slice(-max_markers);
+      }
+    };
     Map.prototype.loadMarkers = function(callback) {
       var center;
+      if (localStorage.zoom < this.markerZoomMin) {
+        return;
+      }
+      this.markersCleanMax();
       center = this.map.getCenter();
       return $.getJSON("/cities/" + center.Oa + "/" + center.Pa, __bind(function(datas) {
         var marker, markers, _i, _len, _ref;
@@ -60,9 +79,8 @@
           marker = _ref[_i];
           markers.push(marker);
         }
-        this.markers = markers;
         this.timer = new Date();
-        return this.callback();
+        return this.callback(markers);
       }, this));
     };
     Map.prototype.drawSimpleMarker = function(lat, lng) {
@@ -75,7 +93,7 @@
         icon: image
       });
     };
-    Map.prototype.drawMarker = function(data) {
+    Map.prototype.doMarkerDrawing = function(data) {
       var image, latLng, marker, that;
       latLng = new google.maps.LatLng(data.lat, data.lng);
       image = "http://" + http_host + "/images/cross_red.png";
@@ -85,6 +103,8 @@
         icon: image
       });
       marker.name = data.city.name;
+      marker.city = data.city;
+      this.markers.push(marker);
       that = this;
       return google.maps.event.addListener(marker, 'click', function() {
         var dia, dialog, _i, _len, _ref;
@@ -100,12 +120,25 @@
         return that.dialogs.push(dialog);
       });
     };
-    Map.prototype.callback = function() {
-      var marker, _i, _len, _ref, _results;
+    Map.prototype.drawMarker = function(data) {
+      var draw, mark, _i, _len, _ref;
+      draw = true;
       _ref = this.markers;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        marker = _ref[_i];
+        mark = _ref[_i];
+        if (mark.city.id === data.city.id) {
+          draw = false;
+        }
+      }
+      if (draw) {
+        return this.doMarkerDrawing(data);
+      }
+    };
+    Map.prototype.callback = function(markers) {
+      var marker, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = markers.length; _i < _len; _i++) {
+        marker = markers[_i];
         _results.push(this.drawMarker(marker));
       }
       return _results;
@@ -120,12 +153,32 @@
         return $(window).trigger("boundszoom_changed");
       }, this));
     };
+    Map.prototype.clearMarkers = function() {
+      var marker, _i, _len, _ref;
+      _ref = this.markers;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        marker = _ref[_i];
+        marker.setMap(null);
+      }
+      return this.markers = [];
+    };
     Map.prototype.listen = function() {
       this.listen_to_bounds();
       return google.maps.event.addListener(this.map, 'zoom_changed', __bind(function() {
         var zoom;
         zoom = this.map.getZoom();
-        return localStorage.zoom = zoom;
+        if (zoom < 4) {
+          this.map.setZoom(4);
+          zoom = 4;
+        }
+        if (zoom > 11) {
+          this.map.setZoom(11);
+          zoom = 11;
+        }
+        localStorage.zoom = zoom;
+        if (zoom < this.markerZoomMin) {
+          return this.clearMarkers();
+        }
       }, this));
     };
     Map.prototype.overlay = function() {
@@ -161,13 +214,23 @@
       });
     };
     Map.prototype.startFetchingMarkers = function() {
-      var self;
+      var self, time2;
       self = this;
+      time2 = new Date();
       this.timer = new Date();
-      return $(window).bind("boundszoom_changed", function() {
+      $(window).bind("boundszoom_changed", function() {
         var time;
         time = new Date() - self.timer;
-        if (time > 2000) {
+        time2 = new Date();
+        if (time > 1000) {
+          self.loadMarkers();
+          return time2 = new Date();
+        }
+      });
+      return $(window).everyTime(1500, function(i) {
+        var time;
+        time = new Date() - time2;
+        if (time > 1000 && time < 2000) {
           return self.loadMarkers();
         }
       });
@@ -214,7 +277,6 @@
     map.draw();
     map.loadMarkers();
     map.listen();
-    map.drawLines();
     map.startFetchingMarkers();
     map.resize();
     return $(window).resize(function() {

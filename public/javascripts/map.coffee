@@ -1,7 +1,12 @@
+
+
 class Map
   
-  constructor: ->    
+  constructor: ->
+    @markerZoomMin = 7    
+    @max_simultaneous_markers = 600
     @dialogs = []
+    @markers = []
     
   set_default_coords: ->
     @center_lat = @default_center_lat = 47.2
@@ -44,7 +49,18 @@ class Map
     height = $("body").height() - $("h1").height() - 30
     $("#container, #map_canvas").height height
 
+  markersCleanMax: ->
+    max_markers = @max_simultaneous_markers
+    if @markers.length > max_markers
+      for marker in @markers[0..-max_markers+1]
+        marker.setMap null 
+      @markers = @markers[-max_markers..-1]
+
   loadMarkers: (callback) ->
+    return if localStorage.zoom < @markerZoomMin
+    this.markersCleanMax()
+    
+    
     center = @map.getCenter()    
     # console.log(center)
     $.getJSON("/cities/#{center.Oa}/#{center.Pa}", (datas) =>
@@ -54,10 +70,10 @@ class Map
       for marker in datas.markers
         #console.log(marker)
         markers.push marker
-      @markers = markers  
+
       
       @timer = new Date()    
-      this.callback()
+      this.callback(markers)
       #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
     )
 
@@ -70,7 +86,9 @@ class Map
       icon: image
     })
     
-  drawMarker: (data) ->
+
+
+  doMarkerDrawing: (data) ->
     latLng = new google.maps.LatLng data.lat, data.lng
     
     image = "http://"+http_host+"/images/cross_red.png"
@@ -80,6 +98,8 @@ class Map
       icon: image
     })
     marker.name = data.city.name
+    marker.city = data.city
+    @markers.push marker
     # TODO: pass more datas
     
     that = this
@@ -100,9 +120,21 @@ class Map
       that.dialogs.push dialog
     )
     #console.log(latLng)
+    
+    
+  drawMarker: (data) ->
+    draw = true
+    for mark in @markers
+      if mark.city.id == data.city.id
+        draw = false
+      
+        
+    this.doMarkerDrawing(data) if draw
+      
+      
 
-  callback: ->
-    for marker in @markers
+  callback: (markers) ->
+    for marker in markers
       this.drawMarker marker
   
   listen_to_bounds: ->
@@ -115,18 +147,31 @@ class Map
       $(window).trigger "boundszoom_changed"
     )
   
+  clearMarkers: ->
+    for marker in @markers
+      marker.setMap null 
+    @markers = []
+  
   listen: ->
     this.listen_to_bounds()
     
     google.maps.event.addListener(@map, 'zoom_changed', =>
       zoom = @map.getZoom()
       
-      # if (zoom > x) 
-      #   map.setZoom(10)
-      #   zoom = 10
+      if (zoom < 4) 
+        @map.setZoom(4)
+        zoom = 4
         
+      if (zoom > 11) 
+        @map.setZoom(11)
+        zoom = 11
+ 
       localStorage.zoom = zoom   
       # $(window).trigger "boundszoom_changed"
+      
+      if zoom < @markerZoomMin
+        this.clearMarkers()
+        
     )
   
   overlay: ->  
@@ -162,13 +207,24 @@ class Map
   startFetchingMarkers: -> # when latchanges
     self = this
     
+    time2 = new Date()
+    
     @timer = new Date()
     $(window).bind("boundszoom_changed", ->
       time = new Date() - self.timer   
-      if time > 2000     
+      time2 = new Date()
+      if time > 1000     
         self.loadMarkers()
-            
+        time2 = new Date()
+          
     )
+    
+    $(window).everyTime(1500, (i) ->
+      time = new Date() - time2
+      if time > 1000 && time < 2000
+        self.loadMarkers() 
+    )
+    
     
 
 class LLRange
@@ -196,7 +252,7 @@ $( ->
   map.listen()
   
   #map.clickInfo()
-  map.drawLines()
+  #map.drawLines()
   
   map.startFetchingMarkers()
   
