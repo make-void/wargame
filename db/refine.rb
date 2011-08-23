@@ -61,28 +61,78 @@ def import(line)
   ccode, name, lat, lng = split[0], split[2], split[5], split[6]
 
   begin
-    loc = Database::Location.create latitude: lat.to_f, longitude: lng.to_f 
-    loc = Database::Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f}) if loc.id.nil? #AR VALIDATION
+    loc = DB::Location.create latitude: lat.to_f, longitude: lng.to_f 
+    loc = DB::Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f}) if loc.id.nil? #AR VALIDATION
   rescue ActiveRecord::RecordNotUnique #DB VALIDATION
-    loc = Database::Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f})
+    loc = DB::Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f})
     raise "Error... No Location for #{lat.to_f} - #{lng.to_f}" if loc.nil?
   end
   
-  City.create name: name, ccode: ccode, location_id: loc.id, player_id: 1
+  DB::City.create name: name, ccode: ccode, location_id: loc.id, player_id: 1
 end
 
 # http://products.wolframalpha.com/api/explorer.html - 20k cities per account per month
 # population firenze, reggello, siena, roma, viterbo, terni, napoli, milano, campagnano di roma, lizzano
 
-def create_default_alliance_and_player
+def create_default_vals
   
-  Database::Alliance.create name: "No Alliance"
+  DB::Alliance.create name: "No Alliance"
   
-  Database::Player.create name: "Free Lands", 
+  DB::Player.create name: "Free Lands", 
                 new_password: "NULLABLE", 
                 new_password_confirmation: "NULLABLE", 
                 email: "test@test.test", 
                 alliance_id: 1
+                
+  DB::UnitDefinition.create name: "Soldier",
+                unit_type: "Infantry",
+                attack_type: 0, 
+                power: 1,
+                defence: 1,
+                movement_speed: 4,
+                movement_cost: 0,
+                cargo_capacity: 20,
+                transport_capacity: 0
+   
+   DB::UnitDefinition.create name: "Special Forces",
+                 unit_type: "Infantry",
+                 attack_type: 0,
+                 power: 5,
+                 defence: 3,
+                 movement_speed: 4,
+                 movement_cost: 0,
+                 cargo_capacity: 20,
+                 transport_capacity: 0
+                 
+   DB::UnitDefinition.create name: "Granatier",
+                unit_type: "Infantry",
+                attack_type: 1,
+                power: 15,
+                defence: 1,
+                movement_speed: 3,
+                movement_cost: 0,
+                cargo_capacity: 10,
+                transport_capacity: 0
+                 
+   DB::UnitDefinition.create name: "Jeep",
+                unit_type: "Vehicle",
+                attack_type: 2,
+                power: 40,
+                defence: 10,
+                movement_speed: 120,
+                movement_cost: 40,
+                cargo_capacity: 200,
+                transport_capacity: 5         
+   
+   DB::UnitDefinition.create name: "Small Camion",
+                unit_type: "Vehicle",
+                attack_type: 0,
+                power: 0,
+                defence: 20,
+                movement_speed: 80,
+                movement_cost: 10,
+                cargo_capacity: 2000,
+                transport_capacity: 50    
                 
 end
 
@@ -90,7 +140,7 @@ def step_2
   require "#{PATH}/config/environment"
   require "#{PATH}/db/recreate_tables"
   
-  create_default_alliance_and_player
+  create_default_vals
   # batch = 10
   # lines = []
   num = 0

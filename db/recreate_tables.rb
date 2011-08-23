@@ -1,9 +1,13 @@
 qs = queries = []
 
+qs << "DROP TABLE IF EXISTS wg_armies;"
 qs << "DROP TABLE IF EXISTS wg_cities;"
 qs << "DROP TABLE IF EXISTS wg_players;"
 qs << "DROP TABLE IF EXISTS wg_locations;"
 qs << "DROP TABLE IF EXISTS wg_alliances;"
+
+qs << "DROP TABLE IF EXISTS wg_unit_defs;"
+
 
 
 
@@ -71,7 +75,45 @@ CREATE TABLE `wg_cities` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
 
+qs << "
+CREATE TABLE `wg_armies` (
+  `army_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `location_id` BIGINT UNSIGNED NOT NULL,
+  `player_id` BIGINT UNSIGNED NOT NULL,
+  
+  `is_moving` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  `destination_id` BIGINT UNSIGNED,
 
+  PRIMARY KEY (`army_id`),
+  
+  FOREIGN KEY (`location_id`) REFERENCES wg_locations(`location_id`)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (`player_id`) REFERENCES wg_players(`player_id`)
+    ON DELETE RESTRICT
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
+
+qs << "
+CREATE TABLE `wg_unit_defs` (
+  `unit_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
+
+  `unit_type` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Infantry',
+  `attack_type` int(11) UNSIGNED NOT NULL DEFAULT 0,
+
+  `power` int(11) NOT NULL,
+  `defence` int(11) NOT NULL,
+  `movement_speed` int(11) NOT NULL,
+  `movement_cost` int(11) NOT NULL DEFAULT 0,
+  `cargo_capacity` int(11) NOT NULL,
+  `transport_capacity` int(11) NOT NULL DEFAULT 0,
+
+
+  PRIMARY KEY (`unit_id`)
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
 
 puts "recreating tables..."
 queries.each do |query|

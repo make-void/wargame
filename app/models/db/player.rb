@@ -35,5 +35,6 @@ module DB # Database
       self.salt = ActiveSupport::SecureRandom.base64(8)
       self.password = Digest::SHA2.hexdigest(self.salt + @new_password)
     end
+    
   end
 end
