@@ -6,6 +6,8 @@ module DB # Database
     belongs_to :location
     belongs_to :player  
     
+    has_many :army_units
+    
     def is_moving?
       return is_moving == 1
     end

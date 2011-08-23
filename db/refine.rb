@@ -122,7 +122,7 @@ def create_default_vals
                 movement_speed: 120,
                 movement_cost: 40,
                 cargo_capacity: 200,
-                transport_capacity: 5         
+                transport_capacity: 10         
    
    DB::UnitDefinition.create name: "Small Camion",
                 unit_type: "Vehicle",
@@ -132,8 +132,38 @@ def create_default_vals
                 movement_speed: 80,
                 movement_cost: 10,
                 cargo_capacity: 2000,
-                transport_capacity: 50    
+                transport_capacity: 50  
                 
+                
+end
+
+def create_default_vals_after_location
+    
+  DB::Army.create location_id: DB::Location.first.id,
+                  player_id: 1,
+                  is_moving: 0
+                  
+  DB::Army.create location_id: DB::Location.first.id,
+                  player_id: 1,
+                  is_moving: 1,
+                  destination_id: DB::Location.last.id
+                  
+                  
+  DB::ArmyUnit.create unit_id: 1,
+                      army_id: 1,
+                      player_id: 1,
+                      number: 100 #100 soldiers
+                      
+  DB::ArmyUnit.create unit_id: 2,
+                      army_id: 2,
+                      player_id: 1,
+                      number: 50
+                      
+  DB::ArmyUnit.create unit_id: 4,
+                      army_id: 2,
+                      player_id: 1,
+                      number: 5
+  
 end
 
 def step_2
@@ -151,6 +181,8 @@ def step_2
     import line
 #    break if num == 50
   end
+  
+  create_default_vals_after_location
 
   
 end

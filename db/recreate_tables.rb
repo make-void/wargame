@@ -1,15 +1,12 @@
 qs = queries = []
 
+qs << "DROP TABLE IF EXISTS wg_army_unit;"
 qs << "DROP TABLE IF EXISTS wg_armies;"
 qs << "DROP TABLE IF EXISTS wg_cities;"
 qs << "DROP TABLE IF EXISTS wg_players;"
 qs << "DROP TABLE IF EXISTS wg_locations;"
 qs << "DROP TABLE IF EXISTS wg_alliances;"
-
 qs << "DROP TABLE IF EXISTS wg_unit_defs;"
-
-
-
 
 qs << "
 CREATE TABLE `wg_alliances` (
@@ -89,7 +86,9 @@ CREATE TABLE `wg_armies` (
   FOREIGN KEY (`location_id`) REFERENCES wg_locations(`location_id`)
     ON DELETE RESTRICT,
   FOREIGN KEY (`player_id`) REFERENCES wg_players(`player_id`)
-    ON DELETE RESTRICT
+    ON DELETE RESTRICT,
+    
+  KEY armyplayer (`army_id`,`player_id`)
     
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
@@ -111,6 +110,24 @@ CREATE TABLE `wg_unit_defs` (
 
 
   PRIMARY KEY (`unit_id`)
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
+
+qs << "
+CREATE TABLE `wg_army_unit` (
+  `unit_id` BIGINT UNSIGNED NOT NULL,
+  `army_id` BIGINT UNSIGNED NOT NULL,
+  `player_id` BIGINT UNSIGNED NOT NULL,
+
+  `number` int(11) NOT NULL,
+  
+  PRIMARY KEY (`unit_id`,`army_id`),
+  
+  FOREIGN KEY (`army_id`,`player_id`) REFERENCES wg_armies(`army_id`,`player_id`)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (`unit_id`) REFERENCES wg_unit_defs(`unit_id`)
+    ON DELETE RESTRICT
     
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
