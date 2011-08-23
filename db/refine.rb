@@ -75,8 +75,15 @@ end
 # population firenze, reggello, siena, roma, viterbo, terni, napoli, milano, campagnano di roma, lizzano
 
 def create_default_alliance_and_player
+  
   Alliance.create name: "No Alliance"
-  Player.create name: "Free Lands", new_password: "NULLABLE", new_password_confirmation: "NULLABLE", email: "test@test.test", alliance_id: 1
+  
+  Player.create name: "Free Lands", 
+                new_password: "NULLABLE", 
+                new_password_confirmation: "NULLABLE", 
+                email: "test@test.test", 
+                alliance_id: 1
+                
 end
 
 def step_2

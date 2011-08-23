@@ -5,7 +5,7 @@ class Location < ActiveRecord::Base
   validates_presence_of :latitude, :longitude
   validates_uniqueness_of :latitude, :scope => :longitude 
   
-  has_many :cities 
+  has_one :city 
   
   reverse_geocoded_by :latitude, :longitude # TODO: check if it doesn't add overhead
   
