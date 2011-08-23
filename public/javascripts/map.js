@@ -13,7 +13,6 @@
       return this.center_lng = this.default_center_lng = 14.4;
     };
     Map.prototype.get_center_and_zoom = function() {
-      console.log(localStorage.center_lat, localStorage.center_lng, localStorage.zoom);
       if (localStorage.center_lat && localStorage.center_lng) {
         this.center_lat = parseFloat(localStorage.center_lat);
         this.center_lng = parseFloat(localStorage.center_lng);
@@ -73,7 +72,6 @@
       return $.getJSON("/cities/" + center.Oa + "/" + center.Pa, __bind(function(datas) {
         var marker, markers, _i, _len, _ref;
         markers = [];
-        console.log(datas.markers.length);
         _ref = datas.markers;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           marker = _ref[_i];
@@ -95,9 +93,11 @@
     };
     Map.prototype.doMarkerDrawing = function(data) {
       var image, latLng, marker, that;
-      latLng = new google.maps.LatLng(data.lat, data.lng);
+      if (!data.latitude) {
+        console.log("ERROR: marker without lat,lng");
+      }
+      latLng = new google.maps.LatLng(data.latitude, data.longitude);
       image = "http://" + http_host + "/images/cross_red.png";
-      console.log(this.map);
       marker = new google.maps.Marker({
         position: latLng,
         map: this.map,
@@ -127,7 +127,7 @@
       _ref = this.markers;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         mark = _ref[_i];
-        if (mark.city.id === data.city.id) {
+        if (mark.city.city_id === data.city.city_id) {
           draw = false;
         }
       }

@@ -13,7 +13,7 @@ class Map
     @center_lng = @default_center_lng = 14.4
   
   get_center_and_zoom: ->
-    console.log(localStorage.center_lat, localStorage.center_lng, localStorage.zoom)
+    #console.log(localStorage.center_lat, localStorage.center_lng, localStorage.zoom)
     
     if localStorage.center_lat && localStorage.center_lng
       @center_lat = parseFloat localStorage.center_lat
@@ -31,7 +31,6 @@ class Map
     
   draw: ->  
     this.get_center_and_zoom()
-    
     mapDiv = document.getElementById 'map_canvas'
     # console.log "lat: ", @center_lat, "lng: ", @center_lng, "zoom: ", @zoom 
     @center_lat = @default_center_lat unless @center_lat
@@ -66,7 +65,7 @@ class Map
     $.getJSON("/cities/#{center.Oa}/#{center.Pa}", (datas) =>
       markers = []
       
-      console.log datas.markers.length
+      #console.log datas.markers.length
       for marker in datas.markers
         #console.log(marker)
         markers.push marker
@@ -89,10 +88,11 @@ class Map
 
 
   doMarkerDrawing: (data) ->
-    latLng = new google.maps.LatLng data.lat, data.lng
+    console.log "ERROR: marker without lat,lng" unless data.latitude
+    
+    latLng = new google.maps.LatLng data.latitude, data.longitude
     
     image = "http://"+http_host+"/images/cross_red.png"
-    console.log @map
     marker = new google.maps.Marker({
       position: latLng,
       map: @map,
@@ -126,8 +126,7 @@ class Map
   drawMarker: (data) ->
     draw = true
     for mark in @markers
-      if mark.city.id == data.city.id
-        draw = false
+      draw = false if mark.city.city_id == data.city.city_id
         
     this.doMarkerDrawing(data) if draw
       
