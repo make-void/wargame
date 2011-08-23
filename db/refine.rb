@@ -59,24 +59,31 @@ def import(line)
   # ad,aixas,Aix‡s,06,,42.4833333,1.4666667
   split = line.split(",")
   ccode, name, lat, lng = split[0], split[2], split[5], split[6]
-  
+
   begin
-    loc = Location.create lat: lat.to_f, lng: lng.to_f 
-  rescue ActiveRecord::RecordNotUnique
-    loc = Location.find(:first, :conditions => {lat: lat.to_f, lng: lng.to_f})
+    loc = Location.create latitude: lat.to_f, longitude: lng.to_f 
+    loc = Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f}) if loc.id.nil? #AR VALIDATION
+  rescue ActiveRecord::RecordNotUnique #DB VALIDATION
+    loc = Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f})
     raise "Error... No Location for #{lat.to_f} - #{lng.to_f}" if loc.nil?
   end
-  City.create name: name, ccode: ccode, location_id: loc.id
+  
+  City.create name: name, ccode: ccode, location_id: loc.id, player_id: 1
 end
 
 # http://products.wolframalpha.com/api/explorer.html - 20k cities per account per month
 # population firenze, reggello, siena, roma, viterbo, terni, napoli, milano, campagnano di roma, lizzano
 
+def create_default_alliance_and_player
+  Alliance.create name: "No Alliance"
+  Player.create name: "Free Lands", new_password: "NULLABLE", new_password_confirmation: "NULLABLE", email: "test@test.test", alliance_id: 1
+end
 
 def step_2
   require "#{PATH}/config/environment"
   require "#{PATH}/db/recreate_tables"
   
+  create_default_alliance_and_player
   # batch = 10
   # lines = []
   num = 0

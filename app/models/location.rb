@@ -1,8 +1,13 @@
 class Location < ActiveRecord::Base
-
-  has_one :city
+  set_table_name "wg_locations" 
+  set_primary_key "location_id"
+    
+  validates_presence_of :latitude, :longitude
+  validates_uniqueness_of :latitude, :scope => :longitude 
   
-  reverse_geocoded_by :lat, :lng # TODO: check if it doesn't add overhead
+  has_many :cities 
+  
+  reverse_geocoded_by :latitude, :longitude # TODO: check if it doesn't add overhead
   
 end
 
