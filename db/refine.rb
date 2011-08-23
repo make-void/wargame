@@ -61,10 +61,10 @@ def import(line)
   ccode, name, lat, lng = split[0], split[2], split[5], split[6]
 
   begin
-    loc = Location.create latitude: lat.to_f, longitude: lng.to_f 
-    loc = Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f}) if loc.id.nil? #AR VALIDATION
+    loc = Database::Location.create latitude: lat.to_f, longitude: lng.to_f 
+    loc = Database::Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f}) if loc.id.nil? #AR VALIDATION
   rescue ActiveRecord::RecordNotUnique #DB VALIDATION
-    loc = Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f})
+    loc = Database::Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f})
     raise "Error... No Location for #{lat.to_f} - #{lng.to_f}" if loc.nil?
   end
   
@@ -76,9 +76,9 @@ end
 
 def create_default_alliance_and_player
   
-  Alliance.create name: "No Alliance"
+  Database::Alliance.create name: "No Alliance"
   
-  Player.create name: "Free Lands", 
+  Database::Player.create name: "Free Lands", 
                 new_password: "NULLABLE", 
                 new_password_confirmation: "NULLABLE", 
                 email: "test@test.test", 

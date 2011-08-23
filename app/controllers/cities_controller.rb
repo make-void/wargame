@@ -8,12 +8,10 @@ class CitiesController < ApplicationController
     lat, lng = [params[:lat].to_f, params[:lng].to_f]
     radius = 50
     
-    
-
     type = {}
     # TODO: uncomment when implementing location type (City, Army...)
     # type = { type: "City" }
-    locs = Location.includes(:city).where(type).near([lat, lng], radius).map do |loc| 
+    locs = Logic::Location.get_near( type, {latitude: lat, longitude: lng, radius: radius} ).map do |loc| 
       city = loc.city.attributes
       loc.attributes.merge(city: city) 
     end
