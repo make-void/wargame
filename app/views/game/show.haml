@@ -5,6 +5,6 @@
   %script{ src: "/javascripts/map.js", type: "text/javascript"  }
 
 - content_for :debug do
-  #{Location.count} locations, #{City.count} cities
+  #{DB::Location.count} locations, #{DB::City.count} cities
   
 #map_canvas

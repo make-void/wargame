@@ -1,4 +1,4 @@
-module Database
+module DB # Database
   class Alliance < ActiveRecord::Base
     set_table_name "wg_alliances" 
     set_primary_key "alliance_id"

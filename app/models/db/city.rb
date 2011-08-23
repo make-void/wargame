@@ -1,5 +1,5 @@
-module Database
-    class City < ActiveRecord::Base
+module DB # Database
+  class City < ActiveRecord::Base
     set_table_name "wg_cities" 
     set_primary_key "city_id"
     

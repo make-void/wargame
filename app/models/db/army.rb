@@ -1,4 +1,4 @@
-module Database
+module DB # Database
   class Army < ActiveRecord::Base
   
   end

@@ -1,4 +1,4 @@
-module Database
+module DB # Database
   class Player < ActiveRecord::Base
     set_table_name "wg_players" 
     set_primary_key "player_id"

@@ -11,7 +11,7 @@ class CitiesController < ApplicationController
     type = {}
     # TODO: uncomment when implementing location type (City, Army...)
     # type = { type: "City" }
-    locs = Logic::Location.get_near( type, {latitude: lat, longitude: lng, radius: radius} ).map do |loc| 
+    locs = LG::Location.get_near( type, {latitude: lat, longitude: lng, radius: radius} ).map do |loc| 
       city = loc.city.attributes
       loc.attributes.merge(city: city) 
     end

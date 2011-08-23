@@ -97,6 +97,7 @@
       var image, latLng, marker, that;
       latLng = new google.maps.LatLng(data.lat, data.lng);
       image = "http://" + http_host + "/images/cross_red.png";
+      console.log(this.map);
       marker = new google.maps.Marker({
         position: latLng,
         map: this.map,

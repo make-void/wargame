@@ -1,4 +1,4 @@
-module Database
+module DB # Database
   class Location < ActiveRecord::Base
     set_table_name "wg_locations" 
     set_primary_key "location_id"

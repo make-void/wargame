@@ -92,6 +92,7 @@ class Map
     latLng = new google.maps.LatLng data.lat, data.lng
     
     image = "http://"+http_host+"/images/cross_red.png"
+    console.log @map
     marker = new google.maps.Marker({
       position: latLng,
       map: @map,
@@ -127,7 +128,6 @@ class Map
     for mark in @markers
       if mark.city.id == data.city.id
         draw = false
-      
         
     this.doMarkerDrawing(data) if draw
       
