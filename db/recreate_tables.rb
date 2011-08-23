@@ -132,6 +132,35 @@ CREATE TABLE `wg_army_unit` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
 
+
+#VIEWS --> LAST ITEMS
+qs << "CREATE OR REPLACE VIEW wg_army_unit_view AS
+   SELECT 
+    u_aunit.unit_id AS unit_id,
+    u_aunit.army_id AS army_id,
+    u_aunit.player_id AS player_id,
+    u_def.name AS name,
+    u_def.unit_type AS unit_type,
+    u_def.attack_type AS attack_type,
+    u_aunit.number AS number,
+    u_def.power AS power,
+    u_def.defence AS defence,
+    u_def.movement_speed AS speed,
+    u_def.movement_cost AS cost,
+    u_def.cargo_capacity AS resources_transported,
+    u_def.transport_capacity AS people_transported,
+    u_army.is_moving AS is_moving,
+    u_army.destination_id AS destination_id,
+    u_army.location_id AS location_id
+  
+   FROM wg_army_unit u_aunit
+   LEFT OUTER JOIN wg_unit_defs u_def 
+      ON  u_def.unit_id = u_aunit.unit_id
+   LEFT OUTER JOIN wg_armies u_army
+      ON  u_army.army_id = u_aunit.army_id
+   ORDER BY army_id;
+"
+
 puts "recreating tables..."
 queries.each do |query|
   puts query.split(/\n/)[0..1].join + "..."  
