@@ -59,7 +59,13 @@ def import(line)
   # ad,aixas,Aix‡s,06,,42.4833333,1.4666667
   split = line.split(",")
   ccode, name, lat, lng = split[0], split[2], split[5], split[6]
-  loc = Location.create lat: lat, lng: lng
+  
+  begin
+    loc = Location.create lat: lat.to_f, lng: lng.to_f 
+  rescue ActiveRecord::RecordNotUnique
+    loc = Location.find(:first, :conditions => {lat: lat.to_f, lng: lng.to_f})
+    raise "Error... No Location for #{lat.to_f} - #{lng.to_f}" if loc.nil?
+  end
   City.create name: name, ccode: ccode, location_id: loc.id
 end
 
