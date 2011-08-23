@@ -7,4 +7,4 @@ guard 'livereload' do
 
 end
 
-guard 'coffeescript', :input => 'public/javascripts'
+#guard 'coffeescript', :input => 'public/javascripts'

@@ -22,7 +22,7 @@ gem "exception_notifier"
 group :development do
   gem "guard"
   gem "guard-livereload"
-  gem "guard-coffeescript"
+  #gem "guard-coffeescript"
 end
 
 # Use unicorn as the web server

@@ -272,16 +272,4 @@
     };
     return LLRange;
   })();
-  $(function() {
-    var map;
-    map = new Map;
-    map.draw();
-    map.loadMarkers();
-    map.listen();
-    map.startFetchingMarkers();
-    map.resize();
-    return $(window).resize(function() {
-      return map.resize();
-    });
-  });
 }).call(this);

@@ -5,6 +5,20 @@
   %script{ src: "/javascripts/map.js", type: "text/javascript"  }
 
 - content_for :debug do
-  #{DB::Location.count} locations, #{DB::City.count} cities
+  %p #{DB::Location.count} locations, #{DB::City.count} cities
+  
+  #centerMap.tool
+    %form
+      %label{ for: "lat_lng" } lat, lng: 
+      %input{ type: "text", name: "lat_lng", id: "lat_lng" }
+      %input{ type: "submit", value: "Go" }
+  
+  
+  #cities.overlay
+    
+  #armies.overlay
+    %p #{DB::Army.first.attributes}
+    - loc = DB::Location.find(2403)
+    %p [#{loc.latitude}, #{loc.longitude}]
   
 #map_canvas

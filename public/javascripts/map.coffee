@@ -241,30 +241,7 @@ class LLRange
       for lng in @lngs
         fn(lat, lng)
       
-$( ->
-  map = new Map
-  map.draw()
-  
-  #map.dialogs()
-  map.loadMarkers()
-  
-  map.listen()
-  
-  #map.clickInfo()
-  #map.drawLines()
-  
-  map.startFetchingMarkers()
-  
-  #map.overlay()
-  
-  #console.log(navigator.userAgent)
-  #if navigator.userAgent.match("iPad")
-  map.resize()
-  $(window).resize( ->
-    map.resize()
-  )
-)
-  
+
   
 
 
