@@ -169,8 +169,13 @@ end
 def create_default_vals_after_location
     
   florence = DB::Location.create latitude: 43.7687324, longitude: 11.2569013  # firenze
+  
+  DB::City.create name: "Florence", ccode: "...", location_id: florence.id, player_id: 1
+  
   paris = DB::Location.create latitude: 48.866667, longitude: 2.333333
     
+  DB::City.create name: "Paris", ccode: "...", location_id: paris.id, player_id: 1
+  
   army = DB::Army.create location_id: florence.id,
                   player_id: 1,
                   is_moving: 0              

@@ -186,7 +186,7 @@ qs << "CREATE OR REPLACE VIEW wg_extended_locations AS
       OR city.player_id = player.player_id
    LEFT OUTER JOIN wg_alliances ally
       ON player.alliance_id = ally.alliance_id
-   ORDER BY army_id;
+   ORDER BY location_id;
 "
 
 
