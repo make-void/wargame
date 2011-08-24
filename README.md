@@ -17,6 +17,22 @@
 
 gg!
 
+### setup coffeescript:
+
+execute this line to install homebrew:
+
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
+
+    brew install node
+    curl http://npmjs.org/install.sh | sh
+    npm install -g coffee-script
+
+done!
+
+try coffee -e "console.log 1+1"
+
+- homebrew page: http://mxcl.github.com/homebrew/
+
 
 ### notes
 
