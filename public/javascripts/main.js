@@ -102,14 +102,25 @@
         console.log("ERROR: marker without lat,lng");
       }
       latLng = new google.maps.LatLng(data.latitude, data.longitude);
-      image = "http://" + http_host + "/images/cross_red.png";
+      //image = "http://" + http_host + "/images/cross_red.png";
+      city_image = "http://" + http_host + "/images/city.png";
+      army_image = "http://" + http_host + "/images/tank.gif";
       marker = new google.maps.Marker({
         position: latLng,
         map: this.map,
-        icon: image
+        player: data.player
       });
-      marker.name = data.city.name;
-      marker.city = data.city;
+      if (data.city.name !== null) {
+          marker.name = data.city.name;
+          marker.city = data.city;
+          marker.army = undefined;
+          marker.icon = city_image;
+      } else {
+          marker.name = "Army";
+          marker.army = data.army;
+          marker.city = undefined;
+          marker.icon = army_image;
+      }
       this.markers.push(marker);
       that = this;
       return google.maps.event.addListener(marker, 'click', function() {
@@ -119,8 +130,15 @@
           dia = _ref[_i];
           dia.close();
         }
+        
+        var content_string = "<div class='dialog'>                    <p class='name'>" + this.name + "</p>                    <p>player: " + this.player.name + "</p>"
+        if (typeof(this.city) !== "undefined") {
+            content_string += "                    <p>population: y</p>                  </div>"
+        } else {
+            content_string += "                  </div>"
+        }
         dialog = new google.maps.InfoWindow({
-          content: "<div class='dialog'>                    <p class='name'>" + this.name + "</p>                    <p>player: X</p>                    <p>population: y</p>                  </div>"
+          content: content_string
         });
         dialog.open(this.map, this);
         return that.dialogs.push(dialog);
@@ -132,9 +150,11 @@
       _ref = this.markers;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         mark = _ref[_i];
+        /* #COMMENTED FOR ARMY SUPPORT ?
         if (mark.city.city_id === data.city.city_id) {
           draw = false;
         }
+        */
       }
       if (draw) {
         return this.doMarkerDrawing(data);

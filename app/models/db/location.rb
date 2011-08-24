@@ -7,6 +7,7 @@ module DB # Database
     validates_uniqueness_of :latitude, :scope => :longitude 
     
     has_one :city 
+    has_many :armies
     
     reverse_geocoded_by :latitude, :longitude # TODO: check if it doesn't add overhead
     

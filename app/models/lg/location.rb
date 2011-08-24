@@ -7,7 +7,8 @@ module LG # Logic
       lat = position_hash[:latitude]
       lng = position_hash[:longitude]
       radius = position_hash[:radius]
-      return DB::Location.includes(:city).where( where_clause ).near([lat, lng], radius)
+
+      return View::ExtendedLocation.where( where_clause ).near([lat, lng], radius)
     end
     
   end

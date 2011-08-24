@@ -8,7 +8,7 @@ module LG
       raise ArgumentError, "Need an ArmyID. Got #{army_id.inspect}" if army_id.nil?
       @army_id = army_id
       @army = DB::Army.find(@army_id)
-      @units = ArmyUnit.find(:all, conditions: { army_id: @army_id} )
+      @units = View::ArmyUnit.find(:all, conditions: { army_id: @army_id} )
     end
     
     
@@ -82,7 +82,7 @@ module LG
     
     def refresh!
       @army = DB::Army.find(@army_id)
-      @units = ArmyUnit.find(:all, conditions: { army_id: @army_id})
+      @units = View::ArmyUnit.find(:all, conditions: { army_id: @army_id})
       return true
     end
     

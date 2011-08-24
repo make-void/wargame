@@ -1,4 +1,4 @@
-module LG
+module View
   class ArmyUnit < ActiveRecord::Base
     set_table_name "wg_army_unit_view" 
     set_primary_keys "unit_id", "army_id"
@@ -8,12 +8,10 @@ module LG
       return self.cost * self.number
     end
     
-    def readonly!
-      @readonly = true
-    end
+
 
     def readonly?
-      defined?(@readonly) && @readonly == true
+      true
     end
     
   end

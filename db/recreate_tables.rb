@@ -161,6 +161,32 @@ qs << "CREATE OR REPLACE VIEW wg_army_unit_view AS
    ORDER BY army_id;
 "
 
+qs << "CREATE OR REPLACE VIEW wg_extended_locations AS
+   SELECT 
+    loc.location_id AS location_id,
+    loc.latitude AS latitude,
+    loc.longitude AS longitude,
+    city.city_id AS city_id,
+    city.player_id OR army.player_id AS player_id,
+    city.name AS city_name,
+    city.pts AS city_pts,
+    city.ccode AS city_ccode,
+    army.army_id AS army_id,
+    player.name AS player_name,
+    player.alliance_id AS player_alliance_id
+    
+   FROM wg_locations loc
+   LEFT OUTER JOIN wg_cities city 
+      ON  loc.location_id = city.location_id
+   LEFT OUTER JOIN wg_armies army
+      ON  loc.location_id = army.location_id
+   LEFT OUTER JOIN wg_players player
+      ON army.player_id = player.player_id
+      OR city.player_id = player.player_id
+   ORDER BY army_id;
+"
+
+
 puts "recreating tables..."
 queries.each do |query|
   puts query.split(/\n/)[0..1].join + "..."  
