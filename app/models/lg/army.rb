@@ -2,6 +2,9 @@ module LG
   class Army
     include Math
     
+    ToDegree = lambda {|x| return ( x * 180 / Math::PI ) }
+    ToRad = lambda {|x| return ( x * Math::PI / 180.to_f ) }
+    
     attr_reader :units, :army
     
     def initialize( army_id )
@@ -16,37 +19,80 @@ module LG
       
       earth_radius = Geocoder::Calculations::EARTH_RADIUS #KM
       distance_travelled = self.speed * (seconds/seconds.to_f) #KM
-      
-      angular_distance = distance_travelled/earth_radius
-            
+                  
       starting_point = @army.location
       arrival_point = @army.destination
       
-      bearing = Geocoder::Calculations.bearing_between(starting_point, arrival_point)#, method: :spherical)
+      lat1 = starting_point.latitude.to_f
+      lon1 = starting_point.longitude.to_f
+            
+      lat2 = arrival_point.latitude.to_f
+      lon2 = arrival_point.longitude.to_f
       
-      #var y = Math.sin(dLon) * Math.cos(lat2);
-      #var x = Math.cos(lat1)*Math.sin(lat2) -
-      #        Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
-      #var brng = Math.atan2(y, x)
-            
-      start_lat = starting_point.latitude.to_f
-      start_long = starting_point.longitude.to_f
-            
       result = { 
-        bearing: bearing,
-        starting_location: [ start_lat, start_long ],
-        arrival_location: [ arrival_point.latitude.to_f, arrival_point.longitude.to_f ]
+        starting_location: [ lat1, lon1 ],
+        arrival_location: [ lat2, lon2 ]
       }
       
-
-      final_latitude = Math.asin( ( Math.sin(start_lat) * Math.cos(angular_distance) ) + ( Math.cos(start_lat) * Math.sin(angular_distance) * Math.cos(bearing)) )
-      final_longitude = start_long + Math.atan2( ( Math.sin(bearing) * Math.sin(angular_distance) * Math.cos(start_lat) ), ( Math.cos(angular_distance) - ( Math.sin(start_lat) * Math.sin(final_latitude) ) ) )
+      #TODAL DISTANCE
+      #a = sin²(Δlat/2) + cos(lat1).cos(lat2).sin²(Δlong/2)
+      #c = 2.atan2(√a, √(1−a))
+      #d = R.c
+      def distance_of_points(lat1 ,lat2, lon1, lon2)
+        dlat = ToRad.call(lat2-lat1)
+        dlon = ToRad.call(lon2-lon1)
+        
+        lat1 = ToRad.call(lat1)
+        lat2 = ToRad.call(lat2)
+        lon1 = ToRad.call(lon1)
+        lon2 = ToRad.call(lon2)
+        
+        a = sin(dlat/2) * sin(dlat/2) + sin(dlon/2) * sin(dlon/2) * cos(lat1) * cos(lat2)
+        c = 2 * atan2( sqrt(a), sqrt(1-a))
+        return Geocoder::Calculations::EARTH_RADIUS * c        
+      end
       
-      result[:middle_point] = [final_latitude, final_longitude]
+      def bearing_of_points(lat1, lat2, lon1, lon2)
+        
+        dLat = ToRad.call(lat2-lat1)
+        dLon = ToRad.call(lon2-lon1)
+        
+        lat1 = ToRad.call(lat1)
+        lat2 = ToRad.call(lat2)
+        lon1 = ToRad.call(lon1)
+        lon2 = ToRad.call(lon2)
+        
+        y = Math.sin(dLon) * Math.cos(lat2)
+        x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon)
+        return ToDegree.call( Math.atan2(y, x) )
+      end      
+      
+      def get_point_after_moving( bearing, starting_point, distance_travelled)
+        
+        lat1 = ToRad.call( starting_point.latitude.to_f )
+        lon1 = ToRad.call( starting_point.longitude.to_f )
+        
+        angular_distance = ToRad.call( distance_travelled / Geocoder::Calculations::EARTH_RADIUS)
+        
+        
+        lat3 = ToDegree.call( asin(sin(lat1)*cos( angular_distance ) + cos(lat1)*sin( angular_distance )*cos(bearing)) )
+        lon3 = ToDegree.call(lon1 )+ atan2( cos( angular_distance ) - sin(lat1) * sin(lat3) , sin(bearing) * sin( angular_distance ) * cos(lat1) )
+        
+        #raise atan2( cos( angular_distance ) - sin(lat1) * sin(lat3) , sin(bearing) * sin( angular_distance ) * cos(lat1) ).inspect
+        
+        return [lat3, lon3]
+      end
+      
+
+      bearing = bearing_of_points(lat1, lat2, lon1, lon2)
+      
+
+      
+      result[:moving_done] = get_point_after_moving( bearing, starting_point, distance_travelled )
       
       return result
-      #lat2 = asin(sin(lat1)*cos(d/R) + cos(lat1)*sin(d/R)*cos(θ))
-      #lon2 = lon1 + atan2(sin(θ)*sin(d/R)*cos(lat1), cos(d/R)−sin(lat1)*sin(lat2))
+      #lat2 = 
+      #lon2 = lon1 + atan2(sin(bearing)*sin(angular_distance)*cos(lat1), cos(angular_distance)−sin(lat1)*sin(lat2))
       #θ is the bearing (in radians, clockwise from north);
       #d/R is the angular distance (in radians), where d is the distance travelled and R is the earth’s radius
     end
@@ -111,6 +157,7 @@ module LG
     def to_s
       @army.inspect + "\n" + @units.inspect
     end
+    
       
   end
 end
