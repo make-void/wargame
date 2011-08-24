@@ -187,19 +187,19 @@ def create_default_vals_after_location
                   
 #ARMY 1
   DB::ArmyUnit.create unit_id: 1,
+                     army_id: 1,
+                     player_id: 1,
+                     number: 100 #100 soldiers
+  
+  DB::ArmyUnit.create unit_id: 3,
                       army_id: 1,
                       player_id: 1,
-                      number: 100 #100 soldiers
-
-   DB::ArmyUnit.create unit_id: 3,
-                       army_id: 1,
-                       player_id: 1,
-                       number: 20 #20 granatiers
-                       
-   DB::ArmyUnit.create unit_id: 5,
-                       army_id: 1,
-                       player_id: 1,
-                       number: 10 #10 light camions
+                      number: 20 #20 granatiers
+                      
+  DB::ArmyUnit.create unit_id: 5,
+                      army_id: 1,
+                      player_id: 1,
+                      number: 10 #10 light camions
 
 #ARMY 2
   DB::ArmyUnit.create unit_id: 2,

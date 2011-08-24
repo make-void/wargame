@@ -7,6 +7,8 @@ qs << "DROP TABLE IF EXISTS wg_players;"
 qs << "DROP TABLE IF EXISTS wg_locations;"
 qs << "DROP TABLE IF EXISTS wg_alliances;"
 qs << "DROP TABLE IF EXISTS wg_unit_defs;"
+qs << "DROP VIEW IF EXISTS wg_army_unit_view;"
+qs << "DROP VIEW IF EXISTS wg_extended_locations;"
 
 qs << "
 CREATE TABLE `wg_alliances` (
@@ -134,7 +136,7 @@ CREATE TABLE `wg_army_unit` (
 
 
 #VIEWS --> LAST ITEMS
-qs << "CREATE OR REPLACE VIEW wg_army_unit_view AS
+qs << "CREATE OR REPLACE VIEW wg_V_army_unit_view AS
    SELECT 
     u_aunit.unit_id AS unit_id,
     u_aunit.army_id AS army_id,
@@ -161,17 +163,16 @@ qs << "CREATE OR REPLACE VIEW wg_army_unit_view AS
    ORDER BY army_id;
 "
 
-qs << "CREATE OR REPLACE VIEW wg_extended_locations AS
+qs << "CREATE OR REPLACE VIEW wg_V_city_locations AS
    SELECT 
     loc.location_id AS location_id,
     loc.latitude AS latitude,
     loc.longitude AS longitude,
     city.city_id AS city_id,
-    city.player_id OR army.player_id AS player_id,
+    city.player_id AS player_id,
     city.name AS city_name,
     city.pts AS city_pts,
     city.ccode AS city_ccode,
-    army.army_id AS army_id,
     player.name AS player_name,
     player.alliance_id AS alliance_id,
     ally.name AS alliance_name
@@ -179,11 +180,29 @@ qs << "CREATE OR REPLACE VIEW wg_extended_locations AS
    FROM wg_locations loc
    LEFT OUTER JOIN wg_cities city 
       ON  loc.location_id = city.location_id
-   LEFT OUTER JOIN wg_armies army
+   LEFT OUTER JOIN wg_players player
+      ON city.player_id = player.player_id
+   LEFT OUTER JOIN wg_alliances ally
+      ON player.alliance_id = ally.alliance_id
+   ORDER BY location_id;
+"
+
+qs << "CREATE OR REPLACE VIEW wg_V_army_locations AS
+   SELECT 
+    loc.location_id AS location_id,
+    loc.latitude AS latitude,
+    loc.longitude AS longitude,
+    army.player_id AS player_id,
+    army.army_id AS army_id,
+    player.name AS player_name,
+    player.alliance_id AS alliance_id,
+    ally.name AS alliance_name
+    
+   FROM wg_locations loc
+   JOIN wg_armies army 
       ON  loc.location_id = army.location_id
    LEFT OUTER JOIN wg_players player
       ON army.player_id = player.player_id
-      OR city.player_id = player.player_id
    LEFT OUTER JOIN wg_alliances ally
       ON player.alliance_id = ally.alliance_id
    ORDER BY location_id;
