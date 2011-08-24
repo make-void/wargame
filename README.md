@@ -20,6 +20,10 @@ gg!
 
 ### notes
 
+Destination point given distance and bearing from start point:
+http://www.movable-type.co.uk/scripts/latlong.html 
+
+
 csvs:
 - http://askbahar.com/2010/07/02/world-city-locations-database/
 - http://www.maxmind.com/app/worldcities

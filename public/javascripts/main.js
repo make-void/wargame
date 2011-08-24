@@ -97,12 +97,11 @@
       });
     };
     Map.prototype.doMarkerDrawing = function(data) {
-      var image, latLng, marker, that;
+      var army_image, city_image, latLng, marker, that;
       if (!data.latitude) {
         console.log("ERROR: marker without lat,lng");
       }
       latLng = new google.maps.LatLng(data.latitude, data.longitude);
-      //image = "http://" + http_host + "/images/cross_red.png";
       city_image = "http://" + http_host + "/images/city.png";
       army_image = "http://" + http_host + "/images/tank.gif";
       marker = new google.maps.Marker({
@@ -111,32 +110,30 @@
         player: data.player
       });
       if (data.city.name !== null) {
-          marker.name = data.city.name;
-          marker.city = data.city;
-          marker.army = undefined;
-          marker.icon = city_image;
+        marker.name = data.city.name;
+        marker.city = data.city;
+        marker.army = void 0;
+        marker.icon = city_image;
       } else {
-          marker.name = "Army";
-          marker.army = data.army;
-          marker.city = undefined;
-          marker.icon = army_image;
+        marker.name = "Army";
+        marker.army = data.army;
+        marker.city = void 0;
+        marker.icon = army_image;
       }
       this.markers.push(marker);
       that = this;
       return google.maps.event.addListener(marker, 'click', function() {
-        var dia, dialog, _i, _len, _ref;
+        var content_string, dia, dialog, _i, _len, _ref;
         _ref = that.dialogs;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           dia = _ref[_i];
           dia.close();
         }
-        
-        var content_string = "<div class='dialog'>                    <p class='name'>" + this.name + "</p>                    <p>player: " + this.player.name + "</p>"
-        if (typeof(this.city) !== "undefined") {
-            content_string += "                    <p>population: y</p>                  </div>"
-        } else {
-            content_string += "                  </div>"
+        content_string = "      <div class='dialog'>        <p class='name'>" + this.name + "</p>        <p>player: " + this.player.name + "</p>               ";
+        if (this.city) {
+          content_string += "<p>population: y</p>";
         }
+        content_string += "</div>";
         dialog = new google.maps.InfoWindow({
           content: content_string
         });
@@ -150,11 +147,7 @@
       _ref = this.markers;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         mark = _ref[_i];
-        /* #COMMENTED FOR ARMY SUPPORT ?
-        if (mark.city.city_id === data.city.city_id) {
-          draw = false;
-        }
-        */
+        draw = true;
       }
       if (draw) {
         return this.doMarkerDrawing(data);

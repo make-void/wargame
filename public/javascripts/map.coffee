@@ -100,14 +100,27 @@ class Map
     
     latLng = new google.maps.LatLng data.latitude, data.longitude
     
-    image = "http://"+http_host+"/images/cross_red.png"
+    # image = "http://"+http_host+"/images/cross_red.png"
+    city_image = "http://" + http_host + "/images/city.png"
+    army_image = "http://" + http_host + "/images/tank.gif"
     marker = new google.maps.Marker({
       position: latLng,
       map: @map,
-      icon: image
+      player: data.player
     })
-    marker.name = data.city.name
-    marker.city = data.city
+    
+    unless data.city.name == null
+      
+      marker.name = data.city.name
+      marker.city = data.city
+      marker.army = undefined
+      marker.icon = city_image
+    else
+      marker.name = "Army"
+      marker.army = data.army
+      marker.city = undefined;
+      marker.icon = army_image
+
     @markers.push marker
     # TODO: pass more datas
     
@@ -116,13 +129,18 @@ class Map
       for dia in that.dialogs
         dia.close()
         
+      # TODO: use handlebars
+      content_string = "
+      <div class='dialog'>
+        <p class='name'>#{this.name}</p>
+        <p>player: #{this.player.name}</p>
+               "
+      content_string += "<p>population: y</p>" if this.city
+      content_string += "</div>"
+
+        
       dialog = new google.maps.InfoWindow({
-        # TODO: use handlebars
-        content: "<div class='dialog'>
-                    <p class='name'>#{this.name}</p>
-                    <p>player: X</p>
-                    <p>population: y</p>
-                  </div>"
+        content: content_string
       })
       dialog.open(@map, this)
       
@@ -134,7 +152,9 @@ class Map
   drawMarker: (data) ->
     draw = true
     for mark in @markers
-      draw = false if mark.city.city_id == data.city.city_id
+      draw = true
+      # FIXME: check type of cities
+      # draw = false if mark.city.city_id == data.city.city_id
         
     this.doMarkerDrawing(data) if draw
       
