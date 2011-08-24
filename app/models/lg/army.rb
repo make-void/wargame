@@ -65,8 +65,35 @@ module LG
         y = Math.sin(dLon) * Math.cos(lat2)
         x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon)
         return ToDegree.call( Math.atan2(y, x) )
+        
       end      
       
+    
+      def constant_bearing_of_points(lat1, lat2, lon1, lon2)
+        dLat = ToRad.call(lat2-lat1)
+        dLon = ToRad.call(lon2-lon1)
+        
+        lat1 = ToRad.call(lat1)
+        lat2 = ToRad.call(lat2)
+        lon1 = ToRad.call(lon1)
+        lon2 = ToRad.call(lon2)
+
+        dPhi = Math.log( Math.tan(lat2/2 + Math::PI/4 ) / tan( lat1/2 + Math::PI/4 ) );
+        
+        begin
+          q = dLat/dPhi
+        rescue
+          q = Math.cos(lat1)
+        end
+        
+        if (dLon.abs > Math::PI)
+          dLon = dLon > 0 ? -(2*Math::PI-dLon) : (2* Math::PI+dLon)
+        end
+        d = Math.sqrt(dLat*dLat + q*q*dLon*dLon) * Geocoder::Calculations::EARTH_RADIUS
+        return ToDegree.call( Math.atan2(dLon, dPhi) )
+        
+      end
+            
       def get_point_after_moving( bearing, starting_point, distance_travelled)
         
         lat1 = ToRad.call( starting_point.latitude.to_f )
@@ -83,10 +110,41 @@ module LG
         return [lat3, lon3]
       end
       
+      def get_constant_movement_point( bearing, starting_point, distance_travelled )
+        
+        d = distance_travelled
+        
+        lat1 = ToRad.call( starting_point.latitude.to_f )
+        lon1 = ToRad.call( starting_point.longitude.to_f )
+              
+        dLat = d*Math.cos(bearing)
+        lat2 = ToRad.call( lat1 + dLat )
+        raise [lat1, lat2].inspect
 
-      bearing = bearing_of_points(lat1, lat2, lon1, lon2)
+        dPhi = Math.log( Math.tan( lat2/2 + Math::PI/4 ) / Math.tan( lat1/2 + Math::PI/4 ) )
+        
+        begin
+          q = dLat/dPhi
+        rescue
+          q = Math.cos(lat1)
+        end
+
+        dLon = d*Math.sin(bearing)/q
+        if (Math.abs(lat2) > Math::PI/2) 
+            lat2 = lat2 > 0 ? Math::PI-lat2 : -( Math::PI-lat2 )
+        end
+        lon2 = ( lon1 + dLon + Math::PI) % ( 2 * Math::PI ) - Math.PI # <--- WTF is This?
+        raise [lat2, lon2].inspect
+        ##### TO FINISH
+        ##### TO FINISH
+        ##### TO FINISH
+                
+      end
       
 
+      bearing = constant_bearing_of_points(lat1, lat2, lon1, lon2)
+
+      #get_constant_movement_point( bearing, starting_point, distance_travelled )
       
       result[:moving_done] = get_point_after_moving( bearing, starting_point, distance_travelled )
       
