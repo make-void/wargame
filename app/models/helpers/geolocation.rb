@@ -65,7 +65,7 @@ module Helpers
    end
     
    def to_json
-     ActiveSupport::JSON.encode( { start_point: @from.to_a, end_point: @to.to_a, result: @result.to_a } )
+     ActiveSupport::JSON.encode( { moving_from: @from.to_a, moving_to: @to.to_a, reached: @result.to_a } )
    end
    
    protected
