@@ -41,7 +41,6 @@ $( ->
   
   #map.clickInfo()
   #map.drawLines()
-  
   map.startFetchingMarkers()
   
   #map.overlay()

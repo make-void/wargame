@@ -243,13 +243,14 @@
         time2 = new Date();
         if (time > 1000) {
           self.loadMarkers();
-          return time2 = new Date();
+          time2 = new Date();
+          return self.timer = new Date();
         }
       });
       return $(window).everyTime(1500, function(i) {
-        var time;
-        time = new Date() - time2;
-        if (time > 1000 && time < 2000) {
+        var time3;
+        time3 = new Date() - time2;
+        if (time3 > 1000 && time3 < 2000) {
           return self.loadMarkers();
         }
       });

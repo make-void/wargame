@@ -235,20 +235,20 @@ class Map
     self = this
     
     time2 = new Date()
-    
     @timer = new Date()
+    
     $(window).bind("boundszoom_changed", ->
       time = new Date() - self.timer   
       time2 = new Date()
-      if time > 1000     
+      if time > 1000
         self.loadMarkers()
         time2 = new Date()
-          
+        self.timer = new Date()
     )
     
     $(window).everyTime(1500, (i) ->
-      time = new Date() - time2
-      if time > 1000 && time < 2000
+      time3 = new Date() - time2
+      if time3 > 1000 && time3 < 2000
         self.loadMarkers() 
     )
     
