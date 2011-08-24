@@ -124,7 +124,7 @@ def create_default_vals
                 cargo_capacity: 200,
                 transport_capacity: 10         
    
-   DB::UnitDefinition.create name: "Small Camion",
+   DB::UnitDefinition.create name: "Light Camion",
                 unit_type: "Vehicle",
                 attack_type: 0,
                 power: 0,
@@ -134,38 +134,78 @@ def create_default_vals
                 cargo_capacity: 2000,
                 transport_capacity: 50  
                 
+   DB::UnitDefinition.create name: "Light Tank",
+                unit_type: "Vehicle",
+                attack_type: 0,
+                power: 60,
+                defence: 20,
+                movement_speed: 80,
+                movement_cost: 40,
+                cargo_capacity: 100,
+                transport_capacity: 5   
                 
+   DB::UnitDefinition.create name: "Heavy Camion",
+                unit_type: "Vehicle",
+                attack_type: 0,
+                power: 0,
+                defence: 35,
+                movement_speed: 60,
+                movement_cost: 15,
+                cargo_capacity: 10000,
+                transport_capacity: 100  
+   
+
+   DB::UnitDefinition.create name: "Heavy Tank",
+                unit_type: "Vehicle",
+                attack_type: 0,
+                power: 140,
+                defence: 40,
+                movement_speed: 40,
+                movement_cost: 80,
+                cargo_capacity: 150,
+                transport_capacity: 5
 end
 
 def create_default_vals_after_location
     
-  loc = DB::Location.create latitude: 43.7687324, longitude: 11.2569013  # firenze
-  paris_loc = DB::Location.create latitude: 48.866667, longitude: 2.333333
+  florence = DB::Location.create latitude: 43.7687324, longitude: 11.2569013  # firenze
+  paris = DB::Location.create latitude: 48.866667, longitude: 2.333333
     
-  army = DB::Army.create location_id: loc.id,
+  army = DB::Army.create location_id: florence.id,
                   player_id: 1,
                   is_moving: 0              
                   
-  DB::Army.create location_id: loc.id,
+  DB::Army.create location_id: florence.id,
                   player_id: 1,
                   is_moving: 1,
-                  destination_id: paris_loc.id
+                  destination_id: paris.id
                   
-                  
+#ARMY 1
   DB::ArmyUnit.create unit_id: 1,
                       army_id: 1,
                       player_id: 1,
                       number: 100 #100 soldiers
-                      
+
+   DB::ArmyUnit.create unit_id: 3,
+                       army_id: 1,
+                       player_id: 1,
+                       number: 20 #20 granatiers
+                       
+   DB::ArmyUnit.create unit_id: 5,
+                       army_id: 1,
+                       player_id: 1,
+                       number: 10 #10 light camions
+
+#ARMY 2
   DB::ArmyUnit.create unit_id: 2,
                       army_id: 2,
                       player_id: 1,
-                      number: 50
+                      number: 50 #50 special forces
                       
   DB::ArmyUnit.create unit_id: 4,
                       army_id: 2,
                       player_id: 1,
-                      number: 5
+                      number: 5 #5 jeeps
   
 end
 

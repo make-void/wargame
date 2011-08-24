@@ -40,13 +40,12 @@ module Helpers
      @distance = distance.to_f
      
      @unit = options[:units] || :kms
-     @formula = options[:formula] || :sphere
-     
-     p distance_between();
+     @formula = options[:formula] || :sphere     
    end
    
    
    def move()
+     
      radius = case @unit
        when :kms; EARTH_RADIUS_IN_KMS
        when :nms; EARTH_RADIUS_IN_NMS
@@ -108,32 +107,32 @@ module Helpers
      (rad2deg(rad)+360)%360
    end
    
-     def units_sphere_multiplier()
-       case @unit
-         when :kms; EARTH_RADIUS_IN_KMS
-         when :nms; EARTH_RADIUS_IN_NMS
-         else EARTH_RADIUS_IN_MILES
-       end
+   def units_sphere_multiplier()
+     case @unit
+       when :kms; EARTH_RADIUS_IN_KMS
+       when :nms; EARTH_RADIUS_IN_NMS
+       else EARTH_RADIUS_IN_MILES
      end
-
-     # Returns the number of units per latitude degree.
-     def units_per_latitude_degree()
-       case @unit
-         when :kms; KMS_PER_LATITUDE_DEGREE
-         when :nms; NMS_PER_LATITUDE_DEGREE
-         else MILES_PER_LATITUDE_DEGREE
-       end
-     end
+   end
    
-     # Returns the number units per longitude degree.
-     def units_per_longitude_degree(lat)
-       miles_per_longitude_degree = (LATITUDE_DEGREES * Math.cos(lat * PI_DIV_RAD)).abs
-       case @unit
-         when :kms; miles_per_longitude_degree * KMS_PER_MILE
-         when :nms; miles_per_longitude_degree * NMS_PER_MILE
-         else miles_per_longitude_degree
-       end
-     end          
+   # Returns the number of units per latitude degree.
+   def units_per_latitude_degree()
+     case @unit
+       when :kms; KMS_PER_LATITUDE_DEGREE
+       when :nms; NMS_PER_LATITUDE_DEGREE
+       else MILES_PER_LATITUDE_DEGREE
+     end
+   end
+   
+   # Returns the number units per longitude degree.
+   def units_per_longitude_degree(lat)
+     miles_per_longitude_degree = (LATITUDE_DEGREES * Math.cos(lat * PI_DIV_RAD)).abs
+     case @unit
+       when :kms; miles_per_longitude_degree * KMS_PER_MILE
+       when :nms; miles_per_longitude_degree * NMS_PER_MILE
+       else miles_per_longitude_degree
+     end
+   end          
           
   end
 end

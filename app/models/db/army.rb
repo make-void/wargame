@@ -14,7 +14,7 @@ module DB # Database
     end
     
     def is_moving?
-      return is_moving == 1
+      return self.is_moving
     end
 
   end

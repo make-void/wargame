@@ -12,12 +12,21 @@ module LG
     end
     
     
-    def debug_moving_tick( seconds = 3600 )
+    def description
+      res = {player: @army.player.name, units: {}, moving: @army.is_moving?, location: [@army.location.latitude.to_f, @army.location.longitude.to_f] }
+      @units.each do |x|
+        res[:units][x.name] = x.number
+      end
+      
+      return res
+    end
+    
+    
+    def debug_moving_tick( seconds = 3600 ) #TODO -> Add estimated time to res result, and make all the methods CLASS methods in the Geolocation class...
       
       distance_traveled = self.speed * (seconds/3600.to_f) #KM
       res = Helpers::Geolocation.new( @army.location, @army.destination, distance_traveled )
       res.move
-      
       return res.to_json
     end
     
