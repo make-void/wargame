@@ -7,6 +7,7 @@
       this.max_simultaneous_markers = 600;
       this.dialogs = [];
       this.markers = [];
+      this.defaultZoom = 5;
     }
     Map.prototype.set_default_coords = function() {
       this.center_lat = this.default_center_lat = 47.2;
@@ -24,7 +25,7 @@
       if (localStorage.zoom) {
         return this.zoom = parseInt(localStorage.zoom);
       } else {
-        this.zoom = 4;
+        this.zoom = this.defaultZoom;
         return localStorage.zoom = this.zoom;
       }
     };
@@ -186,9 +187,9 @@
       return google.maps.event.addListener(this.map, 'zoom_changed', __bind(function() {
         var zoom;
         zoom = this.map.getZoom();
-        if (zoom < 4) {
-          this.map.setZoom(4);
-          zoom = 4;
+        if (zoom < this.defaultZoom) {
+          this.map.setZoom(this.defaultZoom);
+          zoom = this.defaultZoom;
         }
         if (zoom > 11) {
           this.map.setZoom(11);

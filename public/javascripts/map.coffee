@@ -1,4 +1,14 @@
 
+class Location
+  
+class City
+  
+class Army
+  
+class Player
+  
+class Debug
+
 
 class Map
   
@@ -7,6 +17,7 @@ class Map
     @max_simultaneous_markers = 600
     @dialogs = []
     @markers = []
+    @defaultZoom = 5
     
   set_default_coords: ->
     @center_lat = @default_center_lat = 47.2
@@ -26,7 +37,7 @@ class Map
     if localStorage.zoom
       @zoom = parseInt localStorage.zoom
     else
-      @zoom = 4
+      @zoom = @defaultZoom
       localStorage.zoom = @zoom
     
   center: (lat, lng) ->
@@ -185,9 +196,9 @@ class Map
     google.maps.event.addListener(@map, 'zoom_changed', =>
       zoom = @map.getZoom()
       
-      if (zoom < 4) 
-        @map.setZoom(4)
-        zoom = 4
+      if (zoom < @defaultZoom) 
+        @map.setZoom(@defaultZoom)
+        zoom = @defaultZoom
         
       if (zoom > 11) 
         @map.setZoom(11)
