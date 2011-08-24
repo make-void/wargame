@@ -1,11 +1,13 @@
 module LG
   class Army
     
+    attr_reader :units, :army
+    
     def initialize( army_id )
       raise ArgumentError, "Need an ArmyID. Got #{army_id.inspect}" if army_id.nil?
       @army_id = army_id
-      @db_entry = DB::Army.find(@army_id)
-      @units = ArmyUnit.find(:all, conditions: { army_id: @army_id})
+      @army = DB::Army.find(@army_id)
+      @units = ArmyUnit.find(:all, conditions: { army_id: @army_id} )
     end
     
     def capacity
@@ -14,13 +16,38 @@ module LG
       return count
     end
     
-    def speed #TODO -> Add count on #people_transported to INCREMENT speed from MIN
-      @units.map(&:speed).min
+    def speed
+      veicles = @units.select{|x| x.unit_type == "Vehicle" }
+      infantry = @units.select{|x| x.unit_type == "Infantry" }
+      
+      
+      transport_capacity = 0
+      veicles.each{|x| transport_capacity += ( x.people_transported * x.number ) }
+      
+      infantry_number = 0
+      infantry.each{|x| infantry_number += x.number }
+      
+      if transport_capacity >= infantry_number
+        return veicles.map(&:speed).min
+      else
+        return infantry.map(&:speed).min
+      end  
+      
     end
     
     def consumption #TODO -> Check to reduce consumption if the speed is not MAX
       count = 0
-      @units.map{|x| count += (x.cost * x.number)}
+      army_speed = self.speed
+      @units.each do |x|
+        if x.cost != 0 #I consume something by moving
+          if army_speed == x.speed #I'm moving @ max speed
+            count += x.consumption
+          else #This veicle is moving not as fast as he can
+            #x = consumption*real_speed/max_speed
+            count += (x.consumption*army_speed/x.speed.to_f)
+          end
+        end
+      end
       return count
     end
     
@@ -36,13 +63,13 @@ module LG
       return count    end
     
     def refresh!
-      @db_entry = DB::Army.find(@army_id)
+      @army = DB::Army.find(@army_id)
       @units = ArmyUnit.find(:all, conditions: { army_id: @army_id})
       return true
     end
     
     def to_s
-      @db_entry.inspect + "\n" + @units.inspect
+      @army.inspect + "\n" + @units.inspect
     end
       
   end
