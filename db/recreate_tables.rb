@@ -173,7 +173,8 @@ qs << "CREATE OR REPLACE VIEW wg_extended_locations AS
     city.ccode AS city_ccode,
     army.army_id AS army_id,
     player.name AS player_name,
-    player.alliance_id AS player_alliance_id
+    player.alliance_id AS alliance_id,
+    ally.name AS alliance_name
     
    FROM wg_locations loc
    LEFT OUTER JOIN wg_cities city 
@@ -183,6 +184,8 @@ qs << "CREATE OR REPLACE VIEW wg_extended_locations AS
    LEFT OUTER JOIN wg_players player
       ON army.player_id = player.player_id
       OR city.player_id = player.player_id
+   LEFT OUTER JOIN wg_alliances ally
+      ON player.alliance_id = ally.alliance_id
    ORDER BY army_id;
 "
 

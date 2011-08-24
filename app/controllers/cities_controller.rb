@@ -28,8 +28,11 @@ class CitiesController < ApplicationController
             },
             player: {
               player_id: loc[:player_id],
-              name: loc[:player_name],
-              alliance_id: loc[:alliance_id]
+              name: loc[:player_name]
+            },
+            alliance: {
+              alliance_id: loc[:alliance_id],
+              name: loc[:alliance_name]
             }
       }
       
