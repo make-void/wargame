@@ -1,5 +1,6 @@
 module LG
   class Army
+    include Math
     
     attr_reader :units, :army
     
@@ -8,6 +9,46 @@ module LG
       @army_id = army_id
       @army = DB::Army.find(@army_id)
       @units = ArmyUnit.find(:all, conditions: { army_id: @army_id} )
+    end
+    
+    
+    def debug_moving_tick( seconds = 3600 )
+      
+      earth_radius = Geocoder::Calculations::EARTH_RADIUS #KM
+      distance_travelled = self.speed * (seconds/seconds.to_f) #KM
+      
+      angular_distance = distance_travelled/earth_radius
+            
+      starting_point = @army.location
+      arrival_point = @army.destination
+      
+      bearing = Geocoder::Calculations.bearing_between(starting_point, arrival_point)#, method: :spherical)
+      
+      #var y = Math.sin(dLon) * Math.cos(lat2);
+      #var x = Math.cos(lat1)*Math.sin(lat2) -
+      #        Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
+      #var brng = Math.atan2(y, x)
+            
+      start_lat = starting_point.latitude.to_f
+      start_long = starting_point.longitude.to_f
+            
+      result = { 
+        bearing: bearing,
+        starting_location: [ start_lat, start_long ],
+        arrival_location: [ arrival_point.latitude.to_f, arrival_point.longitude.to_f ]
+      }
+      
+
+      final_latitude = Math.asin( ( Math.sin(start_lat) * Math.cos(angular_distance) ) + ( Math.cos(start_lat) * Math.sin(angular_distance) * Math.cos(bearing)) )
+      final_longitude = start_long + Math.atan2( ( Math.sin(bearing) * Math.sin(angular_distance) * Math.cos(start_lat) ), ( Math.cos(angular_distance) - ( Math.sin(start_lat) * Math.sin(final_latitude) ) ) )
+      
+      result[:middle_point] = [final_latitude, final_longitude]
+      
+      return result
+      #lat2 = asin(sin(lat1)*cos(d/R) + cos(lat1)*sin(d/R)*cos(θ))
+      #lon2 = lon1 + atan2(sin(θ)*sin(d/R)*cos(lat1), cos(d/R)−sin(lat1)*sin(lat2))
+      #θ is the bearing (in radians, clockwise from north);
+      #d/R is the angular distance (in radians), where d is the distance travelled and R is the earth’s radius
     end
     
     def capacity
@@ -32,7 +73,6 @@ module LG
       else
         return infantry.map(&:speed).min
       end  
-      
     end
     
     def consumption #TODO -> Check to reduce consumption if the speed is not MAX

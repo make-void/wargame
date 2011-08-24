@@ -8,6 +8,11 @@ module DB # Database
     
     has_many :army_units
     
+    def destination
+      return nil if self.destination_id.nil?
+      return Location.find(self.destination_id)
+    end
+    
     def is_moving?
       return is_moving == 1
     end
