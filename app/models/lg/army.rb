@@ -114,13 +114,12 @@ module LG
         
         d = distance_travelled
         
-        lat1 = ToRad.call( starting_point.latitude.to_f )
-        lon1 = ToRad.call( starting_point.longitude.to_f )
+        lat1 = starting_point.latitude.to_f
+        lon1 = starting_point.longitude.to_f
               
         dLat = d*Math.cos(bearing)
-        lat2 = ToRad.call( lat1 + dLat )
-        raise [lat1, lat2].inspect
-
+        lat2 = ToRad.call(lat1 + dLat)
+        
         dPhi = Math.log( Math.tan( lat2/2 + Math::PI/4 ) / Math.tan( lat1/2 + Math::PI/4 ) )
         
         begin
@@ -130,21 +129,19 @@ module LG
         end
 
         dLon = d*Math.sin(bearing)/q
-        if (Math.abs(lat2) > Math::PI/2) 
+        if (lat2.abs > Math::PI/2) 
             lat2 = lat2 > 0 ? Math::PI-lat2 : -( Math::PI-lat2 )
         end
-        lon2 = ( lon1 + dLon + Math::PI) % ( 2 * Math::PI ) - Math.PI # <--- WTF is This?
-        raise [lat2, lon2].inspect
-        ##### TO FINISH
-        ##### TO FINISH
-        ##### TO FINISH
+        lon2 = ( lon1 + dLon + Math::PI) % ( 2 * Math::PI ) - Math::PI # <--- WTF is This?
+        
+        return [lat2, lon2]
                 
       end
       
 
       bearing = constant_bearing_of_points(lat1, lat2, lon1, lon2)
 
-      #get_constant_movement_point( bearing, starting_point, distance_travelled )
+      #result[:moving_done] = get_constant_movement_point( bearing, starting_point, distance_travelled )
       
       result[:moving_done] = get_point_after_moving( bearing, starting_point, distance_travelled )
       
