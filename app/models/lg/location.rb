@@ -9,13 +9,16 @@ module LG # Logic
       radius = position_hash[:radius]
 
       cities = View::CityLocation.where( where_clause ).near([lat, lng], radius)
-      armies = View::ArmyLocation.where( where_clause ).near([lat, lng], radius)
+      armies = View::ArmyLocation.where( where_clause ).near([lat, lng], radius) ## We Can add in future HERE the rules for FOW
       
       locs =  cities.map{|loc| parse_location(loc) }
       
       locs = locs + armies.map{|loc| parse_location(loc) }
-        
+              
       return locs.sort_by{|x| x[:location_id]}
+      
+      
+      # Sort by location_id. If city, first. then armies by army_id
     end
     
     
