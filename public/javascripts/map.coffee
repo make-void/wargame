@@ -51,6 +51,12 @@ class Map
       disableDefaultUI: true
     })
 
+  autoSize: ->
+    this.resize()
+    $(window).resize( =>
+      this.resize()
+    )
+  
   resize: -> 
     height = $("body").height() - $("h1").height() - 30
     $("#container, #map_canvas").height height
@@ -83,15 +89,6 @@ class Map
       #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
     )
 
-  drawSimpleMarker: (lat, lng) ->
-    latLng = new google.maps.LatLng lat, lng
-    image = "http://"+http_host+"/images/cross_blue.png"
-    marker = new google.maps.Marker({
-      position: latLng,
-      map: @map,
-      icon: image
-    })
-    
 
 
   doMarkerDrawing: (data) ->
@@ -124,29 +121,33 @@ class Map
     
     that = this
     google.maps.event.addListener(marker, 'click', ->
-      for dia in that.dialogs
-        dia.close()
-        
-      # TODO: use handlebars
-      content_string = "
-      <div class='dialog'>
-        <p class='name'>#{this.name}</p>
-        <p>player: #{this.player.name}</p>
-               "
-      content_string += "<p>population: y</p>" if this.city
-      content_string += "</div>"
-
-        
-      dialog = new google.maps.InfoWindow({
-        content: content_string
-      })
-      dialog.open(@map, this)
-      
-      that.dialogs.push dialog
+      that.attachDialog(marker)
+      that. if marker.is_a? City
     )
     #console.log(latLng)
     
+  attachDialog: () ->
+    for dia in that.dialogs
+      dia.close()
+      
+    # TODO: use handlebars
+    content_string = "
+    <div class='dialog'>
+      <p class='name'>#{this.name}</p>
+      <p>player: #{this.player.name}</p>
+             "
+    content_string += "<p>population: y</p>" if this.city
+    content_string += "</div>"
+
+      
+    dialog = new google.maps.InfoWindow({
+      content: content_string
+    })
+    dialog.open(@map, this)
     
+    that.dialogs.push dialog
+    
+
   drawMarker: (data) ->
     draw = true
     for mark in @markers
@@ -217,17 +218,7 @@ class Map
     });
     line.setMap(@map)
 
-  drawLines: ->
-    lat = 0
-    lats = [43..44]
-    lngs = [11..12]
-    range = new LLRange(43.7, 11.2, 0.1, 0.01)
 
-    self = this
-    range.each (lat, lng) ->
-      #console.log lat, lng
-      self.drawSimpleMarker lat, lng
-      
   startFetchingMarkers: -> # when latchanges
     self = this
     
@@ -251,30 +242,7 @@ class Map
     
     
 
-class LLRange
-  constructor: (lat, lng, range, prec) ->
-    times = range / prec 
-    @lats =  []
-    @lngs = []
-    for t in [0..times]
-      @lats.push lat+prec*t 
-    for t in [0..times]
-      @lngs.push lng+prec*t 
-    
-  each: (fn) ->
-    for lat in @lats
-      for lng in @lngs
-        fn(lat, lng)
       
 
   
 
-
-# convert some_image.bmp -resize 256x256 -transparent white favicon-256.png
-# 
-# convert favicon-256.png -resize 16x16 favicon-16.png
-# convert favicon-256.png -resize 32x32 favicon-32.png
-# convert favicon-256.png -resize 64x64 favicon-64.png
-# convert favicon-256.png -resize 128x128 favicon-128.png
-# 
-# convert favicon-16.png favicon-32.png favicon-64.png favicon-128.png favicon-256.png -colors 256 favicon.ico

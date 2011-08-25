@@ -136,7 +136,7 @@ def create_default_vals
                 steel_cost: 200,
                 oil_cost: 80       
    
-   DB::Unit::Definition.create name: "Light Camion",
+   DB::Unit::Definition.create name: "Light Transport",
                 unit_type: "Vehicle",
                 attack_type: 0,
                 power: 0,
@@ -162,7 +162,7 @@ def create_default_vals
                 steel_cost: 500,
                 oil_cost: 250 
                 
-   DB::Unit::Definition.create name: "Heavy Camion",
+   DB::Unit::Definition.create name: "Heavy Transport",
                 unit_type: "Vehicle",
                 attack_type: 0,
                 power: 0,

@@ -1,6 +1,6 @@
 module ControllersUtils
   
-  COFFEE_FILES = %w(map main)
+  COFFEE_FILES = %w(utils map main)
   
   def coffee_installed
     !`which coffee`.blank?
@@ -19,4 +19,5 @@ module ControllersUtils
       do_compilation if coffee_installed   
     end
   end
+  
 end

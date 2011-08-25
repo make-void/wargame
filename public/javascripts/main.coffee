@@ -40,6 +40,10 @@ $( ->
   $("#debug").append g.armyView.render().el
 
   # --------
+  # unit
+
+
+  # --------
   # nav
   
   $("#nav li").hover( ->
@@ -63,22 +67,16 @@ $( ->
   
   map = new Map
   map.draw()
-  
   #map.dialogs()
   map.loadMarkers()
-  
   map.listen()
-  
   #map.clickInfo()
-  #map.drawLines()
   map.startFetchingMarkers()
-  
   #map.overlay()
+  map.autoSize()
   
-  #console.log(navigator.userAgent)
+
   #if navigator.userAgent.match("iPad")
-  map.resize()
-  $(window).resize( ->
-    map.resize()
-  )
+  
+  
 )

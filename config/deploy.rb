@@ -32,6 +32,9 @@ namespace :deploy do
     run "touch #{current_path}/tmp/restart.txt"
   end
   
+  
+  
+  
   desc "Link uploads"
   task :link_uploads do
     run "mkdir -p #{current_path}/public/uploads"

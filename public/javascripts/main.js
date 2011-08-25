@@ -1,4 +1,4 @@
-var LLRange, Map, utils;
+var Map, utils;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 Map = (function() {
   function Map() {
@@ -50,6 +50,12 @@ Map = (function() {
       disableDefaultUI: true
     });
   };
+  Map.prototype.autoSize = function() {
+    this.resize();
+    return $(window).resize(__bind(function() {
+      return this.resize();
+    }, this));
+  };
   Map.prototype.resize = function() {
     var height;
     height = $("body").height() - $("h1").height() - 30;
@@ -86,16 +92,6 @@ Map = (function() {
       return this.callback(markers);
     }, this));
   };
-  Map.prototype.drawSimpleMarker = function(lat, lng) {
-    var image, latLng, marker;
-    latLng = new google.maps.LatLng(lat, lng);
-    image = "http://" + http_host + "/images/cross_blue.png";
-    return marker = new google.maps.Marker({
-      position: latLng,
-      map: this.map,
-      icon: image
-    });
-  };
   Map.prototype.doMarkerDrawing = function(data) {
     var army_image, city_image, latLng, marker, that;
     if (!data.latitude) {
@@ -123,23 +119,27 @@ Map = (function() {
     this.markers.push(marker);
     that = this;
     return google.maps.event.addListener(marker, 'click', function() {
-      var content_string, dia, dialog, _i, _len, _ref;
-      _ref = that.dialogs;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        dia = _ref[_i];
-        dia.close();
-      }
-      content_string = "      <div class='dialog'>        <p class='name'>" + this.name + "</p>        <p>player: " + this.player.name + "</p>               ";
-      if (this.city) {
-        content_string += "<p>population: y</p>";
-      }
-      content_string += "</div>";
-      dialog = new google.maps.InfoWindow({
-        content: content_string
-      });
-      dialog.open(this.map, this);
-      return that.dialogs.push(dialog);
+      that.attachDialog(marker);
+      return that["if"](typeof marker.is_a === "function" ? marker.is_a(City) : void 0);
     });
+  };
+  Map.prototype.attachDialog = function() {
+    var content_string, dia, dialog, _i, _len, _ref;
+    _ref = that.dialogs;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      dia = _ref[_i];
+      dia.close();
+    }
+    content_string = "    <div class='dialog'>      <p class='name'>" + this.name + "</p>      <p>player: " + this.player.name + "</p>             ";
+    if (this.city) {
+      content_string += "<p>population: y</p>";
+    }
+    content_string += "</div>";
+    dialog = new google.maps.InfoWindow({
+      content: content_string
+    });
+    dialog.open(this.map, this);
+    return that.dialogs.push(dialog);
   };
   Map.prototype.drawMarker = function(data) {
     var draw, is_a_city, mark, _i, _len, _ref;
@@ -224,17 +224,6 @@ Map = (function() {
     });
     return line.setMap(this.map);
   };
-  Map.prototype.drawLines = function() {
-    var lat, lats, lngs, range, self;
-    lat = 0;
-    lats = [43, 44];
-    lngs = [11, 12];
-    range = new LLRange(43.7, 11.2, 0.1, 0.01);
-    self = this;
-    return range.each(function(lat, lng) {
-      return self.drawSimpleMarker(lat, lng);
-    });
-  };
   Map.prototype.startFetchingMarkers = function() {
     var self, time2;
     self = this;
@@ -259,40 +248,6 @@ Map = (function() {
     });
   };
   return Map;
-})();
-LLRange = (function() {
-  function LLRange(lat, lng, range, prec) {
-    var t, times;
-    times = range / prec;
-    this.lats = [];
-    this.lngs = [];
-    for (t = 0; 0 <= times ? t <= times : t >= times; 0 <= times ? t++ : t--) {
-      this.lats.push(lat + prec * t);
-    }
-    for (t = 0; 0 <= times ? t <= times : t >= times; 0 <= times ? t++ : t--) {
-      this.lngs.push(lng + prec * t);
-    }
-  }
-  LLRange.prototype.each = function(fn) {
-    var lat, lng, _i, _len, _ref, _results;
-    _ref = this.lats;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      lat = _ref[_i];
-      _results.push((function() {
-        var _j, _len2, _ref2, _results2;
-        _ref2 = this.lngs;
-        _results2 = [];
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          lng = _ref2[_j];
-          _results2.push(fn(lat, lng));
-        }
-        return _results2;
-      }).call(this));
-    }
-    return _results;
-  };
-  return LLRange;
 })();
 utils = {};
 utils.parseCoords = function(string) {
@@ -346,8 +301,5 @@ $(function() {
   map.loadMarkers();
   map.listen();
   map.startFetchingMarkers();
-  map.resize();
-  return $(window).resize(function() {
-    return map.resize();
-  });
+  return map.autoSize();
 });
