@@ -1,11 +1,11 @@
 GIT
-  remote: git://github.com/makevoid/voidtools
+  remote: https://github.com/makevoid/voidtools
   revision: 707a87770f52790fdd9fec1518f21dd0069681c7
   specs:
     voidtools (0.2.4)
 
 GIT
-  remote: git://github.com/rails/exception_notification
+  remote: https://github.com/rails/exception_notification
   revision: 192a49a02d63d28b23ed41cebadfedd490929cf1
   specs:
     exception_notification (1.0.0)

@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 gem 'rails', '3.0.10'
 
 # Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+# gem 'rails', :git => 'https://github.com/rails/rails.git'
 
 gem 'mysql2', '~> 0.2.11'
 
@@ -15,9 +15,9 @@ gem "composite_primary_keys"
 gem "haml"
 gem "sass"
 
-gem "voidtools", git: "git://github.com/makevoid/voidtools"
+gem "voidtools", git: "https://github.com/makevoid/voidtools"
 
-gem "exception_notification", :git => "git://github.com/rails/exception_notification"
+gem "exception_notification", :git => "https://github.com/rails/exception_notification"
 
 group :development do
   gem "guard"
