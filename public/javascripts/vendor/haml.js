@@ -1,6 +1,8 @@
 var Haml;
 
-(function () {
+// JS FILTER
+
+//(function () {
 
   var matchers, self_close_tags, embedder, forceXML;
 
@@ -352,15 +354,14 @@ var Haml;
 
     // If lines is a string, turn it into an array
     if (typeof lines === 'string') {
-      lines = lines.trim().split("\n");
+      lines = lines.trim().replace(/\n\r|\r/g, '\n').split('\n');
     }
-
+    
     lines.forEach(function(line) {
       var match, found = false;
-
       // Collect all text as raw until outdent
       if (block) {
-        match = block.check_indent(line);
+        match = block.check_indent.exec(line);
         if (match) {
           block.contents.push(match[1] || "");
           return;
@@ -372,7 +373,7 @@ var Haml;
 
       matchers.forEach(function (matcher) {
         if (!found) {
-          match = matcher.regexp(line);
+          match = matcher.regexp.exec(line);
           if (match) {
             block = {
               contents: [],
@@ -437,7 +438,7 @@ var Haml;
         buffer = [];
       }
     }
-    js.split("\n").forEach(function (line) {
+    js.replace(/\n\r|\r/g, '\n').split('\n').forEach(function (line) {
       part = line.match(/^(\".*\")(\s*\+\s*)?$/);
       if (!part) {
         flush();
@@ -459,6 +460,7 @@ var Haml;
 
   function render(text, options) {
     options = options || {};
+    text = text || "";
     var js = compile(text);
     if (options.optimize) {
       js = Haml.optimize(js);
@@ -482,24 +484,20 @@ var Haml;
   Haml = function Haml(haml, xml) {
     forceXML = xml;
     var js = optimize(compile(haml));
-    return new Function("locals",
-      html_escape + "\n" +
-      "with(locals || {}) {\n" +
-      "  try {\n" +
-      "    return (" + js + ");\n" +
-      "  } catch (e) {\n" +
-      "    return \"\\n<pre class='error'>\" + html_escape(e.stack) + \"</pre>\\n\";\n" +
-      "  }\n" +
-      "}");
+    //console.log(haml);
+    if (js == "")
+      console.log('HAML: error: compilation returned blank')
+    var string = html_escape + "\nwith(locals || {}) {\n  try {\n    return (" + js + ");\n  } catch (e) {\n    return \"\\n<pre class='error'>\" + html_escape(e.stack) + \"</pre>\\n\";\n  }\n}"
+    
+    //console.log(string);
+    return new Function("locals", string);
   }
   Haml.compile = compile;
   Haml.optimize = optimize;
   Haml.render = render;
   Haml.execute = execute;
 
-}());
+//}());
 
-// Hook into module system
-if (typeof module !== 'undefined') {
-  module.exports = Haml;
-}
+
+
