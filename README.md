@@ -17,6 +17,12 @@
 
 gg!
 
+
+###TODO ->
+
+Signup and Choice of the Capital...
+All via GoogleMap (after signup mail confirmation).
+
 ### setup coffeescript:
 
 execute this line to install homebrew:

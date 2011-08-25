@@ -3,12 +3,14 @@ qs = queries = []
 qs << "DROP TABLE IF EXISTS wg_army_unit;"
 qs << "DROP TABLE IF EXISTS wg_armies;"
 qs << "DROP TABLE IF EXISTS wg_struct;"
+qs << "DROP TABLE IF EXISTS wg_techs;"
 qs << "DROP TABLE IF EXISTS wg_cities;"
 qs << "DROP TABLE IF EXISTS wg_players;"
 qs << "DROP TABLE IF EXISTS wg_locations;"
 qs << "DROP TABLE IF EXISTS wg_alliances;"
 qs << "DROP TABLE IF EXISTS wg_unit_defs;"
 qs << "DROP TABLE IF EXISTS wg_struct_defs;"
+qs << "DROP TABLE IF EXISTS wg_tech_defs;"
 qs << "DROP VIEW IF EXISTS wg_army_unit_view;"
 qs << "DROP VIEW IF EXISTS wg_extended_locations;"
 
@@ -162,13 +164,44 @@ CREATE TABLE `wg_struct` (
 
   PRIMARY KEY (`structure_id`,`city_id`),
   
+  FOREIGN KEY (`structure_id`) REFERENCES wg_struct_defs(`structure_id`) 
+    ON DELETE RESTRICT,
+  
   FOREIGN KEY (`city_id`,`player_id`) REFERENCES wg_cities(`city_id`,`player_id`)
     ON DELETE RESTRICT  
     
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
 
+qs << "
+CREATE TABLE `wg_tech_defs` (
+  `tech_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) COLLATE utf8_unicode_ci NOT NULL UNIQUE,
 
+  `description` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
+
+  PRIMARY KEY (`tech_id`)
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
+
+qs << "
+CREATE TABLE `wg_techs` (
+  `tech_id` BIGINT UNSIGNED NOT NULL,
+  `player_id` BIGINT UNSIGNED NOT NULL,
+
+  `level` int(11) NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (`tech_id`,`player_id`),
+  
+  FOREIGN KEY (`tech_id`) REFERENCES wg_tech_defs(`tech_id`) 
+    ON DELETE RESTRICT,
+    
+  FOREIGN KEY (`player_id`) REFERENCES wg_players(`player_id`)
+    ON DELETE RESTRICT  
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
 
 
 

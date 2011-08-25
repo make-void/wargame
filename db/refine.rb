@@ -192,6 +192,8 @@ def create_default_vals
 
    DB::StructDefinition.create name: "Bunker",
                description: "Increases Defence if City is Attacked"
+               
+   #DB::TechDefinition.create name:""
 
 end
 
