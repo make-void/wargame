@@ -19,6 +19,16 @@
     position: relative
     top: 1px
 
+@mixin button_rdy
+  +button
+  +simple_gradient(#FFF6C7, #81CCBB)
+  font-size: 0.85em
+  padding: 5px 12px
+  margin: 5px 0
+  +rounded(10px)
+  &:hover
+    +simple_gradient(#CA6931, #FFF6C7)
+
 
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -252,6 +262,14 @@ body.game
   div
     font-size: 0.9em
 
+.bubble
+  div.tabs div
+    font-size: 0.8em
+    
+#armyActionsMenu
+  padding: 10px
+  div
+    +button_rdy
 
 @media (max-width:480px)
   body.game

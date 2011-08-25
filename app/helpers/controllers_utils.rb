@@ -1,23 +1,18 @@
 module ControllersUtils
   
-  COFFEE_FILES = %w(utils map main)
+  # main utils
   
-  def coffee_installed
-    !`which coffee`.blank?
-  end
+  CU_HELPERS = [:is_on?]
   
-  def cd_js
-    "cd #{Rails.root}/public/javascripts;"
-  end
-
-  def do_compilation
-    puts `#{cd_js} coffee -j main.js -b  -c #{COFFEE_FILES.map{|c| "#{c}.coffee"}.join(" ")}`
+  def is_on?(route)
+    contr, act = route.to_s.split("#")
+    self.controller_name == contr && self.action_name == act
   end
   
-  def compile_coffeescripts
-    if Rails.env == "development"
-      do_compilation if coffee_installed   
-    end
+  def self.included(obj)
+    obj.helper_method CU_HELPERS
   end
+  
+  include CoffeeUtils
   
 end

@@ -48,7 +48,12 @@ class Map
       zoom: @zoom,
       #mapTypeId: google.maps.MapTypeId.ROADMAP,
       mapTypeId: google.maps.MapTypeId.TERRAIN,
-      disableDefaultUI: true
+      disableDefaultUI: true,
+      navigationControl: true,
+      navigationControlOptions: {
+        style: google.maps.NavigationControlStyle.SMALL,
+        position: google.maps.ControlPosition.RIGHT_TOP
+      }
     })
 
   autoSize: ->
@@ -110,11 +115,13 @@ class Map
       marker.city = data.city
       marker.army = undefined
       marker.icon = city_image
+      marker.type = "city"
     else
       marker.name = "Army"
       marker.army = data.army
       marker.city = undefined;
       marker.icon = army_image
+      marker.type = "army"
 
     @markers.push marker
     # TODO: pass more datas
@@ -122,30 +129,78 @@ class Map
     that = this
     google.maps.event.addListener(marker, 'click', ->
       that.attachDialog(marker)
-      that. if marker.is_a? City
+      that.attachArmyActionsMenu(marker) if marker.type == "army"
     )
     #console.log(latLng)
     
-  attachDialog: () ->
-    for dia in that.dialogs
+  attachArmyActionsMenu: (marker) ->
+    console.log(marker)
+    
+    
+  attachDialog: (location) ->
+    for dia in this.dialogs
       dia.close()
       
     # TODO: use handlebars
-    content_string = "
+    content = "
     <div class='dialog'>
-      <p class='name'>#{this.name}</p>
-      <p>player: #{this.player.name}</p>
+      <p class='name'>#{location.name}</p>
+      <p>player: #{location.player.name}</p>
              "
-    content_string += "<p>population: y</p>" if this.city
-    content_string += "</div>"
-
+    content += "<p>population: x</p>" if location.type == "city"
+    if location.type == "army"
+      haml = Haml($("#armyActionsMenu-tmpl").html())
+      content += haml({})
       
-    dialog = new google.maps.InfoWindow({
-      content: content_string
-    })
-    dialog.open(@map, this)
+    content += "</div>"
+
     
-    that.dialogs.push dialog
+    dialog = new InfoBubble({
+      # map: map,
+      content: content,
+      # position: new google.maps.LatLng(-35, 151),
+      shadowStyle: 1,
+      padding: 12,
+      backgroundColor: "#EEE",
+      borderRadius: 10,
+      arrowSize: 20,
+      borderWidth: 3,
+      borderColor: '#666',
+      disableAutoPan: true,
+      hideCloseButton: false,
+      arrowPosition: 30,
+      backgroundClassName: 'bubbleBg',
+      arrowStyle: 2,
+      minWidth: 200,
+      maxWidth: 700
+    })
+
+    dialog.open(@map, location)
+    #dialog.open(); # you have to set position
+
+    # div = document.createElement('DIV')
+    #    div.innerHTML = 'Hello'
+    # 
+    #    dialog.addTab('A Tab', div)
+    #    dialog.addTab('Uluru', "aaaa")
+    if location.type == "city"
+      dialog.addTab('Overview', content)
+      dialog.addTab('Build', "faaaarming")
+    
+
+    google.maps.event.addListener(location, 'click', ->
+      if !dialog.isOpen()
+        dialog.open(@map, location)
+      
+    )
+    
+    
+    # dialog = new google.maps.InfoWindow({
+    #   content: content_string
+    # })
+    # dialog.open(@map, location)
+    
+    this.dialogs.push dialog
     
 
   drawMarker: (data) ->
