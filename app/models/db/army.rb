@@ -9,7 +9,7 @@ module DB # Database
     has_many :army_units
     
     def destination
-      return nil if self.destination_id.nil?
+      return nil unless self.is_moving?
       return Location.find(self.destination_id)
     end
     
