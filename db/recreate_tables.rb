@@ -118,6 +118,10 @@ CREATE TABLE `wg_unit_defs` (
   `movement_cost` int(11) NOT NULL DEFAULT 0,
   `cargo_capacity` int(11) NOT NULL,
   `transport_capacity` int(11) NOT NULL DEFAULT 0,
+  
+  `gold_cost` int(11) NOT NULL,
+  `steel_cost` int(11) NOT NULL,
+  `oil_cost` int(11) NOT NULL DEFAULT 0,
 
 
   PRIMARY KEY (`unit_id`)
@@ -167,7 +171,15 @@ CREATE TABLE `wg_struct_defs` (
   `name` varchar(150) COLLATE utf8_unicode_ci NOT NULL UNIQUE,
 
   `description` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
-
+  
+  `gold_cost` int(11) NOT NULL,
+  `steel_cost` int(11) NOT NULL,
+  `oil_cost` int(11) NOT NULL DEFAULT 0,
+  
+  `cost_advancement_type` int(5) NOT NULL DEFAULT 3,
+  
+  `base_production` int(10),
+  
   PRIMARY KEY (`structure_id`)
     
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -199,6 +211,10 @@ CREATE TABLE `wg_tech_defs` (
 
   `description` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
 
+  `gold_cost` int(11) NOT NULL,
+  `steel_cost` int(11) NOT NULL,
+  `oil_cost` int(11) NOT NULL DEFAULT 0,
+  
   PRIMARY KEY (`tech_id`)
     
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

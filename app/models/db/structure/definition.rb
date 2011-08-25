@@ -9,6 +9,18 @@ module DB
       
       has_many :buildings, :foreign_key => :structure_id
       
+      COST_ADVANCEMENT = {
+        0 => "Standard",
+        1 => "Medium",
+        2 => "High",
+        3 => "Highest"
+      }
+      
+      
+      def cost_advancement_to_string
+        COST_ADVANCEMENT[self.cost_advancement_type]
+      end
+      
     end
   end
 end

@@ -92,7 +92,10 @@ def create_default_vals
                 movement_speed: 4,
                 movement_cost: 0,
                 cargo_capacity: 20,
-                transport_capacity: 0
+                transport_capacity: 0,
+                gold_cost: 40,
+                steel_cost: 40,
+                oil_cost: 0
    
    DB::Unit::Definition.create name: "Special Forces",
                  unit_type: "Infantry",
@@ -102,7 +105,10 @@ def create_default_vals
                  movement_speed: 4,
                  movement_cost: 0,
                  cargo_capacity: 20,
-                 transport_capacity: 0
+                 transport_capacity: 0,
+                 gold_cost: 120,
+                 steel_cost: 120,
+                 oil_cost: 0
                  
    DB::Unit::Definition.create name: "Granatier",
                 unit_type: "Infantry",
@@ -112,7 +118,10 @@ def create_default_vals
                 movement_speed: 3,
                 movement_cost: 0,
                 cargo_capacity: 10,
-                transport_capacity: 0
+                transport_capacity: 0,
+                gold_cost: 150,
+                steel_cost: 120,
+                oil_cost: 0
                  
    DB::Unit::Definition.create name: "Jeep",
                 unit_type: "Vehicle",
@@ -122,7 +131,10 @@ def create_default_vals
                 movement_speed: 120,
                 movement_cost: 40,
                 cargo_capacity: 200,
-                transport_capacity: 10         
+                transport_capacity: 10  ,
+                gold_cost: 250,
+                steel_cost: 200,
+                oil_cost: 80       
    
    DB::Unit::Definition.create name: "Light Camion",
                 unit_type: "Vehicle",
@@ -132,7 +144,10 @@ def create_default_vals
                 movement_speed: 80,
                 movement_cost: 10,
                 cargo_capacity: 2000,
-                transport_capacity: 50  
+                transport_capacity: 50,
+                gold_cost: 200,
+                steel_cost: 200,
+                oil_cost: 100
                 
    DB::Unit::Definition.create name: "Light Tank",
                 unit_type: "Vehicle",
@@ -142,7 +157,10 @@ def create_default_vals
                 movement_speed: 80,
                 movement_cost: 40,
                 cargo_capacity: 100,
-                transport_capacity: 5   
+                transport_capacity: 5,
+                gold_cost: 350,
+                steel_cost: 500,
+                oil_cost: 250 
                 
    DB::Unit::Definition.create name: "Heavy Camion",
                 unit_type: "Vehicle",
@@ -152,7 +170,10 @@ def create_default_vals
                 movement_speed: 60,
                 movement_cost: 15,
                 cargo_capacity: 10000,
-                transport_capacity: 100  
+                transport_capacity: 100,
+                gold_cost: 400,
+                steel_cost: 450,
+                oil_cost: 220
    
 
    DB::Unit::Definition.create name: "Heavy Tank",
@@ -163,59 +184,122 @@ def create_default_vals
                 movement_speed: 40,
                 movement_cost: 80,
                 cargo_capacity: 150,
-                transport_capacity: 5
+                transport_capacity: 5,
+                gold_cost: 800,
+                steel_cost: 850,
+                oil_cost: 250
                 
    
    #STRUCTURES
-   DB::Structure::Definition.create name: "Market",
-               description: "Produces Gold"
-   
+   DB::Structure::Definition.create name: "Market", 
+               description: "Produces Gold",
+               gold_cost: 85,
+               steel_cost: 42,
+               oil_cost: 0,
+               cost_advancement_type: 0,
+               base_production: 45
+                  
    DB::Structure::Definition.create name: "Foundry",
-               description: "Produces Steel"
-   
+               description: "Produces Steel",
+               gold_cost: 73,
+               steel_cost: 64,
+               oil_cost: 0,
+               cost_advancement_type: 0,
+               base_production: 35
+                  
    DB::Structure::Definition.create name: "Refinery",
-               description: "Produces Oil"
-   
+               description: "Produces Oil",
+               gold_cost: 140,
+               steel_cost: 59,
+               oil_cost: 0,
+               cost_advancement_type: 0,
+               base_production: 15
+                  
    DB::Structure::Definition.create name: "Bank",
-               description: "Storage Room for Gold"
+               description: "Storage Room for Gold",
+               gold_cost: 2000,
+               steel_cost: 1300,
+               oil_cost: 0,
+               cost_advancement_type: 1
                
    DB::Structure::Definition.create name: "Warehouse",
-               description: "Storage Room for Steel and Oil"
+               description: "Storage Room for Steel and Oil",
+               gold_cost: 800,
+               steel_cost: 2000,
+               oil_cost: 500,
+               cost_advancement_type: 1
    
    DB::Structure::Definition.create name: "Barrak",
-               description: "Produces Infantry Units"
+               description: "Produces Infantry Units",
+               gold_cost: 400,
+               steel_cost: 200,
+               oil_cost: 100,
+               cost_advancement_type: 2
                
    DB::Structure::Definition.create name: "Factory",
-               description: "Produces Veicles"
+               description: "Produces Veicles",
+               gold_cost: 600,
+               steel_cost: 800,
+               oil_cost: 150,
+               cost_advancement_type: 2
               
    DB::Structure::Definition.create name: "Research Centre",
-               description: "Produces Researches"
+               description: "Produces Researches",
+               gold_cost: 400,
+               steel_cost: 200,
+               oil_cost: 150,
+               cost_advancement_type: 2
 
    DB::Structure::Definition.create name: "Bunker",
-               description: "Increases Defence if City is Attacked"
+               description: "Increases Defence if City is Attacked",
+               gold_cost: 5000,
+               steel_cost: 10000,
+               oil_cost: 1500,
+               cost_advancement_type: 2
                
                
    #RESEARCHES
    DB::Research::Definition.create name: "Infantry Weapon Upgrade",
-               description: "to-be-added"
+               description: "to-be-added",
+               gold_cost: 300,
+               steel_cost: 800,
+               oil_cost: 0
    
    DB::Research::Definition.create name: "Infrantry Armor Upgrade",
-               description: "to-be-added"   
+               description: "to-be-added" ,
+               gold_cost: 250,
+               steel_cost: 1000,
+               oil_cost: 0  
                
    DB::Research::Definition.create name: "Vehicle Weapon Upgrade",
-               description: "to-be-added"
-  
+               description: "to-be-added",
+               gold_cost: 500,
+               steel_cost: 1000,
+               oil_cost: 0
+                 
    DB::Research::Definition.create name: "Vehicle Armor Upgrade",
-               description: "to-be-added"
+               description: "to-be-added",
+               gold_cost: 400,
+               steel_cost: 800,
+               oil_cost: 400
                
    DB::Research::Definition.create name: "Construction Industry Tecniques",
-               description: "to-be-added"   
+               description: "to-be-added",
+               gold_cost: 1200,
+               steel_cost: 1500,
+               oil_cost: 1000   
    
    DB::Research::Definition.create name: "Espionage",
-               description: "to-be-added"
+               description: "to-be-added",
+               gold_cost: 900,
+               steel_cost: 600,
+               oil_cost: 200
    
    DB::Research::Definition.create name: "Engine Power",
-               description: "to-be-added"
+               description: "to-be-added",
+               gold_cost: 1000,
+               steel_cost: 1500,
+               oil_cost: 1200
                            
 end
 
