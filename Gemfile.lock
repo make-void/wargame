@@ -4,6 +4,12 @@ GIT
   specs:
     voidtools (0.2.4)
 
+GIT
+  remote: git://github.com/rails/exception_notification
+  revision: 192a49a02d63d28b23ed41cebadfedd490929cf1
+  specs:
+    exception_notification (1.0.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -45,7 +51,6 @@ GEM
     erubis (2.6.6)
       abstract (>= 1.0.0)
     eventmachine (0.12.10)
-    exception_notifier (1.0.0)
     geocoder (1.0.2)
     guard (0.6.2)
       thor (~> 0.14.6)
@@ -97,7 +102,7 @@ PLATFORMS
 
 DEPENDENCIES
   composite_primary_keys
-  exception_notifier
+  exception_notification!
   geocoder
   guard
   guard-livereload

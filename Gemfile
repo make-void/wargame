@@ -17,7 +17,7 @@ gem "sass"
 
 gem "voidtools", git: "git://github.com/makevoid/voidtools"
 
-gem "exception_notifier"
+gem "exception_notification", :git => "git://github.com/rails/exception_notification"
 
 group :development do
   gem "guard"
