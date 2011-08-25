@@ -36,7 +36,7 @@ html, body {
   height: 100%; }
 
 body {
-  background: #aaaaaa;
+  background: #dddddd;
   font-family: sans-serif, Helvetica, Arial, Verdana;
   color: #222222;
   font-size: 120%;
@@ -124,7 +124,7 @@ p {
   font-size: 0.9em; }
 
 h1 {
-  margin-bottom: 20px;
+  margin: 5px 0 15px;
   font-size: 2em; }
   h1 span {
     font-size: 0.55em;
@@ -139,7 +139,9 @@ h3 {
 #map_canvas {
   width: 100%;
   height: 100%;
-  position: absolute; }
+  z-index: 2;
+  position: absolute;
+  border-top: 3px solid #999999; }
 
 body.game #wrap {
   padding-top: 0px; }
@@ -162,14 +164,72 @@ body.game h1 {
 .tool input[type="submit"] {
   width: 20px; }
 
+#nav, #debug {
+  position: absolute;
+  z-index: 1; }
+
+#nav {
+  left: 130px;
+  top: 24px;
+  display: inline;
+  width: 200px;
+  margin: 5px 0;
+  z-index: 3; }
+  #nav li {
+    background: #fafafa;
+    font-size: 0.6em;
+    margin: 0 3px;
+    padding: 6px 8px 5px 10px;
+    border: 2px solid #999999;
+    border-bottom: 1px solid #999999;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    -moz-border-radius-topleft: 8px;
+    -moz-border-radius-topright: 8px;
+    -webkit-border-top-left-radius: 8px;
+    -webkit-border-top-right-radius: 8px;
+    display: block;
+    float: left;
+    width: 30px;
+    position: relative;
+    z-index: 3; }
+    #nav li:hover {
+      border-bottom: none; }
+  #nav div {
+    display: none;
+    width: 200px;
+    background: #fafafa;
+    position: absolute;
+    z-index: 3;
+    top: 24px;
+    left: -2px;
+    border: 2px solid #999999;
+    padding: 3px 5px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    -moz-border-radius-bottomleft: 10px;
+    -moz-border-radius-bottomright: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+    -moz-border-radius-topright: 10px;
+    -webkit-border-top-right-radius: 10px;
+    border-top: none; }
+
 #debug {
-  float: right;
+  right: 0;
+  top: 0;
   background: #fafafa;
   margin: 6px 12px;
   font-size: 0.6em;
-  padding: 4px 6px; }
+  padding: 6px 8px;
+  border: 2px solid #999999;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px; }
+  #debug:hover {
+    z-index: 2; }
   #debug div {
-    width: 500px;
     font-size: 0.9em; }
 
 @media (max-width:480px) {

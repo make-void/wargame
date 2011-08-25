@@ -9,7 +9,7 @@
     %meta{ name: "keywords", content: "" }    
     %meta{ name: "author", content: "" }    
     %meta{ name: "viewport", content: "width=device-width, initial-scale=1.0" }
-    %script{ src: "/javascripts/modernizr.js", type: "text/javascript" }
+    %script{ src: "/javascripts/vendor/modernizr.js", type: "text/javascript" }
     = yield :head
     %script{:src => "http://js.pusherapp.com/1.8/pusher.min.js", :type => "text/javascript"}
     %script{ src: "/javascripts/vendor/pusher.js" }
@@ -17,19 +17,41 @@
     #wrap
       #container
         %header
-          #debug
-            = yield :debug
           %h1 
             = link_to "WarGame", "/"
         %nav
         #content
           = yield
         %footer
-
+    
+    %ul#nav
+      %li
+        %p Menu1
+        %div 
+          %p content1
+          %img{ src: "/images/tank.gif" }
+          %img{ src: "/images/tank.gif" }
+          %img{ src: "/images/tank.gif" }
+          %p asdasdasdas<br>asdasdasds
+      %li 
+        %p Menu2
+        %div 
+          %p content2
+          %img{ src: "/images/city.png" }
+          %img{ src: "/images/city.png" }
+      %li 
+        %p Menu3
+        %div 
+          %p content3
+    #debug
+      = yield :debug
     %script{ src: "/javascripts/vendor/jquery.js", type: "text/javascript" }
     %script{ src: "/javascripts/vendor/jquery-timers.js", type: "text/javascript" }
     %script{ src: "/javascripts/vendor/underscore.js", type: "text/javascript" }
     %script{ src: "/javascripts/vendor/backbone.js", type: "text/javascript" }
+
+    //  TODO: choose haml-js or/and handlebars before production
+    %script{ src: "/javascripts/vendor/haml.js", type: "text/javascript" }
     %script{ src: "/javascripts/vendor/handlebars.js", type: "text/javascript" }
     %script{ src: "/javascripts/main.js", type: "text/javascript" }    
     %script

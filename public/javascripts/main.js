@@ -1,6 +1,26 @@
 (function() {
-  var LLRange, Map, utils;
+  var Army, City, Debug, LLRange, Location, Map, Player, utils;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  Location = (function() {
+    function Location() {}
+    return Location;
+  })();
+  City = (function() {
+    function City() {}
+    return City;
+  })();
+  Army = (function() {
+    function Army() {}
+    return Army;
+  })();
+  Player = (function() {
+    function Player() {}
+    return Player;
+  })();
+  Debug = (function() {
+    function Debug() {}
+    return Debug;
+  })();
   Map = (function() {
     function Map() {
       this.markerZoomMin = 7;
@@ -304,10 +324,11 @@
   {console.log();return window.console;}catch(err){return window.console={};}})());
   ;
     var map;
-    $("#debug").hover(function() {
-      return $("header").height(95);
+    $("#nav li").hover(function() {
+      $(this).find("div").show();
+      return console.log("asd");
     }, function() {
-      return $("header").height(50);
+      return $(this).find("div").hide();
     });
     $("#latLng").bind("submit", function() {
       var coords;

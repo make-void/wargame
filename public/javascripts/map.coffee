@@ -8,6 +8,8 @@ class Army
 class Player
   
 class Debug
+  
+# class Nav
 
 
 class Map
