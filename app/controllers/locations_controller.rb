@@ -1,8 +1,8 @@
-class CitiesController < ApplicationController
+class LocationsController < ApplicationController
   
   # TODO: move in a separate rack app for speed
 
-  # http://localhost:3000/cities/43.7687324/11.2569013
+  # http://localhost:3000/locations/43.7687324/11.2569013
   def index
     #lat, lng = [43.7687324, 11.2569013]
     lat, lng = [params[:lat].to_f, params[:lng].to_f]

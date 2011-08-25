@@ -1,13 +1,9 @@
 
-class Location
-  
-class City
-  
-class Army
-  
-class Player
-  
-class Debug
+Location  = Backbone.Model.extend {}
+City      = Backbone.Model.extend {}
+Army      = Backbone.Model.extend {}
+Player    = Backbone.Model.extend {}
+Debug     = Backbone.Model.extend {}
   
 # class Nav
 
@@ -83,7 +79,7 @@ class Map
     
     center = @map.getCenter()    
     # console.log(center)
-    $.getJSON("/cities/#{center.Oa}/#{center.Pa}", (datas) =>
+    $.getJSON("/locations/#{center.Oa}/#{center.Pa}", (datas) =>
       markers = []
       
       #console.log datas.markers.length
@@ -114,8 +110,8 @@ class Map
     latLng = new google.maps.LatLng data.latitude, data.longitude
     
     # image = "http://"+http_host+"/images/cross_red.png"
-    city_image = "http://" + http_host + "/images/city.png"
-    army_image = "http://" + http_host + "/images/tank.gif"
+    city_image = "http://" + http_host + "/images/map_icons/city_enemy.png"
+    army_image = "http://" + http_host + "/images/map_icons/army_ally.png"
     marker = new google.maps.Marker({
       position: latLng,
       map: @map,
@@ -123,7 +119,6 @@ class Map
     })
     
     unless data.city.name == null
-      
       marker.name = data.city.name
       marker.city = data.city
       marker.army = undefined
@@ -165,12 +160,11 @@ class Map
   drawMarker: (data) ->
     draw = true
     for mark in @markers
-      draw = true
-      # FIXME: check type of cities
-      # draw = false if mark.city.city_id == data.city.city_id
+      is_a_city =  data.city && mark.city
+      draw = false if is_a_city && mark.city.city_id == data.city.city_id # is the same city
         
     this.doMarkerDrawing(data) if draw
-      
+    # console.log("drawing") if draw
       
 
   callback: (markers) ->

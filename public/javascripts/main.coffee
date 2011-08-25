@@ -20,7 +20,6 @@ $( ->
   
   $("#nav li").hover( ->
     $(this).find("div").show()
-    console.log("asd")
   , ->
     $(this).find("div").hide()    
   )
