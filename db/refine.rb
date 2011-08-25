@@ -165,7 +165,34 @@ def create_default_vals
                 cargo_capacity: 150,
                 transport_capacity: 5
                 
-    #DB::StructDefinition.create name: ""
+
+   DB::StructDefinition.create name: "Market",
+               description: "Produces Gold"
+   
+   DB::StructDefinition.create name: "Foundry",
+               description: "Produces Steel"
+   
+   DB::StructDefinition.create name: "Refinery",
+               description: "Produces Oil"
+   
+   DB::StructDefinition.create name: "Bank",
+               description: "Storage Room for Gold"
+               
+   DB::StructDefinition.create name: "Warehouse",
+               description: "Storage Room for Steel and Oil"
+   
+   DB::StructDefinition.create name: "Barrak",
+               description: "Produces Infantry Units"
+               
+   DB::StructDefinition.create name: "Factory",
+               description: "Produces Veicles"
+              
+   DB::StructDefinition.create name: "Research Centre",
+               description: "Produces Researches"
+
+   DB::StructDefinition.create name: "Bunker",
+               description: "Increases Defence if City is Attacked"
+
 end
 
 def create_default_vals_after_location
