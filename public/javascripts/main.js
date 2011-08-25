@@ -323,7 +323,7 @@ $(function() {
     }
   });
   g.army = new Army({
-    a: "b"
+    asd: "lol"
   });
   g.armyView = new ArmyView({
     model: g.army

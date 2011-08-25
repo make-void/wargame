@@ -35,7 +35,7 @@ $( ->
       this # returning render method scope lets you chain events (methods)
   )
   
-  g.army = new Army({ a: "b" })
+  g.army = new Army({ asd: "lol" })
   g.armyView = new ArmyView({model: g.army})
   $("#debug").append g.armyView.render().el
 
