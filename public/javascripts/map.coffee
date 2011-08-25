@@ -1,13 +1,3 @@
-
-Location  = Backbone.Model.extend {}
-City      = Backbone.Model.extend {}
-Army      = Backbone.Model.extend {}
-Player    = Backbone.Model.extend {}
-Debug     = Backbone.Model.extend {}
-  
-# class Nav
-
-
 class Map
   
   constructor: ->

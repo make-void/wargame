@@ -1,10 +1,5 @@
-var Army, City, Debug, LLRange, Location, Map, Player, utils;
+var LLRange, Map, utils;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-Location = Backbone.Model.extend({});
-City = Backbone.Model.extend({});
-Army = Backbone.Model.extend({});
-Player = Backbone.Model.extend({});
-Debug = Backbone.Model.extend({});
 Map = (function() {
   function Map() {
     this.markerZoomMin = 7;
@@ -305,12 +300,35 @@ utils.parseCoords = function(string) {
   split = string.replace(/\s/, '').split(",");
   return [split[0], split[1]];
 };
+
+(function(b){function c(){}for(var d="assert,count,debug,dir,dirxml,error,exception,group,groupCollapsed,groupEnd,info,log,timeStamp,profile,profileEnd,time,timeEnd,trace,warn".split(","),a;a=d.pop();){b[a]=b[a]||c}})((function(){try
+{console.log();return window.console;}catch(err){return window.console={};}})());
+;
 $(function() {
-  
-  (function(b){function c(){}for(var d="assert,count,debug,dir,dirxml,error,exception,group,groupCollapsed,groupEnd,info,log,timeStamp,profile,profileEnd,time,timeEnd,trace,warn".split(","),a;a=d.pop();){b[a]=b[a]||c}})((function(){try
-  {console.log();return window.console;}catch(err){return window.console={};}})());
-  ;
-  var map;
+  var g, map;
+  g = window;
+  g.Army = Backbone.Model.extend({});
+  g.City = Backbone.Model.extend({});
+  g.Location = Backbone.Model.extend({});
+  g.Player = Backbone.Model.extend({});
+  g.ArmyView = Backbone.View.extend({
+    initialize: function() {
+      return this.template = Haml($("#army_view-tmpl").html());
+    },
+    render: function() {
+      var content;
+      content = this.template(this.model.attributes);
+      $(this.el).html(content);
+      return this;
+    }
+  });
+  g.army = new Army({
+    a: "b"
+  });
+  g.armyView = new ArmyView({
+    model: g.army
+  });
+  $("#debug").append(g.armyView.render().el);
   $("#nav li").hover(function() {
     return $(this).find("div").show();
   }, function() {
