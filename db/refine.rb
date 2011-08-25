@@ -164,6 +164,8 @@ def create_default_vals
                 movement_cost: 80,
                 cargo_capacity: 150,
                 transport_capacity: 5
+                
+    #DB::StructDefinition.create name: ""
 end
 
 def create_default_vals_after_location
