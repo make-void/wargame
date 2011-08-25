@@ -15,7 +15,11 @@ gem "composite_primary_keys"
 gem "haml"
 gem "sass"
 
+
+gem 'newrelic_rpm'
+
 gem "voidtools", git: "https://github.com/makevoid/voidtools"
+
 
 gem "exception_notification", :git => "https://github.com/rails/exception_notification"
 
