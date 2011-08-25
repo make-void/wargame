@@ -4,11 +4,10 @@ module DB
       set_table_name "wg_city_unit" 
       set_primary_keys "unit_id", "city_id"
       
-      belongs_to :army
-      belongs_to :player
+      belongs_to :army, :class_name => "DB::Army"
+      belongs_to :player, :class_name => "DB::Player"
     
-      belongs_to :definition,
-                 :foreign_key => :unit_id
+      belongs_to :definition, :foreign_key => :unit_id
     
       
       validates_presence_of :number, :player_id

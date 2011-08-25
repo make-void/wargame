@@ -9,6 +9,7 @@ module DB # Database
     belongs_to :player
     
     has_many :units, :class_name => "DB::Unit::CityUnit"
+    has_many :buildings, :class_name => "DB::Structure::Building"
     
     
   end

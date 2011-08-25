@@ -9,10 +9,8 @@ module DB # Database
       validates_numericality_of :power, :defence, :movement_speed, :movement_cost
       validates_numericality_of :cargo_capacity, :transport_capacity, :attack_type
       
-      has_many :army_units,
-                 :foreign_key => :unit_id
-      has_many :city_units,
-                 :foreign_key => :unit_id
+      has_many :army_units, :foreign_key => :unit_id
+      has_many :city_units, :foreign_key => :unit_id
       
       ATTACK_TYPES = {
         0 => "Normal",

@@ -7,6 +7,8 @@ module DB
       validates_uniqueness_of :name
       validates_presence_of :name, :description
       
+      has_many :buildings, :foreign_key => :structure_id
+      
     end
   end
 end

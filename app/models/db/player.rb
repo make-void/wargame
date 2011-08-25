@@ -5,7 +5,7 @@ module DB # Database
     
     belongs_to :alliance
     has_many :cities
-    has_many :upgrades
+    has_many :upgrades, :class_name => "DB::Research::Upgrade"
     
     validates_presence_of :name, :password, :email
     validates_uniqueness_of :name, :email
