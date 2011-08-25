@@ -8,6 +8,8 @@ module DB # Database
     belongs_to :location
     belongs_to :player
     
+    has_many :units, :class_name => "DB::Unit::CityUnit"
+    
     
   end
 end

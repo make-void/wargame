@@ -83,8 +83,8 @@ def create_default_vals
                 new_password_confirmation: "NULLABLE", 
                 email: "test@test.test", 
                 alliance_id: 1
-                
-  DB::UnitDefinition.create name: "Soldier",
+  #UNITS          
+  DB::Unit::Definition.create name: "Soldier",
                 unit_type: "Infantry",
                 attack_type: 0, 
                 power: 1,
@@ -94,7 +94,7 @@ def create_default_vals
                 cargo_capacity: 20,
                 transport_capacity: 0
    
-   DB::UnitDefinition.create name: "Special Forces",
+   DB::Unit::Definition.create name: "Special Forces",
                  unit_type: "Infantry",
                  attack_type: 0,
                  power: 5,
@@ -104,7 +104,7 @@ def create_default_vals
                  cargo_capacity: 20,
                  transport_capacity: 0
                  
-   DB::UnitDefinition.create name: "Granatier",
+   DB::Unit::Definition.create name: "Granatier",
                 unit_type: "Infantry",
                 attack_type: 1,
                 power: 15,
@@ -114,7 +114,7 @@ def create_default_vals
                 cargo_capacity: 10,
                 transport_capacity: 0
                  
-   DB::UnitDefinition.create name: "Jeep",
+   DB::Unit::Definition.create name: "Jeep",
                 unit_type: "Vehicle",
                 attack_type: 2,
                 power: 40,
@@ -124,7 +124,7 @@ def create_default_vals
                 cargo_capacity: 200,
                 transport_capacity: 10         
    
-   DB::UnitDefinition.create name: "Light Camion",
+   DB::Unit::Definition.create name: "Light Camion",
                 unit_type: "Vehicle",
                 attack_type: 0,
                 power: 0,
@@ -134,7 +134,7 @@ def create_default_vals
                 cargo_capacity: 2000,
                 transport_capacity: 50  
                 
-   DB::UnitDefinition.create name: "Light Tank",
+   DB::Unit::Definition.create name: "Light Tank",
                 unit_type: "Vehicle",
                 attack_type: 0,
                 power: 60,
@@ -144,7 +144,7 @@ def create_default_vals
                 cargo_capacity: 100,
                 transport_capacity: 5   
                 
-   DB::UnitDefinition.create name: "Heavy Camion",
+   DB::Unit::Definition.create name: "Heavy Camion",
                 unit_type: "Vehicle",
                 attack_type: 0,
                 power: 0,
@@ -155,7 +155,7 @@ def create_default_vals
                 transport_capacity: 100  
    
 
-   DB::UnitDefinition.create name: "Heavy Tank",
+   DB::Unit::Definition.create name: "Heavy Tank",
                 unit_type: "Vehicle",
                 attack_type: 0,
                 power: 140,
@@ -165,36 +165,58 @@ def create_default_vals
                 cargo_capacity: 150,
                 transport_capacity: 5
                 
-
-   DB::StructDefinition.create name: "Market",
+   
+   #STRUCTURES
+   DB::Structure::Definition.create name: "Market",
                description: "Produces Gold"
    
-   DB::StructDefinition.create name: "Foundry",
+   DB::Structure::Definition.create name: "Foundry",
                description: "Produces Steel"
    
-   DB::StructDefinition.create name: "Refinery",
+   DB::Structure::Definition.create name: "Refinery",
                description: "Produces Oil"
    
-   DB::StructDefinition.create name: "Bank",
+   DB::Structure::Definition.create name: "Bank",
                description: "Storage Room for Gold"
                
-   DB::StructDefinition.create name: "Warehouse",
+   DB::Structure::Definition.create name: "Warehouse",
                description: "Storage Room for Steel and Oil"
    
-   DB::StructDefinition.create name: "Barrak",
+   DB::Structure::Definition.create name: "Barrak",
                description: "Produces Infantry Units"
                
-   DB::StructDefinition.create name: "Factory",
+   DB::Structure::Definition.create name: "Factory",
                description: "Produces Veicles"
               
-   DB::StructDefinition.create name: "Research Centre",
+   DB::Structure::Definition.create name: "Research Centre",
                description: "Produces Researches"
 
-   DB::StructDefinition.create name: "Bunker",
+   DB::Structure::Definition.create name: "Bunker",
                description: "Increases Defence if City is Attacked"
                
-   #DB::TechDefinition.create name:""
-
+               
+   #RESEARCHES
+   DB::Research::Definition.create name: "Infantry Weapon Upgrade",
+               description: "to-be-added"
+   
+   DB::Research::Definition.create name: "Infrantry Armor Upgrade",
+               description: "to-be-added"   
+               
+   DB::Research::Definition.create name: "Vehicle Weapon Upgrade",
+               description: "to-be-added"
+  
+   DB::Research::Definition.create name: "Vehicle Armor Upgrade",
+               description: "to-be-added"
+               
+   DB::Research::Definition.create name: "Construction Industry Tecniques",
+               description: "to-be-added"   
+   
+   DB::Research::Definition.create name: "Espionage",
+               description: "to-be-added"
+   
+   DB::Research::Definition.create name: "Engine Power",
+               description: "to-be-added"
+                           
 end
 
 def create_default_vals_after_location
@@ -217,28 +239,28 @@ def create_default_vals_after_location
                   destination_id: paris.id
                   
 #ARMY 1
-  DB::ArmyUnit.create unit_id: 1,
+  DB::Unit::ArmyUnit.create unit_id: 1,
                      army_id: 1,
                      player_id: 1,
                      number: 100 #100 soldiers
   
-  DB::ArmyUnit.create unit_id: 3,
+  DB::Unit::ArmyUnit.create unit_id: 3,
                       army_id: 1,
                       player_id: 1,
                       number: 20 #20 granatiers
                       
-  DB::ArmyUnit.create unit_id: 5,
+  DB::Unit::ArmyUnit.create unit_id: 5,
                       army_id: 1,
                       player_id: 1,
                       number: 10 #10 light camions
 
 #ARMY 2
-  DB::ArmyUnit.create unit_id: 2,
+  DB::Unit::ArmyUnit.create unit_id: 2,
                       army_id: 2,
                       player_id: 1,
                       number: 50 #50 special forces
                       
-  DB::ArmyUnit.create unit_id: 4,
+  DB::Unit::ArmyUnit.create unit_id: 4,
                       army_id: 2,
                       player_id: 1,
                       number: 5 #5 jeeps

@@ -1,5 +1,6 @@
 qs = queries = []
 
+qs << "DROP TABLE IF EXISTS wg_city_unit;"
 qs << "DROP TABLE IF EXISTS wg_army_unit;"
 qs << "DROP TABLE IF EXISTS wg_armies;"
 qs << "DROP TABLE IF EXISTS wg_struct;"
@@ -11,8 +12,9 @@ qs << "DROP TABLE IF EXISTS wg_alliances;"
 qs << "DROP TABLE IF EXISTS wg_unit_defs;"
 qs << "DROP TABLE IF EXISTS wg_struct_defs;"
 qs << "DROP TABLE IF EXISTS wg_tech_defs;"
-qs << "DROP VIEW IF EXISTS wg_army_unit_view;"
-qs << "DROP VIEW IF EXISTS wg_extended_locations;"
+qs << "DROP VIEW IF EXISTS wg_v_army_unit;"
+qs << "DROP VIEW IF EXISTS wg_v_city_locations;"
+qs << "DROP VIEW IF EXISTS wg_v_army_locations;"
 
 
 qs << "
@@ -141,6 +143,23 @@ CREATE TABLE `wg_army_unit` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
 
+qs << "
+CREATE TABLE `wg_city_unit` (
+  `unit_id` BIGINT UNSIGNED NOT NULL,
+  `city_id` BIGINT UNSIGNED NOT NULL,
+  `player_id` BIGINT UNSIGNED NOT NULL,
+
+  `number` int(11) NOT NULL,
+  
+  PRIMARY KEY (`unit_id`,`city_id`),
+  
+  FOREIGN KEY (`city_id`,`player_id`) REFERENCES wg_cities(`city_id`,`player_id`)
+    ON DELETE RESTRICT,
+  FOREIGN KEY (`unit_id`) REFERENCES wg_unit_defs(`unit_id`)
+    ON DELETE RESTRICT
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
 
 qs << "
 CREATE TABLE `wg_struct_defs` (
@@ -209,7 +228,7 @@ CREATE TABLE `wg_techs` (
      #             VIEWS                #
      ####################################
 
-qs << "CREATE OR REPLACE VIEW wg_V_army_unit_view AS
+qs << "CREATE OR REPLACE VIEW wg_v_army_unit AS
    SELECT 
     u_aunit.unit_id AS unit_id,
     u_aunit.army_id AS army_id,
@@ -236,7 +255,7 @@ qs << "CREATE OR REPLACE VIEW wg_V_army_unit_view AS
    ORDER BY army_id;
 "
 
-qs << "CREATE OR REPLACE VIEW wg_V_city_locations AS
+qs << "CREATE OR REPLACE VIEW wg_v_city_locations AS
    SELECT 
     loc.location_id AS location_id,
     loc.latitude AS latitude,
@@ -260,7 +279,7 @@ qs << "CREATE OR REPLACE VIEW wg_V_city_locations AS
    ORDER BY location_id;
 "
 
-qs << "CREATE OR REPLACE VIEW wg_V_army_locations AS
+qs << "CREATE OR REPLACE VIEW wg_v_army_locations AS
    SELECT 
     loc.location_id AS location_id,
     loc.latitude AS latitude,
