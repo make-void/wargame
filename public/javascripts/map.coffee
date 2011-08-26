@@ -108,7 +108,10 @@ class Map
       player: data.player
     })
     
-    unless data.city.name == null
+  
+    window.dtt = data
+  
+    unless data.city == undefined
       marker.name = data.city.name
       marker.city = data.city
       marker.army = undefined

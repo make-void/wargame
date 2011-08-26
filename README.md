@@ -23,9 +23,23 @@ gg!
 - Signup and Choice of the Capital...
 - All via GoogleMap (after signup mail confirmation).
 
+milestone:
+
+- alpha version funzionante
+
 locations:
 
 - manca la serbia!!
+
+
+### feature ideas:
+
+qua possiamo buttare giu tutto quello che ci viene in mente, quando avremmo finito il TODO faremo queste:
+
+
+UX:
+
+- implementare lo scrolling della mappa via freccette
 
 
 ### setup coffeescript:

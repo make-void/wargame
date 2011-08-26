@@ -174,7 +174,8 @@ Map = (function() {
       map: this.map,
       player: data.player
     });
-    if (data.city.name !== null) {
+    window.dtt = data;
+    if (data.city !== void 0) {
       marker.name = data.city.name;
       marker.city = data.city;
       marker.army = void 0;

@@ -13,7 +13,7 @@ describe "Locations" do
       
       data[:locations].should be_a(Array)
       data[:locations].each do |loc|
-        puts loc
+        #puts loc
         loc.should be_a(Hash)
         loc.symbolize_keys!
         loc[:latitude].should     be_a(Float)
@@ -38,11 +38,18 @@ describe "Locations" do
           army.symbolize_keys!
           army[:id].should be_a(Integer)
           army[:id].should_not  be(0)
-          player = army[:player]
-          player[:id].should be_a(Integer)
-          player[:id].should_not  be(0)
-          alliance = player[:alliance]
         end
+        
+        player = loc[:player]
+        player.should be_a(Hash)        
+        player.symbolize_keys!
+        player[:id].should be_a(Integer)
+        player[:id].should_not  be(0)
+        alliance = player[:alliance]
+        alliance.should be_a(Hash)        
+        alliance.symbolize_keys!
+        alliance[:id].should be_a(Integer)
+        alliance[:id].should_not  be(0)
       end 
       # { "locations":
       #   [{"latitude":44.433333,"longitude":11.283333,"location_id":3640,"city":{"city_id":3658,"name":"Borgo Nuovo","pts":0,"ccode":"it"}]

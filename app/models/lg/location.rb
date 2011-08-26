@@ -24,29 +24,40 @@ module LG # Logic
     
     protected
     
+    def self.key_exists?(key)
+      !key.nil? && key.to_i != 0
+    end
+    
     def self.parse_location(loc)
-      {
+      location = {
         latitude: loc[:latitude].to_f,
         longitude: loc[:longitude].to_f,
         id: loc[:location_id].to_i,
-        city: {
-          id: loc[:city_id].to_i,
-          name: loc[:city_name],
-          pts: loc[:city_pts].to_i,
-          ccode: loc[:city_ccode]
-        },
-        army: {
-          id: loc[:army_id].to_i,
-          player: {
-            id: loc[:player_id].to_i,
-            name: loc[:player_name],
-            alliance: {
-              id: loc[:alliance_id].to_i,
-              name: loc[:alliance_name]
-            }
+        player: {
+          id: loc[:player_id].to_i,
+          name: loc[:player_name],
+          alliance: {
+            id: loc[:alliance_id].to_i,
+            name: loc[:alliance_name]
           }
-        },
+        }
       }
+      
+      city = {
+        id: loc[:city_id].to_i,
+        name: loc[:city_name],
+        pts: loc[:city_pts].to_i,
+        ccode: loc[:city_ccode]
+      }
+      
+      army = {
+        id: loc[:army_id].to_i
+      }
+      
+      location[:city] = city if key_exists?(loc[:city_id])
+      location[:army] = army if key_exists?(loc[:army_id])
+      
+      location
     end
     
   end
