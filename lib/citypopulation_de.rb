@@ -70,6 +70,7 @@ class Deh
       tds = tr.search("td").map { |td| td.inner_text }
       # pp tds
       name = tds[0]
+      name.gsub!(/\s+/, " ")
       pop = tds[5].to_i != 0 ? tds[5] : tds[4]
       #puts "CITY: #{name}\t\t\t\t\t\t\t\t#{pop} [#{region[:country]}]"
       cities << { name: name, pop: pop, region: region}
