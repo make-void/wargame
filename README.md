@@ -18,6 +18,16 @@
 gg!
 
 
+##WORLFRAM ALPHA INFOS:
+APP NAME: wargame
+
+APPID: 77XU86-HYJKA4U5V9
+
+USAGE TYPE: Personal/Non-commercial Only
+
+
+--> http://api.wolframalpha.com/v2/query?input=Population%20Florence%20Italy%20City,%20Rome%20Italy%20City&format=plaintext&appid=77XU86-HYJKA4U5V9&includepodid=MetroPopulation:CityDatac
+
 ### TODO:
 
 - Signup and Choice of the Capital...
