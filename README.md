@@ -94,6 +94,12 @@ ref: http://railscasts.com/episodes/261-testing-javascript-with-jasmine
 
 ### running the test suite
 
+prepare the db:
+
+     ruby db/refine.rb test
+
+run:
+
      guard 
 
 (this also runs livereload)

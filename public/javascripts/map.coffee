@@ -117,13 +117,15 @@ class Map
       marker.army = undefined
       marker.icon = city_image
       marker.type = "city"
+      data.type = "city"
     else
       marker.name = "Army"
       marker.army = data.army
       marker.city = undefined;
       marker.icon = army_image
       marker.type = "army"
-
+      data.type = "army"
+      
     @markers.push marker
     # TODO: pass more datas
     
@@ -135,7 +137,7 @@ class Map
     #console.log(latLng)
     
   attachArmyActionsMenu: (marker) ->
-    console.log(marker)
+    # console.log(marker)
     
     
   attachDialog: (marker, location) ->
@@ -149,15 +151,22 @@ class Map
     #          "
     # content += "<p>population: x</p>" if marker.type == "city"
     # content += "</div>"
+    model  = null
     
-    if marker.type == "army"
+    dialog = if marker.type == "army"
+      # TODO: da disegnare al posto giusto
       haml = Haml($("#armyActionsMenu-tmpl").html())
       content = haml({})
       
-    army = new Army location
-    armyDialog = new ArmyDialog { model: army }
-    content = armyDialog.render().el
-    console.log armyDialog
+      model = new Army location
+      new ArmyDialog { model: model }
+    else  
+      model = new City location
+      new CityDialog { model: model }
+    
+    content = dialog.render().el
+    #console.log model
+    # console.log content
     
     dialog = new InfoBubble({
       # map: map,
@@ -253,7 +262,7 @@ class Map
     
   clickInfo: ->
     google.maps.event.addListener(@map, 'click', (evt) ->
-      console.log evt.latLng.Oa, evt.latLng.Pa
+      # console.log evt.latLng.Oa, evt.latLng.Pa
     )
 
   drawLine: (points) ->

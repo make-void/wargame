@@ -28,11 +28,17 @@ Dialog = Backbone.View.extend({
 CityDialog = Dialog.extend({
   initialize: function() {
     return Dialog.prototype.initialize(null);
+  },
+  label: function() {
+    return city.name;
   }
 });
 ArmyDialog = Dialog.extend({
   initialize: function() {
     return Dialog.prototype.initialize(null);
+  },
+  label: function() {
+    return player.name;
   }
 });
 LLRange = (function() {
@@ -192,12 +198,14 @@ Map = (function() {
       marker.army = void 0;
       marker.icon = city_image;
       marker.type = "city";
+      data.type = "city";
     } else {
       marker.name = "Army";
       marker.army = data.army;
       marker.city = void 0;
       marker.icon = army_image;
       marker.type = "army";
+      data.type = "army";
     }
     this.markers.push(marker);
     that = this;
@@ -208,26 +216,21 @@ Map = (function() {
       }
     });
   };
-  Map.prototype.attachArmyActionsMenu = function(marker) {
-    return console.log(marker);
-  };
+  Map.prototype.attachArmyActionsMenu = function(marker) {};
   Map.prototype.attachDialog = function(marker, location) {
-    var army, armyDialog, content, dia, dialog, haml, _i, _len, _ref;
+    var content, dia, dialog, haml, model, _i, _len, _ref;
     _ref = this.dialogs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       dia = _ref[_i];
       dia.close();
     }
-    if (marker.type === "army") {
-      haml = Haml($("#armyActionsMenu-tmpl").html());
-      content = haml({});
-    }
-    army = new Army(location);
-    armyDialog = new ArmyDialog({
-      model: army
-    });
-    content = armyDialog.render().el;
-    console.log(armyDialog);
+    model = null;
+    dialog = marker.type === "army" ? (haml = Haml($("#armyActionsMenu-tmpl").html()), content = haml({}), model = new Army(location), new ArmyDialog({
+      model: model
+    })) : (model = new City(location), new CityDialog({
+      model: model
+    }));
+    content = dialog.render().el;
     dialog = new InfoBubble({
       content: content,
       shadowStyle: 1,
@@ -321,9 +324,7 @@ Map = (function() {
     return overlay.setMap(this.map);
   };
   Map.prototype.clickInfo = function() {
-    return google.maps.event.addListener(this.map, 'click', function(evt) {
-      return console.log(evt.latLng.Oa, evt.latLng.Pa);
-    });
+    return google.maps.event.addListener(this.map, 'click', function(evt) {});
   };
   Map.prototype.drawLine = function(points) {
     var line;
@@ -373,8 +374,15 @@ utils.parseCoords = function(string) {
 $(function() {
   var g, map;
   g = window;
+  g.anrmy = new Army({
+    asd: "lol"
+  });
+  g.anrmyDialog = new ArmyDialog({
+    model: anrmy
+  });
+  $("#debug").append(anrmyDialog.render().el);
   g.armyMarker = new ArmyMarker({
-    model: g.army
+    model: anrmy
   });
   $("#debug").append(armyMarker.render().el);
   $("#nav li").hover(function() {
