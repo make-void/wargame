@@ -1,0 +1,16 @@
+src_dir: public/javascripts
+
+src_files:
+  - vendor/underscore.js
+  - vendor/backbone.js
+  - vendor/haml.js
+  # - vendor/handlebars.js
+  - vendor/jquery.js
+  - vendor/jquery-timers.js
+  - models.js
+  - map.js
+
+spec_dir: public/javascripts/spec
+
+spec_files:
+  - **/*_spec.js

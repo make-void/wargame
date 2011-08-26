@@ -1,6 +1,9 @@
 # encoding: utf-8
 PATH = File.expand_path "../../", __FILE__
 
+env = ARGV[0]
+ENV["RACK_ENV"] = env if env
+
 
 require 'json'
 
@@ -352,7 +355,7 @@ def create_default_vals_after_location
 end
 
 def step_2
-  require "#{PATH}/config/environment"
+  require "#{PATH}/config/environment"  
   require "#{PATH}/db/recreate_tables"
   
   create_default_vals

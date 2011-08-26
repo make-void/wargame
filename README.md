@@ -65,13 +65,35 @@ firenze
 - http://code.google.com/apis/ajax/playground/#tile_detector
 - code at the end of this file is (http://code.google.com/apis/ajax/playground/#geocoding_extraction) modified
 
+### testing stack:
 
-WarGame
+Ruby - Rspec:
+  
+- model (factories instead of fixtures)
+- requests (capybara)
+
+ref: http://railscasts.com/episodes/275-how-i-test?autoplay=true
+
+JavaScript - Jasmine:
+
+ref: http://railscasts.com/episodes/261-testing-javascript-with-jasmine
+
+### running the test suite
+
+     guard 
+
+(this also runs livereload)
+
+ref: https://github.com/mockko/livereload
+
+
+### WarGame
 
 [europe]
 - test mongodb vs mysql geocoder
 - check acqua
-- csv citta con population
+- csv citta
+  - population da wolfram
 - resque queues?
 - citta' alla ogame non alla travian
 
@@ -79,7 +101,7 @@ WarGame
 
 -----
 
-    imagemagick favicon notes:
+imagemagick favicon notes:
    
     convert some_image.bmp -resize 256x256 -transparent white favicon-256.png
     convert favicon-256.png -resize 16x16 favicon-16.png

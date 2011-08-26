@@ -25,29 +25,28 @@ module LG # Logic
     protected
     
     def self.parse_location(loc)
-      return {
-            latitude: loc[:latitude].to_f,
-            longitude: loc[:longitude].to_f,
-            location_id: loc[:location_id].to_i,
-            city: {
-              city_id: loc[:city_id].to_i,
-              name: loc[:city_name],
-              pts: loc[:city_pts].to_i,
-              ccode: loc[:city_ccode]
-            },
-            army: {
-              army_id: loc[:army_id].to_i
-            },
-            player: {
-              player_id: loc[:player_id].to_i,
-              name: loc[:player_name]
-            },
+      {
+        latitude: loc[:latitude].to_f,
+        longitude: loc[:longitude].to_f,
+        id: loc[:location_id].to_i,
+        city: {
+          id: loc[:city_id].to_i,
+          name: loc[:city_name],
+          pts: loc[:city_pts].to_i,
+          ccode: loc[:city_ccode]
+        },
+        army: {
+          id: loc[:army_id].to_i,
+          player: {
+            id: loc[:player_id].to_i,
+            name: loc[:player_name],
             alliance: {
-              alliance_id: loc[:alliance_id].to_i,
+              id: loc[:alliance_id].to_i,
               name: loc[:alliance_name]
             }
+          }
+        },
       }
-      
     end
     
   end

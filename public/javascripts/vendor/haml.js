@@ -481,7 +481,10 @@ var Haml;
     }).call(self);
   };
 
-  Haml = function Haml(haml, xml) {
+  Haml = function Haml(haml, xml) {  
+    if (haml == null)
+      console.log("ERROR: You have passed a null string to Haml()")
+      
     forceXML = xml;
     var js = optimize(compile(haml));
     //console.log(haml);

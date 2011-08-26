@@ -80,12 +80,10 @@ class Map
     
     center = @map.getCenter()    
     # console.log(center)
-    $.getJSON("/locations/#{center.Oa}/#{center.Pa}", (datas) =>
+    $.getJSON("/locations/#{center.Oa}/#{center.Pa}", (data) =>
       markers = []
       
-      #console.log datas.markers.length
-      for marker in datas.markers
-        #console.log(marker)
+      for marker in data.locations
         markers.push marker
 
       
@@ -207,7 +205,7 @@ class Map
     draw = true
     for mark in @markers
       is_a_city =  data.city && mark.city
-      draw = false if is_a_city && mark.city.city_id == data.city.city_id # is the same city
+      draw = false if is_a_city && mark.city.id == data.city.id # is the same city
         
     this.doMarkerDrawing(data) if draw
     # console.log("drawing") if draw

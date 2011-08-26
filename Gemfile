@@ -24,9 +24,19 @@ gem "voidtools", git: "https://github.com/makevoid/voidtools"
 gem "exception_notification", :git => "https://github.com/rails/exception_notification"
 
 group :development do
+  gem 'rb-fsevent'
+  gem 'growl'
   gem "guard"
   gem "guard-livereload"
   #gem "guard-coffeescript"
+  gem 'guard-rspec'
+end
+
+group :test do
+  gem "rspec-rails", "~> 2.6"
+  gem "factory_girl_rails"
+  gem "capybara"
+  gem "jasmine"
 end
 
 # Use unicorn as the web server

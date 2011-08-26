@@ -1,5 +1,30 @@
-var LLRange, Map, utils;
+var Army, ArmyDialog, City, CityDialog, Dialog, LLRange, Location, Map, Player, Upgrade, utils;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+Dialog = Backbone.View.extend({
+  initialize: function(selector) {
+    return this.template = Haml($(selector).html());
+  },
+  render: function() {
+    var content;
+    content = this.template(this.model.attributes);
+    $(this.el).html(content);
+    return this;
+  }
+});
+CityDialog = Dialog.extend({
+  initialize: function() {
+    var selector;
+    selector = "#cityDialog-tmpl";
+    return Dialog.prototype.initialize(selector);
+  }
+});
+ArmyDialog = Dialog.extend({
+  initialize: function() {
+    var selector;
+    selector = "#armyDialog-tmpl";
+    return Dialog.prototype.initialize(selector);
+  }
+});
 LLRange = (function() {
   function LLRange(lat, lng, range, prec) {
     var t, times;
@@ -34,6 +59,11 @@ LLRange = (function() {
   };
   return LLRange;
 })();
+Army = Backbone.Model.extend({});
+City = Backbone.Model.extend({});
+Location = Backbone.Model.extend({});
+Player = Backbone.Model.extend({});
+Upgrade = Backbone.Model.extend({});
 Map = (function() {
   function Map() {
     this.markerZoomMin = 7;
@@ -119,10 +149,10 @@ Map = (function() {
     }
     this.markersCleanMax();
     center = this.map.getCenter();
-    return $.getJSON("/locations/" + center.Oa + "/" + center.Pa, __bind(function(datas) {
+    return $.getJSON("/locations/" + center.Oa + "/" + center.Pa, __bind(function(data) {
       var marker, markers, _i, _len, _ref;
       markers = [];
-      _ref = datas.markers;
+      _ref = data.locations;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         marker = _ref[_i];
         markers.push(marker);
@@ -221,7 +251,7 @@ Map = (function() {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       mark = _ref[_i];
       is_a_city = data.city && mark.city;
-      if (is_a_city && mark.city.city_id === data.city.city_id) {
+      if (is_a_city && mark.city.id === data.city.id) {
         draw = false;
       }
     }
@@ -335,28 +365,13 @@ utils.parseCoords = function(string) {
 $(function() {
   var g, map;
   g = window;
-  g.Army = Backbone.Model.extend({});
-  g.City = Backbone.Model.extend({});
-  g.Location = Backbone.Model.extend({});
-  g.Player = Backbone.Model.extend({});
-  g.ArmyView = Backbone.View.extend({
-    initialize: function() {
-      return this.template = Haml($("#army_view-tmpl").html());
-    },
-    render: function() {
-      var content;
-      content = this.template(this.model.attributes);
-      $(this.el).html(content);
-      return this;
-    }
-  });
   g.army = new Army({
     asd: "lol"
   });
-  g.armyView = new ArmyView({
+  g.armyDialog = new ArmyDialog({
     model: g.army
   });
-  $("#debug").append(g.armyView.render().el);
+  $("#debug").append(g.armyDialog.render().el);
   $("#nav li").hover(function() {
     return $(this).find("div").show();
   }, function() {

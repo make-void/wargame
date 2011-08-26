@@ -16,28 +16,13 @@ $( ->
   g = window # makes the variable global (so you can test it in console an you can call it from outside jquery domready)
   
   # --------
-  # models & views
+  # construct models & views
     
-  g.Army      = Backbone.Model.extend {}
-  g.City      = Backbone.Model.extend {}
-  g.Location  = Backbone.Model.extend {}
-  g.Player    = Backbone.Model.extend {}
   # Debug     = Backbone.Model.extend {}
   
-  g.ArmyView  = Backbone.View.extend(
-    initialize: ->
-      this.template = Haml $("#army_view-tmpl").html()
-      #this.template = _.template $("#army_view-tmpl").html()
-      
-    render: ->
-      content = this.template this.model.attributes
-      $(this.el).html(content)
-      this # returning render method scope lets you chain events (methods)
-  )
-  
   g.army = new Army({ asd: "lol" })
-  g.armyView = new ArmyView({model: g.army})
-  $("#debug").append g.armyView.render().el
+  g.armyDialog = new ArmyDialog({model: g.army})
+  $("#debug").append g.armyDialog.render().el
 
   # --------
   # unit
