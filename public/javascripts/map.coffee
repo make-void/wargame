@@ -129,7 +129,7 @@ class Map
     
     that = this
     google.maps.event.addListener(marker, 'click', ->
-      that.attachDialog(marker)
+      that.attachDialog(marker, data)
       that.attachArmyActionsMenu(marker) if marker.type == "army"
     )
     #console.log(latLng)
@@ -138,23 +138,26 @@ class Map
     console.log(marker)
     
     
-  attachDialog: (location) ->
+  attachDialog: (marker, location) ->
     for dia in this.dialogs
       dia.close()
       
-    # TODO: use handlebars
-    content = "
-    <div class='dialog'>
-      <p class='name'>#{location.name}</p>
-      <p>player: #{location.player.name}</p>
-             "
-    content += "<p>population: x</p>" if location.type == "city"
-    if location.type == "army"
+    # content = "
+    # <div class='dialog'>
+    #   <p class='name'>#{marker.name}</p>
+    #   <p>player: #{marker.player.name}</p>
+    #          "
+    # content += "<p>population: x</p>" if marker.type == "city"
+    # content += "</div>"
+    
+    if marker.type == "army"
       haml = Haml($("#armyActionsMenu-tmpl").html())
-      content += haml({})
+      content = haml({})
       
-    content += "</div>"
-
+    army = new Army location
+    armyDialog = new ArmyDialog { model: army }
+    content = armyDialog.render().el
+    console.log armyDialog
     
     dialog = new InfoBubble({
       # map: map,
@@ -176,33 +179,21 @@ class Map
       maxWidth: 700
     })
 
-    dialog.open(@map, location)
+    dialog.open(@map, marker)
     #dialog.open(); # you have to set position
 
-    # div = document.createElement('DIV')
-    #    div.innerHTML = 'Hello'
-    # 
-    #    dialog.addTab('A Tab', div)
-    #    dialog.addTab('Uluru', "aaaa")
-    if location.type == "city"
+    if marker.type == "city"
       dialog.addTab('Overview', content)
       dialog.addTab('Build', "faaaarming")
     
-
-    google.maps.event.addListener(location, 'click', ->
-      if !dialog.isOpen()
-        dialog.open(@map, location)
-      
-    )
+    this.dialogs.push dialog
     
-    
+    # original InfoWindow
+    #    
     # dialog = new google.maps.InfoWindow({
     #   content: content_string
     # })
-    # dialog.open(@map, location)
-    
-    this.dialogs.push dialog
-    
+    # dialog.open(@map, marker)
 
   drawMarker: (data) ->
     draw = true

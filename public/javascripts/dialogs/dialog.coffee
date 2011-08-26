@@ -1,5 +1,6 @@
 Dialog  = Backbone.View.extend(
-  initialize: (selector) ->
+  initialize: (nil) ->
+    selector = "#dialog-tmpl"
     this.template = Haml($(selector).html())
     
   render: ->

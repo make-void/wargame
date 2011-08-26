@@ -49,14 +49,14 @@
     
     // templates    
     
-    %script{ type: "text/template", id: "cityDialog-tmpl" }
+    %script{ type: "text/template", id: "dialog-tmpl" }
       :plain
-        = asd
-    
-    %script{ type: "text/template", id: "armyDialog-tmpl" }
-      :plain
-        = asd
-        
+        .dialog
+          %p.name
+          %p.player= asd
+          %p.population pop: x
+          
+          
     %script{ type: "text/template", id: "armyActionsMenu-tmpl" }    
       #armyActionsMenu
         #move 

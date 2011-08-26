@@ -1,0 +1,4 @@
+CityMarker  = LocationMarker.extend(
+  initialize: () ->
+    
+)

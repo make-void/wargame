@@ -20,9 +20,13 @@ $( ->
     
   # Debug     = Backbone.Model.extend {}
   
-  g.army = new Army({ asd: "lol" })
-  g.armyDialog = new ArmyDialog({model: g.army})
-  $("#debug").append g.armyDialog.render().el
+  # g.army = new Army { asd: "lol" }
+  #  g.armyDialog = new ArmyDialog { model: g.army }
+  #  $("#debug").append armyDialog.render().el
+  
+  
+  g.armyMarker = new ArmyMarker { model: g.army }
+  $("#debug").append armyMarker.render().el
 
   # --------
   # unit

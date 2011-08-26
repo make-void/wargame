@@ -1,12 +1,15 @@
 module CoffeeUtils
-  COFFEE_FILES = [ "dialogs/dialog"           ,
+  COFFEE_FILES = [ "markers/location_marker"  ,
+                   "markers/city_marker"      ,
+                   "markers/army_marker"      ,
+                   "dialogs/dialog"           ,
                    "dialogs/city_dialog"      ,
                    "dialogs/army_dialog"      ,
                    "utils"                    ,
                    "models"                   ,
                    "map"                      ,
                    "main"                     ,
-                 ]
+                 ] # you can use 'folder/*' but that way you have no control on the load order
 
   APP_ROOT = Rails.root
   # private

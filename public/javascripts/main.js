@@ -1,7 +1,21 @@
-var Army, ArmyDialog, City, CityDialog, Dialog, LLRange, Location, Map, Player, Upgrade, utils;
+var Alliance, Army, ArmyDialog, ArmyMarker, City, CityDialog, CityMarker, Dialog, LLRange, Location, LocationMarker, Map, Player, Upgrade, utils;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+LocationMarker = Backbone.View.extend({
+  initialize: function() {},
+  render: function() {
+    return this;
+  }
+});
+CityMarker = LocationMarker.extend({
+  initialize: function() {}
+});
+ArmyMarker = LocationMarker.extend({
+  initialize: function() {}
+});
 Dialog = Backbone.View.extend({
-  initialize: function(selector) {
+  initialize: function(nil) {
+    var selector;
+    selector = "#dialog-tmpl";
     return this.template = Haml($(selector).html());
   },
   render: function() {
@@ -13,16 +27,12 @@ Dialog = Backbone.View.extend({
 });
 CityDialog = Dialog.extend({
   initialize: function() {
-    var selector;
-    selector = "#cityDialog-tmpl";
-    return Dialog.prototype.initialize(selector);
+    return Dialog.prototype.initialize(null);
   }
 });
 ArmyDialog = Dialog.extend({
   initialize: function() {
-    var selector;
-    selector = "#armyDialog-tmpl";
-    return Dialog.prototype.initialize(selector);
+    return Dialog.prototype.initialize(null);
   }
 });
 LLRange = (function() {
@@ -59,11 +69,12 @@ LLRange = (function() {
   };
   return LLRange;
 })();
-Army = Backbone.Model.extend({});
-City = Backbone.Model.extend({});
 Location = Backbone.Model.extend({});
+Army = Location.extend({});
+City = Location.extend({});
 Player = Backbone.Model.extend({});
 Upgrade = Backbone.Model.extend({});
+Alliance = Backbone.Model.extend({});
 Map = (function() {
   function Map() {
     this.markerZoomMin = 7;
@@ -191,7 +202,7 @@ Map = (function() {
     this.markers.push(marker);
     that = this;
     return google.maps.event.addListener(marker, 'click', function() {
-      that.attachDialog(marker);
+      that.attachDialog(marker, data);
       if (marker.type === "army") {
         return that.attachArmyActionsMenu(marker);
       }
@@ -200,22 +211,23 @@ Map = (function() {
   Map.prototype.attachArmyActionsMenu = function(marker) {
     return console.log(marker);
   };
-  Map.prototype.attachDialog = function(location) {
-    var content, dia, dialog, haml, _i, _len, _ref;
+  Map.prototype.attachDialog = function(marker, location) {
+    var army, armyDialog, content, dia, dialog, haml, _i, _len, _ref;
     _ref = this.dialogs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       dia = _ref[_i];
       dia.close();
     }
-    content = "    <div class='dialog'>      <p class='name'>" + location.name + "</p>      <p>player: " + location.player.name + "</p>             ";
-    if (location.type === "city") {
-      content += "<p>population: x</p>";
-    }
-    if (location.type === "army") {
+    if (marker.type === "army") {
       haml = Haml($("#armyActionsMenu-tmpl").html());
-      content += haml({});
+      content = haml({});
     }
-    content += "</div>";
+    army = new Army(location);
+    armyDialog = new ArmyDialog({
+      model: army
+    });
+    content = armyDialog.render().el;
+    console.log(armyDialog);
     dialog = new InfoBubble({
       content: content,
       shadowStyle: 1,
@@ -233,16 +245,11 @@ Map = (function() {
       minWidth: 200,
       maxWidth: 700
     });
-    dialog.open(this.map, location);
-    if (location.type === "city") {
+    dialog.open(this.map, marker);
+    if (marker.type === "city") {
       dialog.addTab('Overview', content);
       dialog.addTab('Build', "faaaarming");
     }
-    google.maps.event.addListener(location, 'click', function() {
-      if (!dialog.isOpen()) {
-        return dialog.open(this.map, location);
-      }
-    });
     return this.dialogs.push(dialog);
   };
   Map.prototype.drawMarker = function(data) {
@@ -366,13 +373,10 @@ utils.parseCoords = function(string) {
 $(function() {
   var g, map;
   g = window;
-  g.army = new Army({
-    asd: "lol"
-  });
-  g.armyDialog = new ArmyDialog({
+  g.armyMarker = new ArmyMarker({
     model: g.army
   });
-  $("#debug").append(g.armyDialog.render().el);
+  $("#debug").append(armyMarker.render().el);
   $("#nav li").hover(function() {
     return $(this).find("div").show();
   }, function() {
