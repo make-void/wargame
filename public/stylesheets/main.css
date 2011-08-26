@@ -264,9 +264,9 @@ body.game h1 {
 .bubble div.tabs div {
   font-size: 0.8em; }
 
-#armyActionsMenu {
+.dialog .commands {
   padding: 10px; }
-  #armyActionsMenu div {
+  .dialog .commands div {
     display: inline-block;
     padding: 0.1em 1em 0.12em;
     outline: none;
@@ -291,12 +291,12 @@ body.game h1 {
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px; }
-    #armyActionsMenu div:hover {
+    .dialog .commands div:hover {
       text-decoration: none; }
-    #armyActionsMenu div:active {
+    .dialog .commands div:active {
       position: relative;
       top: 1px; }
-    #armyActionsMenu div:hover {
+    .dialog .commands div:hover {
       background: #ca6931;
       background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
       background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }

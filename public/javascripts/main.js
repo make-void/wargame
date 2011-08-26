@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, ArmyMarker, City, CityDialog, CityMarker, Dialog, LLRange, Location, LocationMarker, Map, Player, Upgrade, utils;
+var Alliance, Army, ArmyDialog, ArmyMarker, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, Player, Upgrade, utils;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 LocationMarker = Backbone.View.extend({
   initialize: function() {},
@@ -35,17 +35,32 @@ CityDialog = Dialog.extend({
     return city.name;
   }
 });
+GameState = {
+  current: "browse",
+  states: ["browse", "move", "attack"]
+};
 ArmyDialog = Dialog.extend({
   initialize: function() {
     var selector;
     selector = "#armyDialog-tmpl";
     return Dialog.prototype.initialize(selector);
   },
+  activateButtons: function() {
+    $(this.el).find(".move").bind('click', function() {
+      console.log("moving");
+      return GameState.current = "move";
+    });
+    return $(this.el).find(".attack").bind('click', function() {
+      console.log("attaaaack!");
+      return GameState.current = "move";
+    });
+  },
   afterRender: function() {
     var content, haml;
     haml = Haml($("#armyActionsMenu-tmpl").html());
     content = haml({});
-    return $(this.el).find(".commands").append(content);
+    $(this.el).find(".commands").append(content);
+    return this.activateButtons();
   },
   label: function() {
     return player.name;
