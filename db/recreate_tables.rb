@@ -22,6 +22,9 @@ CREATE TABLE `wg_alliances` (
   `alliance_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   
+   /* ENTRY DATA */
+  `created_at` datetime DEFAULT NULL,
+  
   PRIMARY KEY (`alliance_id`),
   
   UNIQUE KEY `ally_name` (`name`)
@@ -38,6 +41,9 @@ CREATE TABLE `wg_players` (
   `password` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   `salt` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   
+  
+   /* ENTRY DATA */
+  `created_at` datetime DEFAULT NULL,
   
   PRIMARY KEY (`player_id`),
   
@@ -71,6 +77,22 @@ CREATE TABLE `wg_cities` (
   `pts` int(5) DEFAULT '0', # points for city differentiation (based on population)
   `ccode` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
   
+  `gold_production` int(11) NOT NULL DEFAULT 45,
+  `steel_production` int(11) NOT NULL DEFAULT 35,
+  `oil_production` int(11) NOT NULL DEFAULT 15,
+  
+  `gold_stored` int(11) NOT NULL DEFAULT 2500,
+  `steel_stored` int(11) NOT NULL DEFAULT 2500,
+  `oil_stored` int(11) NOT NULL DEFAULT 2500,
+
+  `gold_storage_space` int(11) NOT NULL DEFAULT 2500,
+  `steel_storage_space` int(11) NOT NULL DEFAULT 2500,
+  `oil_storage_space` int(11) NOT NULL DEFAULT 2500,
+  
+  /* HELPER FOR RESOURCES CALCULATION */
+  `last_update_at` datetime DEFAULT NULL,
+
+  
   PRIMARY KEY (`city_id`),
   
   FOREIGN KEY (`location_id`) REFERENCES wg_locations(`location_id`)
@@ -91,6 +113,18 @@ CREATE TABLE `wg_armies` (
   
   `is_moving` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `destination_id` BIGINT UNSIGNED,
+  
+  `speed` int(11) NOT NULL DEFAULT 0,
+  
+  `gold_stored` int(11) NOT NULL DEFAULT 0,
+  `steel_stored` int(11) NOT NULL DEFAULT 0,
+  `oil_stored` int(11) NOT NULL DEFAULT 0,
+
+  `storage_space` int(11) NOT NULL DEFAULT 0,
+  
+   /* ENTRY DATA */
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
 
   PRIMARY KEY (`army_id`),
   
@@ -137,6 +171,10 @@ CREATE TABLE `wg_army_unit` (
 
   `number` int(11) NOT NULL,
   
+   /* ENTRY DATA */
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  
   PRIMARY KEY (`unit_id`,`army_id`),
   
   FOREIGN KEY (`army_id`,`player_id`) REFERENCES wg_armies(`army_id`,`player_id`)
@@ -154,6 +192,10 @@ CREATE TABLE `wg_city_unit` (
   `player_id` BIGINT UNSIGNED NOT NULL,
 
   `number` int(11) NOT NULL,
+  
+   /* ENTRY DATA */
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
   
   PRIMARY KEY (`unit_id`,`city_id`),
   
@@ -192,6 +234,14 @@ CREATE TABLE `wg_struct` (
   `player_id` BIGINT UNSIGNED NOT NULL,
 
   `level` int(11) NOT NULL DEFAULT 0,
+  
+  `next_lev_gold_cost` int(11) NOT NULL,
+  `next_lev_steel_cost` int(11) NOT NULL,
+  `next_lev_oil_cost` int(11) NOT NULL DEFAULT 0,
+  
+   /* ENTRY DATA */
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
 
   PRIMARY KEY (`structure_id`,`city_id`),
   
@@ -226,6 +276,14 @@ CREATE TABLE `wg_techs` (
   `player_id` BIGINT UNSIGNED NOT NULL,
 
   `level` int(11) NOT NULL DEFAULT 0,
+  
+  `next_lev_gold_cost` int(11) NOT NULL,
+  `next_lev_steel_cost` int(11) NOT NULL,
+  `next_lev_oil_cost` int(11) NOT NULL DEFAULT 0,
+  
+   /* ENTRY DATA */
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
 
   PRIMARY KEY (`tech_id`,`player_id`),
   

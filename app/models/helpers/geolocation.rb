@@ -58,7 +58,7 @@ module Helpers
 
      destination_value = LatLng.new( Geolocation.rad2deg(end_lat), Geolocation.rad2deg(end_lng) )
      
-     return  { moving_from: from.to_a, moving_to: to.to_a, reached: destination_value.to_a, estimated_time: ( Geolocation.distance_between(from, to) / distance.to_f ) }
+     return { moving_from: from.to_a, moving_to: to.to_a, reached: destination_value.to_a, estimated_time_left: ( ( Geolocation.distance_between(destination_value, to) / distance.to_f ) * 3600 ).to_i }
    end
    
    protected
