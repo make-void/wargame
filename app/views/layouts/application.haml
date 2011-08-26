@@ -49,10 +49,17 @@
     
     // templates    
     
-    %script{ type: "text/template", id: "dialog-tmpl" }
+    %script{ type: "text/template", id: "armyDialog-tmpl" }
       :plain
-        %div.dialog
-          %p.name= ""
+        .dialog.army
+          %p.player.name= player.name
+          .commands
+            
+          
+    %script{ type: "text/template", id: "cityDialog-tmpl" }
+      :plain
+        .dialog.city
+          %p.name= city.name
           %p.player= player.name
           %p.population pop: x
           

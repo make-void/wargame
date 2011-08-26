@@ -13,21 +13,23 @@ ArmyMarker = LocationMarker.extend({
   initialize: function() {}
 });
 Dialog = Backbone.View.extend({
-  initialize: function(nil) {
-    var selector;
-    selector = "#dialog-tmpl";
+  initialize: function(selector) {
     return this.template = Haml($(selector).html());
   },
+  afterRender: function() {},
   render: function() {
     var content;
     content = this.template(this.model.attributes);
     $(this.el).html(content);
+    this.afterRender();
     return this;
   }
 });
 CityDialog = Dialog.extend({
   initialize: function() {
-    return Dialog.prototype.initialize(null);
+    var selector;
+    selector = "#cityDialog-tmpl";
+    return Dialog.prototype.initialize(selector);
   },
   label: function() {
     return city.name;
@@ -35,7 +37,15 @@ CityDialog = Dialog.extend({
 });
 ArmyDialog = Dialog.extend({
   initialize: function() {
-    return Dialog.prototype.initialize(null);
+    var selector;
+    selector = "#armyDialog-tmpl";
+    return Dialog.prototype.initialize(selector);
+  },
+  afterRender: function() {
+    var content, haml;
+    haml = Haml($("#armyActionsMenu-tmpl").html());
+    content = haml({});
+    return $(this.el).find(".commands").append(content);
   },
   label: function() {
     return player.name;
@@ -218,14 +228,14 @@ Map = (function() {
   };
   Map.prototype.attachArmyActionsMenu = function(marker) {};
   Map.prototype.attachDialog = function(marker, location) {
-    var content, dia, dialog, haml, model, _i, _len, _ref;
+    var content, dia, dialog, model, _i, _len, _ref;
     _ref = this.dialogs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       dia = _ref[_i];
       dia.close();
     }
     model = null;
-    dialog = marker.type === "army" ? (haml = Haml($("#armyActionsMenu-tmpl").html()), content = haml({}), model = new Army(location), new ArmyDialog({
+    dialog = marker.type === "army" ? (model = new Army(location), new ArmyDialog({
       model: model
     })) : (model = new City(location), new CityDialog({
       model: model
@@ -374,15 +384,11 @@ utils.parseCoords = function(string) {
 $(function() {
   var g, map;
   g = window;
-  g.anrmy = new Army({
+  g.army_test = new Army({
     asd: "lol"
   });
-  g.anrmyDialog = new ArmyDialog({
-    model: anrmy
-  });
-  $("#debug").append(anrmyDialog.render().el);
   g.armyMarker = new ArmyMarker({
-    model: anrmy
+    model: army_test
   });
   $("#debug").append(armyMarker.render().el);
   $("#nav li").hover(function() {

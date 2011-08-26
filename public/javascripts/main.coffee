@@ -20,12 +20,10 @@ $( ->
     
   # Debug     = Backbone.Model.extend {}
   
-  g.anrmy = new Army { asd: "lol" }
-  g.anrmyDialog = new ArmyDialog { model: anrmy }
-  $("#debug").append anrmyDialog.render().el
-  
-  
-  g.armyMarker = new ArmyMarker { model: anrmy }
+  g.army_test = new Army { asd: "lol" }
+  #  g.anrmyDialog = new ArmyDialog { model: anrmy }
+  #  $("#debug").append anrmyDialog.render().el
+  g.armyMarker = new ArmyMarker { model: army_test }
   $("#debug").append armyMarker.render().el
 
   # --------

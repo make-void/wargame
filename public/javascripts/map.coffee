@@ -155,8 +155,6 @@ class Map
     
     dialog = if marker.type == "army"
       # TODO: da disegnare al posto giusto
-      haml = Haml($("#armyActionsMenu-tmpl").html())
-      content = haml({})
       
       model = new Army location
       new ArmyDialog { model: model }
