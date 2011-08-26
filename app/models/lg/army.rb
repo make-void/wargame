@@ -25,9 +25,7 @@ module LG
     def debug_moving_tick( seconds = 3600 ) #TODO -> Add estimated time to res result, and make all the methods CLASS methods in the Geolocation class...
       
       distance_traveled = self.speed * (seconds/3600.to_f) #KM
-      res = Helpers::Geolocation.new( @army.location, @army.destination, distance_traveled )
-      res.move
-      return res.to_json
+      return ActiveSupport::JSON.encode( Helpers::Geolocation.move( @army.location, @army.destination, distance_traveled ) )
     end
     
     def capacity
@@ -54,7 +52,7 @@ module LG
       end  
     end
     
-    def consumption #TODO -> Check to reduce consumption if the speed is not MAX
+    def consumption
       count = 0
       army_speed = self.speed
       @units.each do |x|

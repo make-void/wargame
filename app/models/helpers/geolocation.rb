@@ -1,7 +1,5 @@
 module Helpers
-  class Geolocation
-    
-   attr_reader :from, :to, :result
+  module Geolocation
    
    PI_DIV_RAD = 0.0174
    KMS_PER_MILE = 1.609
@@ -13,6 +11,9 @@ module Helpers
    KMS_PER_LATITUDE_DEGREE = MILES_PER_LATITUDE_DEGREE * KMS_PER_MILE
    NMS_PER_LATITUDE_DEGREE = MILES_PER_LATITUDE_DEGREE * NMS_PER_MILE
    LATITUDE_DEGREES = EARTH_RADIUS_IN_MILES / MILES_PER_LATITUDE_DEGREE
+   
+   DEF_UNIT = :kms
+   DEF_FORMULA = :sphere
    
    class LatLng
      attr_accessor :lat, :lng
@@ -31,84 +32,83 @@ module Helpers
      def ==(other) ; other.is_a?(LatLng) ? self.lat == other.lat && self.lng == other.lng : false; end
      def hash ; lat.hash + lng.hash ; end
      def eql?(other) ; self == other ; end
+     def latitude ; @lat ; end
+     def longitude ; @lon ; end
          
    end
-   
-   def initialize( starting_point, ending_point, distance, options = {} )
-     @from = LatLng.new( starting_point.latitude, starting_point.longitude )
-     @to = LatLng.new( ending_point.latitude, ending_point.longitude )
-     @distance = distance.to_f
-     
-     @unit = options[:units] || :kms
-     @formula = options[:formula] || :sphere     
-   end
-   
-   
-   def move()
-     
-     radius = case @unit
+
+ 
+   def self.move( from, to, distance, unit = DEF_UNIT)
+     from = LatLng.new( from.latitude, from.longitude ) unless from.class == LatLng
+     to = LatLng.new( to.latitude, to.longitude ) unless to.class == LatLng
+
+     radius = case unit
        when :kms; EARTH_RADIUS_IN_KMS
        when :nms; EARTH_RADIUS_IN_NMS
        else EARTH_RADIUS_IN_MILES
      end
-     start = @from
-     lat = deg2rad( start.lat )
-     lng = deg2rad( start.lng )
-     heading = deg2rad( heading_between() )
+     start = from
+     lat = Geolocation.deg2rad( start.lat )
+     lng = Geolocation.deg2rad( start.lng )
+     heading = Geolocation.deg2rad( Geolocation.heading_between( from, to) )
      
-     end_lat = Math.asin( Math.sin(lat) * Math.cos(@distance/radius) + Math.cos(lat) * Math.sin(@distance/radius) * Math.cos(heading) )
+     end_lat = Math.asin( Math.sin(lat) * Math.cos(distance/radius) + Math.cos(lat) * Math.sin(distance/radius) * Math.cos(heading) )
 
-     end_lng = lng + Math.atan2( Math.sin(heading) * Math.sin(@distance/radius) * Math.cos(lat), Math.cos(@distance/radius) - Math.sin(lat) * Math.sin(end_lat) )
+     end_lng = lng + Math.atan2( Math.sin(heading) * Math.sin(distance/radius) * Math.cos(lat), Math.cos(distance/radius) - Math.sin(lat) * Math.sin(end_lat) )
 
-     @result = LatLng.new( rad2deg(end_lat), rad2deg(end_lng) )
-   end
-    
-   def to_json
-     ActiveSupport::JSON.encode( { moving_from: @from.to_a, moving_to: @to.to_a, reached: @result.to_a } )
+     destination_value = LatLng.new( Geolocation.rad2deg(end_lat), Geolocation.rad2deg(end_lng) )
+     
+     return  { moving_from: from.to_a, moving_to: to.to_a, reached: destination_value.to_a, estimated_time: ( Geolocation.distance_between(from, to) / distance.to_f ) }
    end
    
    protected
-   
-   def heading_between()
-     d_lng = deg2rad( @to.lng - @from.lng )
-     from_lat = deg2rad( @from.lat )
-     to_lat = deg2rad( @to.lat )
+
+   def self.heading_between( from, to )
+     from = LatLng.new( from.latitude, from.longitude ) unless from.class == LatLng
+     to = LatLng.new( to.latitude, to.longitude ) unless to.class == LatLng
+     
+     d_lng = Geolocation.deg2rad( to.lng - from.lng )
+     from_lat = Geolocation.deg2rad( from.lat )
+     to_lat = Geolocation.deg2rad( to.lat )
      y = Math.sin(d_lng) * Math.cos(to_lat)
      x = Math.cos(from_lat) * Math.sin(to_lat) - Math.sin(from_lat) * Math.cos(to_lat) * Math.cos(d_lng)
-     heading = to_heading( Math.atan2(y,x) )
+     heading = Geolocation.to_heading( Math.atan2(y,x) )
    end
    
-   def distance_between()
-     return 0.0 if @from == @to # fixes a "zero-distance" bug
-     case @formula
+   def self.distance_between( from, to, formula = DEF_FORMULA)
+     from = LatLng.new( from.latitude, from.longitude ) unless from.class == LatLng
+     to = LatLng.new( to.latitude, to.longitude ) unless to.class == LatLng
+     
+     return 0.0 if from == to # fixes a "zero-distance" bug
+     case formula
      when :sphere
        begin
          units_sphere_multiplier() *
-             Math.acos( Math.sin( deg2rad( @from.lat ) ) * Math.sin( deg2rad( @to.lat ) ) +
-             Math.cos( deg2rad( @from.lat ) ) * Math.cos( deg2rad( @to.lat ) ) *
-             Math.cos( deg2rad( @to.lng ) - deg2rad( @from.lng ) ) )
+             Math.acos( Math.sin( deg2rad( from.lat ) ) * Math.sin( Geolocation.deg2rad( to.lat ) ) +
+             Math.cos( Geolocation.deg2rad( from.lat ) ) * Math.cos( Geolocation.deg2rad( to.lat ) ) *
+             Math.cos( Geolocation.deg2rad( to.lng ) - Geolocation.deg2rad( from.lng ) ) )
        rescue Errno::EDOM
          0.0
        end
      when :flat
-       Math.sqrt( ( units_per_latitude_degree() * ( @from.lat - @to.lat ) )**2 + ( units_per_longitude_degree( @from.lat ) * ( @from.lng - @to.lng ) )**2 )
+       Math.sqrt( ( Geolocation.units_per_latitude_degree() * ( from.lat - to.lat ) )**2 + ( Geolocation.units_per_longitude_degree( from.lat ) * ( from.lng - to.lng ) )**2 )
      end
    end
    
-   def deg2rad(degrees)
+   def self.deg2rad(degrees)
      degrees.to_f / 180.0 * Math::PI
    end
   
-   def rad2deg(rad)
+   def self.rad2deg(rad)
      rad.to_f * 180.0 / Math::PI
    end
    
-   def to_heading(rad)
-     (rad2deg(rad)+360)%360
+   def self.to_heading(rad)
+     (Geolocation.rad2deg(rad)+360)%360
    end
    
-   def units_sphere_multiplier()
-     case @unit
+   def self.units_sphere_multiplier(unit = DEF_UNIT)
+     case unit
        when :kms; EARTH_RADIUS_IN_KMS
        when :nms; EARTH_RADIUS_IN_NMS
        else EARTH_RADIUS_IN_MILES
@@ -116,8 +116,8 @@ module Helpers
    end
    
    # Returns the number of units per latitude degree.
-   def units_per_latitude_degree()
-     case @unit
+   def self.units_per_latitude_degree(unit = DEF_UNIT)
+     case unit
        when :kms; KMS_PER_LATITUDE_DEGREE
        when :nms; NMS_PER_LATITUDE_DEGREE
        else MILES_PER_LATITUDE_DEGREE
@@ -125,9 +125,9 @@ module Helpers
    end
    
    # Returns the number units per longitude degree.
-   def units_per_longitude_degree(lat)
+   def self.units_per_longitude_degree(lat, unit = DEF_UNIT)
      miles_per_longitude_degree = (LATITUDE_DEGREES * Math.cos(lat * PI_DIV_RAD)).abs
-     case @unit
+     case unit
        when :kms; miles_per_longitude_degree * KMS_PER_MILE
        when :nms; miles_per_longitude_degree * NMS_PER_MILE
        else miles_per_longitude_degree

@@ -19,9 +19,3 @@ module DB # Database
 
   end
 end
-
-# properties:
-#
-# id
-# location_id
-# ...
