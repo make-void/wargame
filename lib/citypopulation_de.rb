@@ -2,14 +2,33 @@ class Deh
   
   require 'mechanize'
   require 'pp'
+  require 'json'
+
+  PATH = File.expand_path "../", __FILE__
   
   HOST = "http://www.citypopulation.de"
   
   HOME = "Europe.html"
+
+  COUNTRY_SKIP_FROM = 1000 # final
+  # REGION_SKIP_FROM = 1 # testing
+  REGION_SKIP_FROM = 10000 # final
   
-  COUNTRY_SKIP_FROM = 1000 # testing
-  REGION_SKIP_FROM = 1 # testing
-  # SKIP_FROM = 10000 # final
+  
+  # IMPORTANT: countries that are MISSING
+  # ---
+
+  # with door page
+  #   Greece 
+  #   Finland 
+  #
+  # without door page
+  #   Estonia 
+  #   Bosnia and Hercegovina
+  #   Belarus
+  #   Albania
+  
+  # ---
   
   def initialize
     @agent = Mechanize.new
@@ -31,7 +50,11 @@ class Deh
         cities << get_cities(region)
       end
     end
-    cities.flatten
+    cities.flatten!
+    
+    puts cities.count
+    puts "writing it down!"
+    File.open("#{PATH}/cities.json", "w"){ |f| f.write cities.to_json }
   end
   
   private
@@ -46,14 +69,16 @@ class Deh
     page.search("table#ts tr").each do |tr|
       tds = tr.search("td").map { |td| td.inner_text }
       # pp tds
-      cities << tds
+      name = tds[0]
+      pop = tds[5].to_i != 0 ? tds[5] : tds[4]
+      #puts "CITY: #{name}\t\t\t\t\t\t\t\t#{pop} [#{region[:country]}]"
+      cities << { name: name, pop: pop, region: region}
     end
     cities
 
-    puts "-"*80    
-    puts "CITIES OF REGION: #{region}"
-    puts cities.inspect
-    puts "-"*80
+    # puts "CITIES OF REGION: #{region}"
+    # puts cities.inspect
+    # puts "-"*80
   end
   
   def get_regions(country)
@@ -69,11 +94,16 @@ class Deh
     
     # puts page.body
     regions = []
-    page.search(".cindex .mcol:last a").each do |region|
+    reg_elems = page.search(".cindex .mcol:last a")
+
+
+    reg_elems.each do |region|
       name = region.inner_text 
       url = region["href"]
-      regions << { name: name, url: url }
+      regions << { name: name, url: url, country: country[:name] }
     end
+    
+    puts "COUNTRY: #{country[:name]} DOESNT HAZ CITIES" if regions == []
     regions
   end
   
