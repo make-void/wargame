@@ -28,6 +28,12 @@ USAGE TYPE: Personal/Non-commercial Only
 
 --> http://api.wolframalpha.com/v2/query?input=Population%20Florence%20Italy%20City,%20Rome%20Italy%20City&format=plaintext&appid=77XU86-HYJKA4U5V9&includepodid=MetroPopulation:CityDatac
 
+### BUGFIX:
+
+- su iOs e Android quando scrolli la mappa non carica le location (ne la mappa?) se non lasci il dito (gestire eventi multitouch)
+
+- ingrandire il tasto close dei dialog
+
 ### TODO:
 
 - Signup and Choice of the Capital...

@@ -3,6 +3,8 @@ class Map
   constructor: ->
     @markerZoomMin = 7    
     @max_simultaneous_markers = 600
+    # @max_simultaneous_markers = 200 # if iPad || iPhone v => 4 || Android v >= 3
+    # @max_simultaneous_markers = 100 # if iPhone v <= 3 || Android v <= 2
     @dialogs = []
     @markers = []
     @defaultZoom = 5

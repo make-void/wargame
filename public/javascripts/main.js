@@ -1,7 +1,16 @@
-var Alliance, Army, ArmyDialog, ArmyMarker, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, Player, Upgrade, utils;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var ArmyMarker, CityMarker, LocationMarker;
 LocationMarker = Backbone.View.extend({
   initialize: function() {},
+  render: function() {
+    return this;
+  }
+});
+CityMarker = LocationMarker.extend({
+  initialize: function() {}
+});
+ArmyMarker = LocationMarker.extend({
+  initialize: function() {}
+});on() {},
   render: function() {
     return this;
   }
@@ -385,6 +394,7 @@ Map = (function() {
     });
   };
   return Map;
+})();;
 })();
 utils = {};
 utils.parseCoords = function(string) {
