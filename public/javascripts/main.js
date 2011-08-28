@@ -205,7 +205,7 @@ Map = (function() {
   };
   Map.prototype.city_image = function(pop) {
     var final_size, size, sizes, _i, _len;
-    sizes = [20000, 10000, 6000, 4000, 0];
+    sizes = [150000, 50000, 30000, 12000, 0];
     size = sizes[-1];
     for (_i = 0, _len = sizes.length; _i < _len; _i++) {
       size = sizes[_i];

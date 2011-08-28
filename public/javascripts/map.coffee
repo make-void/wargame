@@ -98,11 +98,11 @@ class Map
   
   city_image: (pop) ->
     sizes = [
-      20000,
-      10000, 
-      6000,
-      4000,
-      0 # 3000
+      150000,
+      50000, 
+      30000,
+      12000,
+      0 # 6000
     ]
     size = sizes[-1]
     
@@ -122,6 +122,7 @@ class Map
     city_image = "http://" + http_host + "/images/map_icons/city_enemy.png"
     army_image = "http://" + http_host + "/images/map_icons/army_ally.png"
     
+    # TODO: reuse the same markers
     marker = new google.maps.Marker({
       position: latLng,
       map: @map,
