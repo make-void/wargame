@@ -1,6 +1,7 @@
-class LocationsController < ApplicationController
+class LocationsController < ActionController::Base
   
   # TODO: move in a separate rack app for speed
+  include ActionController::Rendering
 
   def index
     lat, lng = [params[:lat].to_f, params[:lng].to_f]

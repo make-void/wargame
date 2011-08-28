@@ -1,7 +1,7 @@
 module LG # Logic
   class Location
 
-    CITY_LIMIT = 50
+    CITY_LIMIT = 30
        
     #Esample Usage
     #LG::Location.get_near( { type: "City" }, {latitude: 1.0102939, longitude: 49.198198, radius: 50} )
