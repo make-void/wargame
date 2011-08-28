@@ -61,7 +61,9 @@
         .dialog.city
           %p.name= city.name
           %p.player= player.name
-          %p.population pop: x
+          %p.population 
+            pop: 
+            = city.pts
           
           
     %script{ type: "text/template", id: "armyActionsMenu-tmpl" }    

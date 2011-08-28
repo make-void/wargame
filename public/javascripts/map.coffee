@@ -95,7 +95,24 @@ class Map
     )
 
 
-
+  
+  city_image: (pop) ->
+    sizes = [
+      20000,
+      10000, 
+      6000,
+      4000,
+      0 # 3000
+    ]
+    size = sizes[-1]
+    
+    for size in sizes
+      if pop >= size
+        final_size = _.indexOf(sizes, size)
+        break
+    
+    "http://" + http_host + "/images/map_icons/city_enemy"+final_size+".png"
+        
   doMarkerDrawing: (data) ->
     console.log "ERROR: marker without lat,lng" unless data.latitude
     
@@ -104,6 +121,7 @@ class Map
     # image = "http://"+http_host+"/images/cross_red.png"
     city_image = "http://" + http_host + "/images/map_icons/city_enemy.png"
     army_image = "http://" + http_host + "/images/map_icons/army_ally.png"
+    
     marker = new google.maps.Marker({
       position: latLng,
       map: @map,
@@ -117,7 +135,14 @@ class Map
       marker.name = data.city.name
       marker.city = data.city
       marker.army = undefined
-      marker.icon = city_image
+      
+      # TODO: this doesnt works, figure out why!
+      #
+      # size = google.maps.Size(90, 59)
+      # sizeScale = google.maps.Size(180, 118)
+      # city_image = new google.maps.MarkerImage(city_image, null, null, null, sizeScale)
+      marker.icon = this.city_image data.city.pts
+      
       marker.type = "city"
       data.type = "city"
     else

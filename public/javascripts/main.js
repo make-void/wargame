@@ -203,6 +203,19 @@ Map = (function() {
       return this.callback(markers);
     }, this));
   };
+  Map.prototype.city_image = function(pop) {
+    var final_size, size, sizes, _i, _len;
+    sizes = [20000, 10000, 6000, 4000, 0];
+    size = sizes[-1];
+    for (_i = 0, _len = sizes.length; _i < _len; _i++) {
+      size = sizes[_i];
+      if (pop >= size) {
+        final_size = _.indexOf(sizes, size);
+        break;
+      }
+    }
+    return "http://" + http_host + "/images/map_icons/city_enemy" + final_size + ".png";
+  };
   Map.prototype.doMarkerDrawing = function(data) {
     var army_image, city_image, latLng, marker, that;
     if (!data.latitude) {
@@ -221,7 +234,7 @@ Map = (function() {
       marker.name = data.city.name;
       marker.city = data.city;
       marker.army = void 0;
-      marker.icon = city_image;
+      marker.icon = this.city_image(data.city.pts);
       marker.type = "city";
       data.type = "city";
     } else {

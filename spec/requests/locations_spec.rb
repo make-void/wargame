@@ -29,6 +29,7 @@ describe "Locations" do
           city[:id].should be_a(Integer)
           city[:id].should_not  be(0)
           city[:name].should be_a(String)
+          city[:pts].should be_a(Integer)
         end
 
         # FIXME: move this in a request with armies to be sure we have an army        
@@ -60,9 +61,9 @@ describe "Locations" do
       
     end
     
-    it "locations/:lat/:lng/cities"
-    
-    it "locations/:lat/:lng/cities"
+    # it "locations/:lat/:lng/cities"
+    # 
+    # it "locations/:lat/:lng/cities"
     
   end
 
