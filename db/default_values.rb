@@ -1,4 +1,6 @@
 module DefaultValues
+
+  PTS_FILTER = 3000 # cities with population > 3000 (9028 cities)
   
   def create_default_vals
 

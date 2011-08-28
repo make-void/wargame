@@ -1,5 +1,7 @@
 module LG # Logic
   class Location
+
+    CITY_LIMIT = 50
        
     #Esample Usage
     #LG::Location.get_near( { type: "City" }, {latitude: 1.0102939, longitude: 49.198198, radius: 50} )
@@ -8,7 +10,7 @@ module LG # Logic
       lng = position_hash[:longitude]
       radius = position_hash[:radius]
 
-      cities = View::CityLocation.where( where_clause ).near([lat, lng], radius)
+      cities = View::CityLocation.where( where_clause ).near([lat, lng], radius).limit CITY_LIMIT
       armies = View::ArmyLocation.where( where_clause ).near([lat, lng], radius) ## We Can add in future HERE the rules for FOW
       
       locs =  cities.map{|loc| parse_location(loc) }

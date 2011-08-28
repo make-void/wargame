@@ -83,6 +83,7 @@ class Deh
         name.gsub!(/\s+/, " ")
         pop = tds[5].to_i != 0 ? tds[5] : tds[4]
         #puts "CITY: #{name}\t\t\t\t\t\t\t\t#{pop} [#{region[:country]}]"
+        # TODO: import district, should be fun!!!
         cities << { name: name, pop: pop, region: region}
       end
     end

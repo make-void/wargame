@@ -30,20 +30,25 @@ def step_1
   puts `wc -l europe_cities.txt`
 end
 
-def import(line)
+def import(city)
   # ad,aixas,Aix‡s,06,,42.4833333,1.4666667
-  split = line.split(",")
-  ccode, name, lat, lng = split[0], split[2], split[5], split[6]
-
-  begin
+  ccode, name, pop, lat, lng = city.split(",")
+  # begin
     loc = DB::Location.create latitude: lat.to_f, longitude: lng.to_f 
-    loc = DB::Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f}) if loc.id.nil? #AR VALIDATION
-  rescue ActiveRecord::RecordNotUnique #DB VALIDATION
-    loc = DB::Location.find(:first, :conditions => {latitude: lat.to_f, longitude: lng.to_f})
-    raise "Error... No Location for #{lat.to_f} - #{lng.to_f}" if loc.nil?
-  end
+    
+    # SORRY, no time for this, prefilter out taking the most populated location
+    
+    #   loc = DB::Location.find(:first, :conditions => {latitude: city["lat"].to_f, longitude: city["lng"].to_f}) if loc.id.nil? #AR VALIDATION
+    # rescue ActiveRecord::RecordNotUnique #DB VALIDATION
+    #   loc = DB::Location.find(:first, :conditions => {latitude: city["lat"].to_f, longitude: city["lng"].to_f})
+    #   raise "Error... No Location for #{city["lat"].to_f} - #{city["lng"].to_f}" if loc.nil?
+    # end
   
-  DB::City.create name: name, ccode: ccode, location_id: loc.id, player_id: 1
+  if loc.id.nil?
+    # puts "not inserted: #{name}" 
+  else
+    DB::City.create name: name, ccode: ccode, location_id: loc.id, player_id: 1, pts: pop
+  end
 end
 
 # http://products.wolframalpha.com/api/explorer.html - 20k cities per account per month
@@ -51,6 +56,7 @@ end
 
 require "#{PATH}/db/default_values"
 include DefaultValues
+`unzip #{PATH}/db/cities_pop.json.zip`
 
 
 def step_2
@@ -61,11 +67,13 @@ def step_2
   # batch = 10
   # lines = []
   num = 0
-  File.open("#{PATH}/db/europe_cities.txt").each_line do |line|
+  
+  cities = JSON.parse File.read("#{PATH}/db/cities_pop.json")
+  cities.each do |city|
     num += 1
     #batching(batch, lines, num)
-    next unless num % 100 == 0
-    import line
+    #next unless num % 100 == 0
+    import city
 #    break if num == 50
   end
   

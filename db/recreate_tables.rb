@@ -329,6 +329,7 @@ qs << "CREATE OR REPLACE VIEW wg_v_army_unit AS
    ORDER BY army_id;
 "
 
+
 qs << "CREATE OR REPLACE VIEW wg_v_city_locations AS
    SELECT 
     loc.location_id AS location_id,
@@ -350,6 +351,7 @@ qs << "CREATE OR REPLACE VIEW wg_v_city_locations AS
       ON city.player_id = player.player_id
    LEFT OUTER JOIN wg_alliances ally
       ON player.alliance_id = ally.alliance_id
+   WHERE pts > #{PTS_FILTER}
    ORDER BY location_id;
 "
 
