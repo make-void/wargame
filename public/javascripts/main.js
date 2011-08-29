@@ -152,7 +152,7 @@ Map = (function() {
     return this.map = new google.maps.Map(mapDiv, {
       center: new google.maps.LatLng(this.center_lat, this.center_lng),
       zoom: this.zoom,
-      mapTypeId: google.maps.MapTypeId.TERRAIN,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
       disableDefaultUI: true,
       navigationControl: true,
       navigationControlOptions: {

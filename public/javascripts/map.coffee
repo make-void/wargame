@@ -48,8 +48,8 @@ class Map
     @map = new google.maps.Map( mapDiv, {
       center: new google.maps.LatLng(@center_lat, @center_lng),
       zoom: @zoom,
-      #mapTypeId: google.maps.MapTypeId.ROADMAP,
-      mapTypeId: google.maps.MapTypeId.TERRAIN,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      #mapTypeId: google.maps.MapTypeId.TERRAIN,
       disableDefaultUI: true,
       navigationControl: true,
       navigationControlOptions: {
