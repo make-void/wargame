@@ -7,10 +7,10 @@ utils.parseCoords = (string) ->
   return [split[0], split[1]]
 
 #use console.log safely
-`
-(function(b){function c(){}for(var d="assert,count,debug,dir,dirxml,error,exception,group,groupCollapsed,groupEnd,info,log,timeStamp,profile,profileEnd,time,timeEnd,trace,warn".split(","),a;a=d.pop();){b[a]=b[a]||c}})((function(){try
-{console.log();return window.console;}catch(err){return window.console={};}})());
-`
+unless console
+  console = {} 
+  console.log = {}
+
 
 $( ->
   g = window # makes the variable global (so you can test it in console an you can call it from outside jquery domready)
@@ -29,7 +29,7 @@ $( ->
   # --------
   # unit
 
-
+  
   # --------
   # nav
   
@@ -52,7 +52,8 @@ $( ->
   # --------
   # map
   
-  map = new Map
+  
+  g.map = new Map
   map.draw()
   #map.dialogs()
   map.loadMarkers()
@@ -61,6 +62,25 @@ $( ->
   map.startFetchingMarkers()
   #map.overlay()
   map.autoSize()
+  
+  $(window).oneTime(1000, ->
+    army = null
+    for marker in map.markers
+      # console.log marker
+      if marker.type == "army"
+        army = marker          
+        break
+
+    # console.log "loc:", army.dialog.el
+    
+    
+    # TODO: delete me?
+    #
+
+    # window.arm = army
+    # army.dialog.render()
+    # $(army.dialog.el).find(".move").trigger("click")
+  )
   
 
   #if navigator.userAgent.match("iPad")

@@ -1,7 +1,6 @@
-var Alliance, Army, ArmyDialog, ArmyMarker, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, Player, Upgrade, utils;
+var Alliance, Army, ArmyDialog, ArmyMarker, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, Player, UI, Upgrade, console, utils;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 LocationMarker = Backbone.View.extend({
-  initialize: function() {},
   render: function() {
     return this;
   }
@@ -9,9 +8,7 @@ LocationMarker = Backbone.View.extend({
 CityMarker = LocationMarker.extend({
   initialize: function() {}
 });
-ArmyMarker = LocationMarker.extend({
-  initialize: function() {}
-});
+ArmyMarker = LocationMarker.extend();
 Dialog = Backbone.View.extend({
   initialize: function(selector) {
     return this.template = Haml($(selector).html());
@@ -39,6 +36,30 @@ GameState = {
   current: "browse",
   states: ["browse", "move", "attack"]
 };
+UI = {};
+UI.moving = {};
+UI.moving.show = function(location) {
+  var line, loc, map, mapListen;
+  line = null;
+  mapListen = $("#map_canvas").bind;
+  mapListen = google.maps.event.addListener;
+  map = window.map.map;
+  loc = location.attributes;
+  return mapListen(map, "mousemove", function(evt) {
+    var points;
+    points = [new google.maps.LatLng(loc.latitude, loc.longitude), new google.maps.LatLng(evt.latLng.Oa, evt.latLng.Pa)];
+    if (line) {
+      line.setMap(null);
+    }
+    line = new google.maps.Polyline({
+      path: points,
+      strokeColor: "#FF0000",
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+    return line.setMap(map);
+  });
+};
 ArmyDialog = Dialog.extend({
   initialize: function() {
     var selector;
@@ -46,8 +67,11 @@ ArmyDialog = Dialog.extend({
     return Dialog.prototype.initialize(selector);
   },
   activateButtons: function() {
+    var model;
+    model = this.model;
     $(this.el).find(".move").bind('click', function() {
       console.log("moving");
+      UI.moving.show(model);
       return GameState.current = "move";
     });
     return $(this.el).find(".attack").bind('click', function() {
@@ -113,6 +137,7 @@ Map = (function() {
     this.dialogs = [];
     this.markers = [];
     this.defaultZoom = 5;
+    this.map = null;
   }
   Map.prototype.set_default_coords = function() {
     this.center_lat = this.default_center_lat = 47.2;
@@ -124,8 +149,8 @@ Map = (function() {
       this.center_lng = parseFloat(localStorage.center_lng);
     } else {
       this.set_default_coords();
-      localStorage.center_lat = this.center_lat;
-      localStorage.center_lng = this.center_lng;
+      localStorage.center_lat = this.default_center_lat;
+      localStorage.center_lng = this.default_center_lng;
     }
     if (localStorage.zoom) {
       return this.zoom = parseInt(localStorage.zoom);
@@ -191,7 +216,7 @@ Map = (function() {
     }
     this.markersCleanMax();
     center = this.map.getCenter();
-    return $.getJSON("/locations/" + center.Oa + "/" + center.Pa, __bind(function(data) {
+    return $.getJSON("/locations/" + (center.lat()) + "/" + (center.lng()), __bind(function(data) {
       var marker, markers, _i, _len, _ref;
       markers = [];
       _ref = data.locations;
@@ -229,7 +254,6 @@ Map = (function() {
       map: this.map,
       player: data.player
     });
-    window.dtt = data;
     if (data.city !== void 0) {
       marker.name = data.city.name;
       marker.city = data.city;
@@ -245,17 +269,27 @@ Map = (function() {
       marker.type = "army";
       data.type = "army";
     }
+    marker.data = data;
+    marker.model = null;
+    marker.dialog = null;
+    if (marker.type === "army") {
+      marker.model = new Army(data);
+      marker.dialog = new ArmyDialog({
+        model: marker.model
+      });
+    } else {
+      marker.model = new City(data);
+      marker.dialog = new CityDialog({
+        model: marker.model
+      });
+    }
     this.markers.push(marker);
     that = this;
     return google.maps.event.addListener(marker, 'click', function() {
-      that.attachDialog(marker, data);
-      if (marker.type === "army") {
-        return that.attachArmyActionsMenu(marker);
-      }
+      return that.attachDialog(marker);
     });
   };
-  Map.prototype.attachArmyActionsMenu = function(marker) {};
-  Map.prototype.attachDialog = function(marker, location) {
+  Map.prototype.attachDialog = function(marker) {
     var content, dia, dialog, model, _i, _len, _ref;
     _ref = this.dialogs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -263,12 +297,7 @@ Map = (function() {
       dia.close();
     }
     model = null;
-    dialog = marker.type === "army" ? (model = new Army(location), new ArmyDialog({
-      model: model
-    })) : (model = new City(location), new CityDialog({
-      model: model
-    }));
-    content = dialog.render().el;
+    content = marker.dialog.render().el;
     dialog = new InfoBubble({
       content: content,
       shadowStyle: 1,
@@ -321,9 +350,9 @@ Map = (function() {
     return google.maps.event.addListenerOnce(this.map, "bounds_changed", __bind(function() {
       var center;
       center = this.map.getCenter();
-      localStorage.center_lat = center.Oa;
-      localStorage.center_lng = center.Pa;
-      this.listen_to_bounds();
+      localStorage.center_lat = center.lat();
+      localStorage.center_lng = center.lng();
+      setTimeout(this.listen_to_bounds, 50);
       return $(window).trigger("boundszoom_changed");
     }, this));
   };
@@ -375,27 +404,32 @@ Map = (function() {
     return line.setMap(this.map);
   };
   Map.prototype.startFetchingMarkers = function() {
-    var self, time2;
-    self = this;
-    time2 = new Date();
-    this.timer = new Date();
-    $(window).bind("boundszoom_changed", function() {
-      var time;
-      time = new Date() - self.timer;
+    return google.maps.event.addListener(this.map, 'tilesloaded', __bind(function() {
+      var self, time2;
+      self = this;
       time2 = new Date();
-      if (time > 1000) {
-        self.loadMarkers();
+      this.timer = new Date();
+      $(window).bind("boundszoom_changed", function() {
+        var time;
+        time = new Date() - self.timer;
         time2 = new Date();
-        return self.timer = new Date();
-      }
-    });
-    return $(window).everyTime(1500, function(i) {
-      var time3;
-      time3 = new Date() - time2;
-      if (time3 > 1000 && time3 < 2000) {
-        return self.loadMarkers();
-      }
-    });
+        if (time > 1000) {
+          self.loadMarkers();
+          time2 = new Date();
+          return self.timer = new Date();
+        }
+      });
+      return $(window).everyTime(1500, function(i) {
+        var time3;
+        time3 = new Date() - time2;
+        if (time3 > 1000 && time3 < 2000) {
+          return self.loadMarkers();
+        }
+      });
+    }, this));
+  };
+  Map.prototype.raise = function(message) {
+    return console.log("Exception: ", message);
   };
   return Map;
 })();
@@ -405,12 +439,12 @@ utils.parseCoords = function(string) {
   split = string.replace(/\s/, '').split(",");
   return [split[0], split[1]];
 };
-
-(function(b){function c(){}for(var d="assert,count,debug,dir,dirxml,error,exception,group,groupCollapsed,groupEnd,info,log,timeStamp,profile,profileEnd,time,timeEnd,trace,warn".split(","),a;a=d.pop();){b[a]=b[a]||c}})((function(){try
-{console.log();return window.console;}catch(err){return window.console={};}})());
-;
+if (!console) {
+  console = {};
+  console.log = {};
+}
 $(function() {
-  var g, map;
+  var g;
   g = window;
   g.army_test = new Army({
     asd: "lol"
@@ -431,10 +465,24 @@ $(function() {
     map.center(coords[0], coords[1]);
     return false;
   });
-  map = new Map;
+  g.map = new Map;
   map.draw();
   map.loadMarkers();
   map.listen();
   map.startFetchingMarkers();
-  return map.autoSize();
+  map.autoSize();
+  return $(window).oneTime(1000, function() {
+    var army, marker, _i, _len, _ref, _results;
+    army = null;
+    _ref = map.markers;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      marker = _ref[_i];
+      if (marker.type === "army") {
+        army = marker;
+        break;
+      }
+    }
+    return _results;
+  });
 });

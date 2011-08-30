@@ -255,7 +255,8 @@ body.game h1 {
   border: 2px solid #999999;
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
-  border-radius: 8px; }
+  border-radius: 8px;
+  width: 400px; }
   #debug:hover {
     z-index: 2; }
   #debug div {

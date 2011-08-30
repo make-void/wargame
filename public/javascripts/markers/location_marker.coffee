@@ -1,6 +1,4 @@
-LocationMarker  = Backbone.View.extend(
-  initialize: () ->
-    
+LocationMarker  = Backbone.View.extend(    
   render: ->
     
     this 

@@ -8,6 +8,7 @@ class Map
     @dialogs = []
     @markers = []
     @defaultZoom = 5
+    @map = null
     
   set_default_coords: ->
     @center_lat = @default_center_lat = 47.2
@@ -21,8 +22,8 @@ class Map
       @center_lng = parseFloat localStorage.center_lng
     else
       this.set_default_coords()
-      localStorage.center_lat = @center_lat
-      localStorage.center_lng = @center_lng
+      localStorage.center_lat = @default_center_lat
+      localStorage.center_lng = @default_center_lng
       
     if localStorage.zoom
       @zoom = parseInt localStorage.zoom
@@ -78,23 +79,17 @@ class Map
   loadMarkers: (callback) ->
     return if localStorage.zoom < @markerZoomMin
     this.markersCleanMax()
-    
-    
+
     center = @map.getCenter()    
-    # console.log(center)
-    $.getJSON("/locations/#{center.Oa}/#{center.Pa}", (data) =>
+    $.getJSON("/locations/#{center.lat()}/#{center.lng()}", (data) =>
       markers = []
-      
       for marker in data.locations
         markers.push marker
-
-      
+    
       @timer = new Date()    
       this.callback(markers)
       #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
     )
-
-
   
   city_image: (pop) ->
     sizes = [
@@ -130,8 +125,6 @@ class Map
     })
     
   
-    window.dtt = data
-  
     unless data.city == undefined
       marker.name = data.city.name
       marker.city = data.city
@@ -153,22 +146,38 @@ class Map
       marker.icon = army_image
       marker.type = "army"
       data.type = "army"
-      
+    
+    marker.data = data ## TODO: THA SOLUTION! put data inside marker or backbone model
+    
+    
+    marker.model  = null
+    marker.dialog = null
+    
+    
+    
+    if marker.type == "army"
+      # TODO: da disegnare al posto giusto
+      marker.model = new Army data
+      marker.dialog = new ArmyDialog { model: marker.model }
+    else  
+      marker.model = new City data
+      marker.dialog = new CityDialog { model: marker.model }
+    
+    
     @markers.push marker
+    
     # TODO: pass more datas
+    
     
     that = this
     google.maps.event.addListener(marker, 'click', ->
-      that.attachDialog(marker, data)
-      that.attachArmyActionsMenu(marker) if marker.type == "army"
+      that.attachDialog(marker)
     )
     #console.log(latLng)
     
-  attachArmyActionsMenu: (marker) ->
-    # console.log(marker)
     
     
-  attachDialog: (marker, location) ->
+  attachDialog: (marker) ->
     for dia in this.dialogs
       dia.close()
       
@@ -181,16 +190,10 @@ class Map
     # content += "</div>"
     model  = null
     
-    dialog = if marker.type == "army"
-      # TODO: da disegnare al posto giusto
-      
-      model = new Army location
-      new ArmyDialog { model: model }
-    else  
-      model = new City location
-      new CityDialog { model: model }
     
-    content = dialog.render().el
+    
+    content = marker.dialog.render().el
+
     #console.log model
     # console.log content
     
@@ -247,10 +250,12 @@ class Map
   listen_to_bounds: ->
     google.maps.event.addListenerOnce(@map, "bounds_changed", =>
       center = @map.getCenter()
-      # console.log(center)
-      localStorage.center_lat = center.Oa
-      localStorage.center_lng = center.Pa     
-      this.listen_to_bounds()  
+
+      localStorage.center_lat = center.lat()
+      localStorage.center_lng = center.lng()    
+      
+      setTimeout(this.listen_to_bounds, 50)
+    
       $(window).trigger "boundszoom_changed"
     )
   
@@ -302,27 +307,32 @@ class Map
 
 
   startFetchingMarkers: -> # when latchanges
-    self = this
-    
-    time2 = new Date()
-    @timer = new Date()
-    
-    $(window).bind("boundszoom_changed", ->
-      time = new Date() - self.timer   
+    google.maps.event.addListener(@map, 'tilesloaded', =>
+      
+      self = this
       time2 = new Date()
-      if time > 1000
-        self.loadMarkers()
+      @timer = new Date()    
+      $(window).bind("boundszoom_changed", ->
+        time = new Date() - self.timer   
         time2 = new Date()
-        self.timer = new Date()
+        if time > 1000
+          self.loadMarkers()
+          time2 = new Date()
+          self.timer = new Date()
+      )
+    
+      $(window).everyTime(1500, (i) ->
+        time3 = new Date() - time2
+        if time3 > 1000 && time3 < 2000
+          self.loadMarkers() 
+      )
+      
     )
     
-    $(window).everyTime(1500, (i) ->
-      time3 = new Date() - time2
-      if time3 > 1000 && time3 < 2000
-        self.loadMarkers() 
-    )
-    
-    
+  # exceptions
+  
+  raise: (message) ->
+    console.log "Exception: ", message    
 
       
 

@@ -1,4 +1,3 @@
 ArmyMarker  = LocationMarker.extend(
-  initialize: () ->
     
 )
