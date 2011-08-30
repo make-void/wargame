@@ -352,8 +352,10 @@ Map = (function() {
       center = this.map.getCenter();
       localStorage.center_lat = center.lat();
       localStorage.center_lng = center.lng();
-      this.listen_to_bounds();
-      return $(window).trigger("boundszoom_changed");
+      return setTimeout(__bind(function() {
+        this.listen_to_bounds();
+        return $(window).trigger("boundszoom_changed");
+      }, this), 50);
     }, this));
   };
   Map.prototype.clearMarkers = function() {

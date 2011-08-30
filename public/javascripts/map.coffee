@@ -254,9 +254,10 @@ class Map
       localStorage.center_lat = center.lat()
       localStorage.center_lng = center.lng()    
       
-      this.listen_to_bounds()
-      $(window).trigger "boundszoom_changed"
-
+      setTimeout( => 
+        this.listen_to_bounds()
+        $(window).trigger "boundszoom_changed"
+      , 50)
     
       
     )
