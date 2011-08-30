@@ -16,13 +16,9 @@ $( ->
   g = window # makes the variable global (so you can test it in console an you can call it from outside jquery domready)
   
   # --------
-  # construct models & views
+  # demo of constructing a model & a views
     
-  # Debug     = Backbone.Model.extend {}
-  
   g.army_test = new Army { asd: "lol" }
-  #  g.anrmyDialog = new ArmyDialog { model: anrmy }
-  #  $("#debug").append anrmyDialog.render().el
   g.armyMarker = new ArmyMarker { model: army_test }
   $("#debug").append armyMarker.render().el
 
@@ -49,20 +45,6 @@ $( ->
     return false
   )
   
-  # --------
-  # map
-  
-  
-  g.map = new Map
-  map.draw()
-  #map.dialogs()
-  map.loadMarkers()
-  map.listen()
-  #map.clickInfo()
-  map.startFetchingMarkers()
-  #map.overlay()
-  map.autoSize()
-  
   $(window).oneTime(1000, ->
     army = null
     for marker in map.markers
@@ -82,8 +64,21 @@ $( ->
     # $(army.dialog.el).find(".move").trigger("click")
   )
   
+  # --------
+  # map
+  
+  
+  g.map = new Map
+  map.draw()
+  #map.dialogs()
+  map.loadMarkers()
+  map.listen()
+  #map.clickInfo()
+  map.startFetchingMarkers()
+  #map.overlay()
+  map.autoSize()
+  
+  # map.debug()
 
-  #if navigator.userAgent.match("iPad")
-  
-  
+  #note: if (navigator.userAgent.match("iPad")) ...
 )

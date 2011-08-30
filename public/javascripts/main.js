@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, ArmyMarker, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, Player, UI, Upgrade, console, utils;
+var Alliance, Army, ArmyDialog, ArmyMarker, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, MapAttack, MapMove, Player, Upgrade, console, utils;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 LocationMarker = Backbone.View.extend({
   render: function() {
@@ -36,30 +36,50 @@ GameState = {
   current: "browse",
   states: ["browse", "move", "attack"]
 };
-UI = {};
-UI.moving = {};
-UI.moving.show = function(location) {
-  var line, loc, map, mapListen;
-  line = null;
-  mapListen = $("#map_canvas").bind;
-  mapListen = google.maps.event.addListener;
-  map = window.map.map;
-  loc = location.attributes;
-  return mapListen(map, "mousemove", function(evt) {
+MapAttack = (function() {
+  function MapAttack(location) {}
+  MapAttack.prototype.draw = function(evt) {};
+  return MapAttack;
+})();
+MapMove = (function() {
+  function MapMove(location) {
+    var loc;
+    this.line = null;
+    this.active = true;
+    this.map = window.map.map;
+    loc = location.attributes;
+    google.maps.event.addListener(this.map, "mousemove", __bind(function(evt) {
+      return this.draw(loc, evt);
+    }, this));
+    this.deactivationHook();
+  }
+  MapMove.prototype.draw = function(loc, evt) {
     var points;
-    points = [new google.maps.LatLng(loc.latitude, loc.longitude), new google.maps.LatLng(evt.latLng.Oa, evt.latLng.Pa)];
-    if (line) {
-      line.setMap(null);
+    points = [new google.maps.LatLng(loc.latitude, loc.longitude), evt.latLng];
+    if (this.line) {
+      this.line.setMap(null);
     }
-    line = new google.maps.Polyline({
-      path: points,
-      strokeColor: "#FF0000",
-      strokeOpacity: 1.0,
-      strokeWeight: 2
-    });
-    return line.setMap(map);
-  });
-};
+    if (this.active) {
+      this.line = new google.maps.Polyline({
+        path: points,
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+      });
+      return this.line.setMap(this.map);
+    }
+  };
+  MapMove.prototype.deactivationHook = function() {
+    return $("#map_canvas").bind("click", __bind(function() {
+      return this.deactivate();
+    }, this));
+  };
+  MapMove.prototype.deactivate = function() {
+    this.line.setMap(null);
+    return this.active = false;
+  };
+  return MapMove;
+})();
 ArmyDialog = Dialog.extend({
   initialize: function() {
     var selector;
@@ -70,12 +90,15 @@ ArmyDialog = Dialog.extend({
     var model;
     model = this.model;
     $(this.el).find(".move").bind('click', function() {
+      var map_move;
       console.log("moving");
-      UI.moving.show(model);
+      map_move = new MapMove(model);
       return GameState.current = "move";
     });
     return $(this.el).find(".attack").bind('click', function() {
+      var map_attack;
       console.log("attaaaack!");
+      map_attack = new MapAttack(model);
       return GameState.current = "move";
     });
   },
@@ -430,6 +453,23 @@ Map = (function() {
       });
     }, this));
   };
+  Map.prototype.debug = function() {
+    return $(window).oneTime(1000, function() {
+      var army, marker, _i, _len, _ref;
+      army = null;
+      _ref = map.markers;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        marker = _ref[_i];
+        if (marker.type === "army") {
+          army = marker;
+          break;
+        }
+      }
+      window.arm = army;
+      army.dialog.render();
+      return $(army.dialog.el).find(".move").trigger("click");
+    });
+  };
   Map.prototype.raise = function(message) {
     return console.log("Exception: ", message);
   };
@@ -467,13 +507,7 @@ $(function() {
     map.center(coords[0], coords[1]);
     return false;
   });
-  g.map = new Map;
-  map.draw();
-  map.loadMarkers();
-  map.listen();
-  map.startFetchingMarkers();
-  map.autoSize();
-  return $(window).oneTime(1000, function() {
+  $(window).oneTime(1000, function() {
     var army, marker, _i, _len, _ref;
     army = null;
     _ref = map.markers;
@@ -486,4 +520,10 @@ $(function() {
     }
     return window.arm = army;
   });
+  g.map = new Map;
+  map.draw();
+  map.loadMarkers();
+  map.listen();
+  map.startFetchingMarkers();
+  return map.autoSize();
 });

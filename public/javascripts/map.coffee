@@ -296,7 +296,7 @@ class Map
     
   clickInfo: ->
     google.maps.event.addListener(@map, 'click', (evt) ->
-      # console.log evt.latLng.Oa, evt.latLng.Pa
+      # console.log evt.latLng.lat(), evt.latLng.lng()
     )
 
   drawLine: (points) ->
@@ -330,6 +330,26 @@ class Map
           self.loadMarkers() 
       )
       
+    )
+
+  debug: ->
+    $(window).oneTime(1000, ->
+      army = null
+      for marker in map.markers
+        # console.log marker
+        if marker.type == "army"
+          army = marker          
+          break
+
+      # console.log "loc:", army.dialog.el
+
+
+      # TODO: delete me?
+      #
+
+      window.arm = army
+      army.dialog.render()
+      $(army.dialog.el).find(".move").trigger("click")
     )
     
   # exceptions

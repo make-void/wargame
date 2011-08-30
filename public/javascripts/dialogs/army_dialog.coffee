@@ -6,37 +6,51 @@ GameState = {
   
 }
 
-UI = {}
-UI.moving = {}
-UI.moving.show = (location) ->
-  # change cursor
-  line = null
-  # draw a line
-  mapListen = $("#map_canvas").bind
-  mapListen = google.maps.event.addListener
-  map = window.map.map
 
-  loc = location.attributes
-  mapListen(map, "mousemove", (evt) ->
+class MapAttack
+  constructor: (location) ->
+
+  draw: (evt) ->
+    
+
+class MapMove
+  constructor: (location) ->
+    # TODO: change cursor
+    @line = null
+    @active = true
+    this.map = window.map.map
+    loc = location.attributes
+    google.maps.event.addListener(this.map, "mousemove", (evt) => 
+      this.draw(loc, evt)
+    )
+    this.deactivationHook()
+
+  draw: (loc, evt) ->
     points = [
       new google.maps.LatLng(loc.latitude, loc.longitude),
-      new google.maps.LatLng(evt.latLng.Oa, evt.latLng.Pa) 
+      evt.latLng
     ]
     #console.log "moved: #{evt.pageX}, #{evt.pageY}"
-    line.setMap(null) if line
+    @line.setMap(null) if @line
     
-    line = new google.maps.Polyline({
-      path: points,
-      strokeColor: "#FF0000",
-      strokeOpacity: 1.0,
-      strokeWeight: 2
-    });
-    line.setMap(map)
+    if @active
+      @line = new google.maps.Polyline({
+        path: points,
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+      });
+      @line.setMap this.map
+  
     
-  )
-  
-  
-  
+  deactivationHook: ->
+    $("#map_canvas").bind("click", =>
+      this.deactivate()
+    )
+
+  deactivate: ->
+    @line.setMap null
+    @active = false
 
 ArmyDialog  = Dialog.extend(
   initialize: ->
@@ -47,12 +61,15 @@ ArmyDialog  = Dialog.extend(
     model = this.model
     $(this.el).find(".move").bind('click', ->
       console.log("moving")
-      UI.moving.show(model)
+      map_move = new MapMove(model)
+      # map_move.deactivate()
       GameState.current = "move"
     )
     
     $(this.el).find(".attack").bind('click', ->
       console.log("attaaaack!")
+      map_attack = new MapAttack(model)      
+      # map_attack.deactivate()
       GameState.current = "move"
     )
     
