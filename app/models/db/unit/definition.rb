@@ -12,6 +12,9 @@ module DB # Database
       has_many :army_units, :foreign_key => :unit_id
       has_many :city_units, :foreign_key => :unit_id
       
+      has_many :tech_reqs, :class_name => "DB::Unit::Requirement::Tech", :foreign_key => :unit_id
+      has_many :building_reqs, :class_name => "DB::Unit::Requirement::Building", :foreign_key => :unit_id
+      
       ATTACK_TYPES = {
         0 => "Normal",
         1 => "Vehicle Killer",

@@ -501,6 +501,23 @@ qs << "CREATE OR REPLACE VIEW wg_v_army_locations AS
    ORDER BY location_id, army_id;
 "
 
+# qs << "CREATE OR REPLACE VIEW wg_lol AS
+#     SELECT sd.*, 
+#           rst.name AS RequiredStructName,
+#           ssd.level AS RequiredStructLevel,
+#           td.name AS RequiredTechName,
+#           std.level AS RequiredTechLevel
+#     FROM wg_struct_defs sd 
+#     LEFT JOIN wg_struct_struct_req_defs ssd 
+#       ON sd.structure_id = ssd.structure_id
+#     LEFT JOIN wg_struct_defs rst 
+#       ON rst.structure_id = ssd.req_structure_id
+#     LEFT JOIN wg_struct_tech_req_defs std
+#       ON sd.structure_id = std.structure_id
+#     LEFT JOIN wg_tech_defs td 
+#       ON std.req_tech_id = td.tech_id;
+# "
+
 
 puts "recreating tables..."
 queries.each do |query|

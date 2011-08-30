@@ -9,6 +9,9 @@ module DB
       
       has_many :upgrades, :foreign_key => :tech_id
       
+      has_many :tech_reqs, :class_name => "DB::Research::Requirement::Tech", :foreign_key => :tech_id
+      has_many :building_reqs, :class_name => "DB::Research::Requirement::Building", :foreign_key => :tech_id
+      
     end
   end
 end

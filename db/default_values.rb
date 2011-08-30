@@ -12,6 +12,18 @@ module DefaultValues
                   email: "test@test.test", 
                   alliance_id: 1
                   
+    DB::Player.create name: "Cor3y", 
+                  new_password: "daniel001", 
+                  new_password_confirmation: "daniel001", 
+                  email: "test1@test.test", 
+                  alliance_id: 1
+                  
+    DB::Player.create name: "Makevoid", 
+                  new_password: "final33man", 
+                  new_password_confirmation: "final33man", 
+                  email: "test2@test.test", 
+                  alliance_id: 1
+    
     #################
     #     UNITS     #
     #################          
@@ -323,18 +335,18 @@ module DefaultValues
 
     florence = DB::Location.create latitude: 43.7687324, longitude: 11.2569013  # firenze
 
-    DB::City.create name: "Florence", ccode: "it", location_id: florence.id, player_id: 1
+    DB::City.create name: "Florence", ccode: "it", location_id: florence.id, player_id: 3
 
     paris = DB::Location.create latitude: 48.866667, longitude: 2.333333
 
-    DB::City.create name: "Paris", ccode: "fr", location_id: paris.id, player_id: 1
+    DB::City.create name: "Paris", ccode: "fr", location_id: paris.id, player_id: 2
 
     army = DB::Army.create location_id: florence.id,
-                    player_id: 1,
+                    player_id: 3,
                     is_moving: 0              
 
     DB::Army.create location_id: florence.id,
-                    player_id: 1,
+                    player_id: 2,
                     is_moving: 1,
                     destination_id: paris.id
 

@@ -9,6 +9,9 @@ module DB
       
       has_many :buildings, :foreign_key => :structure_id
       
+      has_many :tech_reqs, :class_name => "DB::Structure::Requirement::Tech", :foreign_key => :structure_id
+      has_many :building_reqs, :class_name => "DB::Structure::Requirement::Building", :foreign_key => :structure_id
+      
       COST_ADVANCEMENT = {
         0 => "Standard",
         1 => "Medium",
