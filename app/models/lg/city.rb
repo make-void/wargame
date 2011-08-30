@@ -74,7 +74,13 @@ module LG
       end
       
       loc = city_entry.location
-      v.merge!( :latitude => loc.latitude.to_f, :longitude => loc.longitude.to_f, :location_id => loc.location_id )
+      v.merge!( {
+        :location => { 
+          :latitude => loc.latitude.to_f, 
+          :longitude => loc.longitude.to_f, 
+          :location_id => loc.location_id 
+        }
+      })
                   
       return v 
       
