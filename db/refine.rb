@@ -56,7 +56,7 @@ end
 
 require "#{PATH}/db/default_values"
 include DefaultValues
-`unzip #{PATH}/db/cities_pop.json.zip`
+`cd #{PATH}/db; rm -f cities_pop.json; unzip #{PATH}/db/cities_pop.json.zip`
 
 
 def step_2
