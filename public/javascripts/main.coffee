@@ -77,7 +77,7 @@ $( ->
     # TODO: delete me?
     #
 
-    # window.arm = army
+    window.arm = army
     # army.dialog.render()
     # $(army.dialog.el).find(".move").trigger("click")
   )

@@ -149,8 +149,8 @@ Map = (function() {
       this.center_lng = parseFloat(localStorage.center_lng);
     } else {
       this.set_default_coords();
-      localStorage.center_lat = this.default_center_lat;
-      localStorage.center_lng = this.default_center_lng;
+      localStorage.center_lat = this.center_lat;
+      localStorage.center_lng = this.center_lng;
     }
     if (localStorage.zoom) {
       return this.zoom = parseInt(localStorage.zoom);
@@ -352,7 +352,7 @@ Map = (function() {
       center = this.map.getCenter();
       localStorage.center_lat = center.lat();
       localStorage.center_lng = center.lng();
-      setTimeout(this.listen_to_bounds, 50);
+      this.listen_to_bounds();
       return $(window).trigger("boundszoom_changed");
     }, this));
   };
@@ -472,10 +472,9 @@ $(function() {
   map.startFetchingMarkers();
   map.autoSize();
   return $(window).oneTime(1000, function() {
-    var army, marker, _i, _len, _ref, _results;
+    var army, marker, _i, _len, _ref;
     army = null;
     _ref = map.markers;
-    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       marker = _ref[_i];
       if (marker.type === "army") {
@@ -483,6 +482,6 @@ $(function() {
         break;
       }
     }
-    return _results;
+    return window.arm = army;
   });
 });

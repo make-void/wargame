@@ -22,8 +22,8 @@ class Map
       @center_lng = parseFloat localStorage.center_lng
     else
       this.set_default_coords()
-      localStorage.center_lat = @default_center_lat
-      localStorage.center_lng = @default_center_lng
+      localStorage.center_lat = @center_lat
+      localStorage.center_lng = @center_lng
       
     if localStorage.zoom
       @zoom = parseInt localStorage.zoom
@@ -254,9 +254,11 @@ class Map
       localStorage.center_lat = center.lat()
       localStorage.center_lng = center.lng()    
       
-      setTimeout(this.listen_to_bounds, 50)
-    
+      this.listen_to_bounds()
       $(window).trigger "boundszoom_changed"
+
+    
+      
     )
   
   clearMarkers: ->
