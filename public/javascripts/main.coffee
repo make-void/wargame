@@ -78,7 +78,8 @@ $( ->
   #map.overlay()
   map.autoSize()
   
-  # map.debug()
+  # map.debug("move")
+  # map.debug("attack")
 
   #note: if (navigator.userAgent.match("iPad")) ...
 )

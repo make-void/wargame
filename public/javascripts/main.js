@@ -1,5 +1,24 @@
-var Alliance, Army, ArmyDialog, ArmyMarker, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, MapAttack, MapMove, Player, Upgrade, console, utils;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var Alliance, Army, ArmyDialog, ArmyMarker, AttackState, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, MapAction, MapAttack, MapMove, MoveState, Player, Upgrade, Utils, console, utils;
+var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+  for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+  function ctor() { this.constructor = child; }
+  ctor.prototype = parent.prototype;
+  child.prototype = new ctor;
+  child.__super__ = parent.prototype;
+  return child;
+}, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+GameState = {
+  "default": "browse",
+  states: ["browse", "move", "attack"]
+};
+MoveState = {
+  "default": "wait",
+  states: ["wait", "choose", "selected"]
+};
+AttackState = {
+  "default": "wait",
+  states: ["wait", "choose", "selected"]
+};
 LocationMarker = Backbone.View.extend({
   render: function() {
     return this;
@@ -32,54 +51,6 @@ CityDialog = Dialog.extend({
     return city.name;
   }
 });
-GameState = {
-  current: "browse",
-  states: ["browse", "move", "attack"]
-};
-MapAttack = (function() {
-  function MapAttack(location) {}
-  MapAttack.prototype.draw = function(evt) {};
-  return MapAttack;
-})();
-MapMove = (function() {
-  function MapMove(location) {
-    var loc;
-    this.line = null;
-    this.active = true;
-    this.map = window.map.map;
-    loc = location.attributes;
-    google.maps.event.addListener(this.map, "mousemove", __bind(function(evt) {
-      return this.draw(loc, evt);
-    }, this));
-    this.deactivationHook();
-  }
-  MapMove.prototype.draw = function(loc, evt) {
-    var points;
-    points = [new google.maps.LatLng(loc.latitude, loc.longitude), evt.latLng];
-    if (this.line) {
-      this.line.setMap(null);
-    }
-    if (this.active) {
-      this.line = new google.maps.Polyline({
-        path: points,
-        strokeColor: "#FF0000",
-        strokeOpacity: 1.0,
-        strokeWeight: 2
-      });
-      return this.line.setMap(this.map);
-    }
-  };
-  MapMove.prototype.deactivationHook = function() {
-    return $("#map_canvas").bind("click", __bind(function() {
-      return this.deactivate();
-    }, this));
-  };
-  MapMove.prototype.deactivate = function() {
-    this.line.setMap(null);
-    return this.active = false;
-  };
-  return MapMove;
-})();
 ArmyDialog = Dialog.extend({
   initialize: function() {
     var selector;
@@ -99,7 +70,7 @@ ArmyDialog = Dialog.extend({
       var map_attack;
       console.log("attaaaack!");
       map_attack = new MapAttack(model);
-      return GameState.current = "move";
+      return GameState.current = "attack";
     });
   },
   afterRender: function() {
@@ -113,6 +84,135 @@ ArmyDialog = Dialog.extend({
     return player.name;
   }
 });
+MapAction = (function() {
+  function MapAction() {
+    this.map = window.map.map;
+  }
+  return MapAction;
+})();
+Object.clone = function(object) {
+  return eval(uneval(object));
+};
+MapAttack = (function() {
+  __extends(MapAttack, MapAction);
+  function MapAttack(location) {
+    this.location = location;
+    MapAttack.__super__.constructor.apply(this, arguments);
+    this.circle = null;
+    this.drawCircle();
+    this.hoverCities();
+  }
+  MapAttack.prototype.drawCircle = function() {
+    var center;
+    center = new google.maps.LatLng(this.location.attributes.latitude, this.location.attributes.longitude);
+    this.circle = new google.maps.Circle({
+      map: this.map,
+      center: center,
+      radius: 5500,
+      fillColor: "#FF0000",
+      fillOpacity: 0.3,
+      strokeColor: "#CC0000",
+      strokeOpacity: 0.7,
+      strokeWeight: 3
+    });
+    this.circle.setMap(this.map);
+    return console.log(this.map);
+  };
+  MapAttack.prototype.hoverCities = function() {
+    var marker, _i, _len, _ref, _results;
+    _ref = this.map.controller.markers;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      marker = _ref[_i];
+      _results.push(marker.type === "city" ? this.hoverCity(marker) : void 0);
+    }
+    return _results;
+  };
+  MapAttack.prototype.hoverCity = function(marker) {
+    var addListener;
+    addListener = google.maps.event.addListener;
+    addListener(marker, "mouseover", __bind(function(evt) {
+      var icon;
+      icon = Utils.city_image(marker.data.city.pts, "selected");
+      if (marker.icon !== icon) {
+        marker.nonhover_icon = eval("" + (JSON.stringify(marker.icon)));
+        marker.icon = icon;
+        return marker.setMap(this.map);
+      }
+    }, this));
+    return addListener(marker, "mouseout", __bind(function(evt) {
+      if (marker.nonhover_icon) {
+        marker.icon = marker.nonhover_icon;
+        return marker.setMap(this.map);
+      }
+    }, this));
+  };
+  return MapAttack;
+})();
+MapMove = (function() {
+  __extends(MapMove, MapAction);
+  function MapMove(location) {
+    var loc;
+    this.line = null;
+    this.active = true;
+    this.destination = null;
+    this.endMarker = null;
+    MapMove.__super__.constructor.apply(this, arguments);
+    loc = location.attributes;
+    google.maps.event.addListener(this.map, "mousemove", __bind(function(evt) {
+      return this.draw(loc, evt);
+    }, this));
+    this.deactivationHook();
+  }
+  MapMove.prototype.draw = function(loc, evt) {
+    var points;
+    if (this.active) {
+      this.destination = evt.latLng;
+      points = [new google.maps.LatLng(loc.latitude, loc.longitude), this.destination];
+      if (this.line) {
+        this.line.setMap(null);
+      }
+      this.line = new google.maps.Polyline({
+        path: points,
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+      });
+      return this.line.setMap(this.map);
+    }
+  };
+  MapMove.prototype.deactivationHook = function() {
+    return $("#map_canvas").bind("click", __bind(function() {
+      return this.deactivate();
+    }, this));
+  };
+  MapMove.prototype.deactivate = function() {
+    this.active = false;
+    return this.endMarker = new google.maps.Marker({
+      position: this.destination,
+      map: this.map,
+      icon: "http://" + http_host + "/images/map_icons/point_red.png"
+    });
+  };
+  return MapMove;
+})();
+Utils = {};
+Utils.city_image = function(pop, kind) {
+  var final_size, size, sizes, _i, _len;
+  if (!kind) {
+    kind = "enemy";
+  }
+  sizes = [150000, 50000, 30000, 12000, 0];
+  size = sizes[-1];
+  for (_i = 0, _len = sizes.length; _i < _len; _i++) {
+    size = sizes[_i];
+    if (pop >= size) {
+      final_size = _.indexOf(sizes, size);
+      break;
+    }
+  }
+  return "http://" + http_host + ("/images/map_icons/city_" + kind + final_size + ".png");
+};
 LLRange = (function() {
   function LLRange(lat, lng, range, prec) {
     var t, times;
@@ -197,7 +297,7 @@ Map = (function() {
     if (!this.center_lng) {
       this.center_lng = this.default_center_lng;
     }
-    return this.map = new google.maps.Map(mapDiv, {
+    this.map = new google.maps.Map(mapDiv, {
       center: new google.maps.LatLng(this.center_lat, this.center_lng),
       zoom: this.zoom,
       mapTypeId: google.maps.MapTypeId.TERRAIN,
@@ -208,6 +308,7 @@ Map = (function() {
         position: google.maps.ControlPosition.RIGHT_TOP
       }
     });
+    return this.map.controller = this;
   };
   Map.prototype.autoSize = function() {
     this.resize();
@@ -251,26 +352,12 @@ Map = (function() {
       return this.callback(markers);
     }, this));
   };
-  Map.prototype.city_image = function(pop) {
-    var final_size, size, sizes, _i, _len;
-    sizes = [150000, 50000, 30000, 12000, 0];
-    size = sizes[-1];
-    for (_i = 0, _len = sizes.length; _i < _len; _i++) {
-      size = sizes[_i];
-      if (pop >= size) {
-        final_size = _.indexOf(sizes, size);
-        break;
-      }
-    }
-    return "http://" + http_host + "/images/map_icons/city_enemy" + final_size + ".png";
-  };
   Map.prototype.doMarkerDrawing = function(data) {
-    var army_image, city_image, latLng, marker, that;
+    var anchor, army_icon, army_image, latLng, marker, that;
     if (!data.latitude) {
       console.log("ERROR: marker without lat,lng");
     }
     latLng = new google.maps.LatLng(data.latitude, data.longitude);
-    city_image = "http://" + http_host + "/images/map_icons/city_enemy.png";
     army_image = "http://" + http_host + "/images/map_icons/army_ally.png";
     marker = new google.maps.Marker({
       position: latLng,
@@ -281,14 +368,16 @@ Map = (function() {
       marker.name = data.city.name;
       marker.city = data.city;
       marker.army = void 0;
-      marker.icon = this.city_image(data.city.pts);
+      marker.icon = Utils.city_image(data.city.pts);
       marker.type = "city";
       data.type = "city";
     } else {
       marker.name = "Army";
       marker.army = data.army;
       marker.city = void 0;
-      marker.icon = army_image;
+      anchor = new google.maps.Point(25, 20);
+      army_icon = new google.maps.MarkerImage(army_image, null, null, anchor, null);
+      marker.icon = army_icon;
       marker.type = "army";
       data.type = "army";
     }
@@ -453,7 +542,7 @@ Map = (function() {
       });
     }, this));
   };
-  Map.prototype.debug = function() {
+  Map.prototype.debug = function(what) {
     return $(window).oneTime(1000, function() {
       var army, marker, _i, _len, _ref;
       army = null;
@@ -467,7 +556,7 @@ Map = (function() {
       }
       window.arm = army;
       army.dialog.render();
-      return $(army.dialog.el).find(".move").trigger("click");
+      return $(army.dialog.el).find("." + what).trigger("click");
     });
   };
   Map.prototype.raise = function(message) {

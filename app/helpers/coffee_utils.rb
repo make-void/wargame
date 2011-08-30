@@ -1,10 +1,15 @@
 module CoffeeUtils
-  COFFEE_FILES = [ "markers/location_marker"  ,
+  COFFEE_FILES = [ 
+                   "game_state"               ,
+                   "markers/location_marker"  ,
                    "markers/city_marker"      ,
                    "markers/army_marker"      ,
                    "dialogs/dialog"           ,
                    "dialogs/city_dialog"      ,
                    "dialogs/army_dialog"      ,
+                   "views/map_action"         ,
+                   "views/map_attack"         ,
+                   "views/map_move"           ,                   
                    "utils"                    ,
                    "models"                   ,
                    "map"                      ,

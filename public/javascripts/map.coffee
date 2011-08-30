@@ -58,6 +58,7 @@ class Map
         position: google.maps.ControlPosition.RIGHT_TOP
       }
     })
+    @map.controller = this
 
   autoSize: ->
     this.resize()
@@ -91,30 +92,12 @@ class Map
       #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
     )
   
-  city_image: (pop) ->
-    sizes = [
-      150000,
-      50000, 
-      30000,
-      12000,
-      0 # 6000
-    ]
-    size = sizes[-1]
-    
-    for size in sizes
-      if pop >= size
-        final_size = _.indexOf(sizes, size)
-        break
-    
-    "http://" + http_host + "/images/map_icons/city_enemy"+final_size+".png"
         
   doMarkerDrawing: (data) ->
     console.log "ERROR: marker without lat,lng" unless data.latitude
     
     latLng = new google.maps.LatLng data.latitude, data.longitude
     
-    # image = "http://"+http_host+"/images/cross_red.png"
-    city_image = "http://" + http_host + "/images/map_icons/city_enemy.png"
     army_image = "http://" + http_host + "/images/map_icons/army_ally.png"
     
     # TODO: reuse the same markers
@@ -135,7 +118,7 @@ class Map
       # size = google.maps.Size(90, 59)
       # sizeScale = google.maps.Size(180, 118)
       # city_image = new google.maps.MarkerImage(city_image, null, null, null, sizeScale)
-      marker.icon = this.city_image data.city.pts
+      marker.icon = Utils.city_image data.city.pts
       
       marker.type = "city"
       data.type = "city"
@@ -143,7 +126,9 @@ class Map
       marker.name = "Army"
       marker.army = data.army
       marker.city = undefined;
-      marker.icon = army_image
+      anchor = new google.maps.Point(25, 20)
+      army_icon = new google.maps.MarkerImage(army_image, null, null, anchor, null)
+      marker.icon = army_icon
       marker.type = "army"
       data.type = "army"
     
@@ -332,7 +317,7 @@ class Map
       
     )
 
-  debug: ->
+  debug: (what) ->
     $(window).oneTime(1000, ->
       army = null
       for marker in map.markers
@@ -349,7 +334,7 @@ class Map
 
       window.arm = army
       army.dialog.render()
-      $(army.dialog.el).find(".move").trigger("click")
+      $(army.dialog.el).find(".#{what}").trigger("click")
     )
     
   # exceptions
