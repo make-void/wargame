@@ -20,6 +20,7 @@ module LG
       return { :errors => errors } if errors.size != 0
       
       if city_entry.player_id == player_entry.player_id
+        #It's My Damn City... Show all Data
         ally = player_entry.alliance
         v = {
           :name => city_entry.name,
@@ -54,7 +55,7 @@ module LG
           },
           :errors => errors
         }
-      else
+      else #It's not My City! HIDE Data
         enemy_player = city_entry.player
         ally = enemy_player.alliance
         

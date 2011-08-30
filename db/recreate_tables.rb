@@ -1,6 +1,9 @@
 qs = queries = []
 
 
+qs << "DROP TABLE IF EXISTS wg_struct_queue;"
+qs << "DROP TABLE IF EXISTS wg_tech_queue;"
+qs << "DROP TABLE IF EXISTS wg_unit_queue;"
 qs << "DROP TABLE IF EXISTS wg_tech_tech_req_defs;"
 qs << "DROP TABLE IF EXISTS wg_tech_struct_req_defs;"
 qs << "DROP TABLE IF EXISTS wg_unit_tech_req_defs;"
@@ -422,6 +425,84 @@ CREATE TABLE `wg_unit_struct_req_defs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
 
+qs << "
+CREATE TABLE `wg_unit_queue` (
+  /* TABLE FOR UNIT BUILD QUEUE IMPLEMENTATION */
+  
+  `unit_id` BIGINT UNSIGNED NOT NULL,
+  `city_id` BIGINT UNSIGNED NOT NULL,
+  `player_id` BIGINT UNSIGNED NOT NULL,
+  
+  `number` int(11) NOT NULL,
+  `running` tinyint(1) UNSIGNED DEFAULT 0,
+
+   /* ENTRY DATA */
+  `started_at` datetime DEFAULT NULL,
+  `time_needed` int(11) NOT NULL,
+  
+  PRIMARY KEY (`player_id`,`unit_id`,`city_id`),
+  
+  FOREIGN KEY (`unit_id`) REFERENCES wg_unit_defs(`unit_id`) 
+    ON DELETE RESTRICT,
+    
+  FOREIGN KEY (`city_id`,`player_id`) REFERENCES wg_cities(`city_id`,`player_id`) 
+    ON DELETE RESTRICT  
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
+
+qs << "
+CREATE TABLE `wg_tech_queue` (
+  /* TABLE FOR TECH BUILD QUEUE IMPLEMENTATION */
+  
+  `tech_id` BIGINT UNSIGNED NOT NULL,
+  `city_id` BIGINT UNSIGNED NOT NULL,
+  `player_id` BIGINT UNSIGNED NOT NULL,
+
+  `level` int(11) NOT NULL,
+  `running` tinyint(1) UNSIGNED DEFAULT 0,
+
+   /* ENTRY DATA */
+  `started_at` datetime DEFAULT NULL,
+  `time_needed` int(11) NOT NULL,
+  
+  PRIMARY KEY (`player_id`,`tech_id`,`city_id`),
+  
+  FOREIGN KEY (`tech_id`,`player_id`) REFERENCES wg_techs(`tech_id`,`player_id`) 
+    ON DELETE RESTRICT,
+    
+  FOREIGN KEY (`city_id`,`player_id`) REFERENCES wg_cities(`city_id`,`player_id`) 
+    ON DELETE RESTRICT  
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
+
+qs << "
+CREATE TABLE `wg_struct_queue` (
+  /* TABLE FOR STRUCTURE BUILD QUEUE IMPLEMENTATION */
+  
+  `structure_id` BIGINT UNSIGNED NOT NULL,
+  `city_id` BIGINT UNSIGNED NOT NULL,
+  `player_id` BIGINT UNSIGNED NOT NULL,
+
+  `level` int(11) NOT NULL,
+  `running` tinyint(1) UNSIGNED DEFAULT 0,
+
+
+   /* ENTRY DATA */
+  `started_at` datetime DEFAULT NULL,
+  `time_needed` int(11) NOT NULL,
+  
+  PRIMARY KEY (`player_id`,`structure_id`,`city_id`),
+  
+  FOREIGN KEY (`structure_id`,`city_id`) REFERENCES wg_struct(`structure_id`,`city_id`)
+    ON DELETE RESTRICT,
+    
+  FOREIGN KEY (`city_id`,`player_id`) REFERENCES wg_cities(`city_id`,`player_id`) 
+    ON DELETE RESTRICT  
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
 
      ####################################
      #             VIEWS                #
