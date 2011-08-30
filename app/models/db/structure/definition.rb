@@ -19,6 +19,11 @@ module DB
         3 => "Highest"
       }
       
+      def self.unit_production_building_id( unit_type )
+        raise ArgumentError, "Need unitType in [Infantry, Vehicle]. Got #{unit_type.inspect}" unless ["Infantry","Vehicle"].include?(unit_type)
+        return 6 if unit_type == "Infantry"
+        return 7
+      end
       
       def cost_advancement_to_string
         COST_ADVANCEMENT[self.cost_advancement_type]

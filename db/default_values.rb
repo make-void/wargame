@@ -174,7 +174,7 @@ module DefaultValues
                  oil_cost: 500,
                  cost_advancement_type: 1
 
-     DB::Structure::Definition.create name: "Barrak",
+     DB::Structure::Definition.create name: "Barraks",
                  description: "Produces Infantry Units",
                  gold_cost: 400,
                  steel_cost: 200,

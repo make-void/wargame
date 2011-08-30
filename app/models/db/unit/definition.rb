@@ -20,6 +20,11 @@ module DB # Database
         1 => "Vehicle Killer",
         2 => "Infantry Killer"
       }
+      
+      PRODUCTION_CENTRE_ID = {
+        "Infantry" => DB::Structure::Definition.unit_production_building_id("Infantry"),
+        "Vehicle" => DB::Structure::Definition.unit_production_building_id("Vehicle")
+      }
           
     end
   end
