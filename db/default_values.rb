@@ -11,7 +11,10 @@ module DefaultValues
                   new_password_confirmation: "NULLABLE", 
                   email: "test@test.test", 
                   alliance_id: 1
-    #UNITS          
+                  
+    #################
+    #     UNITS     #
+    #################          
     DB::Unit::Definition.create name: "Soldier",
                   unit_type: "Infantry",
                   attack_type: 0, 
@@ -118,7 +121,9 @@ module DefaultValues
                   oil_cost: 250
 
 
-     #STRUCTURES
+     #################
+     #  STRUCTURES   #
+     #################
      DB::Structure::Definition.create name: "Market", 
                  description: "Produces Gold",
                  gold_cost: 85,
@@ -185,8 +190,9 @@ module DefaultValues
                  oil_cost: 1500,
                  cost_advancement_type: 2
 
-
-     #RESEARCHES
+     #################
+     #  RESEARCHES   #
+     #################
      DB::Research::Definition.create name: "Infantry Weapon Upgrade",
                  description: "to-be-added",
                  gold_cost: 300,
@@ -228,6 +234,88 @@ module DefaultValues
                  gold_cost: 1000,
                  steel_cost: 1500,
                  oil_cost: 1200
+                 
+                 
+                 
+      ##########################
+      #  RESEARCH REQUIREMENTS #
+      ##########################
+
+     #Vehicle Weapon => 2 Research Centre
+     DB::Research::Requirement::Building.create :tech_id => 3, :req_structure_id => 8, :level => 2
+     #Vehicle Armor => 2 Research Centre
+     DB::Research::Requirement::Building.create :tech_id => 4, :req_structure_id => 8, :level => 2
+     #Construction Industry Tecniques => 10 Research Centre
+     DB::Research::Requirement::Building.create :tech_id => 5, :req_structure_id => 8, :level => 10
+     #Engine Power => 5 Research Centre, 2 Factory
+     DB::Research::Requirement::Building.create :tech_id => 7, :req_structure_id => 7, :level => 2
+     DB::Research::Requirement::Building.create :tech_id => 7, :req_structure_id => 8, :level => 5
+
+     ##########################
+     # STRUCTURE REQUIREMENTS #
+     ##########################
+     
+     #Bank => 3 Market
+     DB::Structure::Requirement::Building.create :structure_id => 4, :req_structure_id => 1, :level => 3
+     #WareHouse => 3 Foundry, 3 Refinery
+     DB::Structure::Requirement::Building.create :structure_id => 5, :req_structure_id => 2, :level => 3
+     DB::Structure::Requirement::Building.create :structure_id => 5, :req_structure_id => 3, :level => 3
+     #Bunker => 8 Barrak, 5 Factory
+     DB::Structure::Requirement::Building.create :structure_id => 8 , :req_structure_id => 6, :level => 8
+     DB::Structure::Requirement::Building.create :structure_id => 8 , :req_structure_id => 7, :level => 5
+     
+     #Barrak => 1 Infantry Weapon
+     DB::Structure::Requirement::Tech.create :structure_id => 6, :req_tech_id => 1, :level => 1
+     #Factory => 2 Vehicle Weapon, 2 Vehicle Armor
+     DB::Structure::Requirement::Tech.create :structure_id => 7, :req_tech_id => 3, :level => 2
+     DB::Structure::Requirement::Tech.create :structure_id => 7, :req_tech_id => 4, :level => 2
+     #Bunker => 6 Infantry Weapon, 5 Vehicle Armor
+     DB::Structure::Requirement::Tech.create :structure_id => 9, :req_tech_id => 1, :level => 6
+     DB::Structure::Requirement::Tech.create :structure_id => 9, :req_tech_id => 4, :level => 5
+     
+     
+     ##########################
+     #   UNITS REQUIREMENTS   #
+     ##########################
+
+     #Special Forces => 4 Barrak
+     DB::Unit::Requirement::Building.create :unit_id => 2, :req_structure_id => 6, :level => 4
+     #Granatier => 6 Barrak, 2 Factory
+     DB::Unit::Requirement::Building.create :unit_id => 3, :req_structure_id => 6, :level => 6
+     DB::Unit::Requirement::Building.create :unit_id => 3, :req_structure_id => 7, :level => 2
+     #Jeep => 3 Factory
+     DB::Unit::Requirement::Building.create :unit_id => 4, :req_structure_id => 7, :level => 2
+     #Light Tank => 6 Factory
+     DB::Unit::Requirement::Building.create :unit_id => 5, :req_structure_id => 7, :level => 6
+     #Light Transport => 5 Factory
+     DB::Unit::Requirement::Building.create :unit_id => 6, :req_structure_id => 7, :level => 6
+     #Heavy Tank => 12 Factory
+     DB::Unit::Requirement::Building.create :unit_id => 7, :req_structure_id => 7, :level => 12
+     #Heavy Transport
+     DB::Unit::Requirement::Building.create :unit_id => 8, :req_structure_id => 7, :level => 8
+     
+     #Soldier => 2 Infantry Weapon
+     DB::Unit::Requirement::Tech.create :unit_id => 1, :req_tech_id => 1, :level => 2
+     #Special Forces => 4 Infantry Weapon, 4 Infantry Armor
+     DB::Unit::Requirement::Tech.create :unit_id => 2, :req_tech_id => 2, :level => 4
+     DB::Unit::Requirement::Tech.create :unit_id => 2, :req_tech_id => 3, :level => 4
+     #Granatier => 6 Infantry Weapon, 6 Infantry Armor
+     DB::Unit::Requirement::Tech.create :unit_id => 3, :req_tech_id => 2, :level => 6
+     DB::Unit::Requirement::Tech.create :unit_id => 3, :req_tech_id => 3, :level => 6
+     #Jeep => 1 Engine Power
+     DB::Unit::Requirement::Tech.create :unit_id => 4, :req_tech_id => 7, :level => 1
+     #Light Tank => 5 Vehicle Armor, 5 Vehicle Weapon
+     DB::Unit::Requirement::Tech.create :unit_id => 5, :req_tech_id => 3, :level => 5
+     DB::Unit::Requirement::Tech.create :unit_id => 5, :req_tech_id => 4, :level => 5
+     #Light Transport => 5 Vehicle Armor, 3 Engine Power
+     DB::Unit::Requirement::Tech.create :unit_id => 6, :req_tech_id => 3, :level => 5
+     DB::Unit::Requirement::Tech.create :unit_id => 6, :req_tech_id => 7, :level => 3
+     #Heavy Tank => 5 Vehicle Armor, 5 Vehicle Weapon
+     DB::Unit::Requirement::Tech.create :unit_id => 7, :req_tech_id => 3, :level => 8
+     DB::Unit::Requirement::Tech.create :unit_id => 7, :req_tech_id => 4, :level => 6
+     #Heavy Transport => 5 Vehicle Armor, 3 Engine Power
+     DB::Unit::Requirement::Tech.create :unit_id => 8, :req_tech_id => 3, :level => 8
+     DB::Unit::Requirement::Tech.create :unit_id => 8, :req_tech_id => 7, :level => 6
 
   end
 

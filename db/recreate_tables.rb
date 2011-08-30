@@ -1,5 +1,12 @@
 qs = queries = []
 
+
+qs << "DROP TABLE IF EXISTS wg_tech_tech_req_defs;"
+qs << "DROP TABLE IF EXISTS wg_tech_struct_req_defs;"
+qs << "DROP TABLE IF EXISTS wg_unit_tech_req_defs;"
+qs << "DROP TABLE IF EXISTS wg_unit_struct_req_defs;"
+qs << "DROP TABLE IF EXISTS wg_struct_tech_req_defs;"
+qs << "DROP TABLE IF EXISTS wg_struct_struct_req_defs;"
 qs << "DROP TABLE IF EXISTS wg_city_unit;"
 qs << "DROP TABLE IF EXISTS wg_army_unit;"
 qs << "DROP TABLE IF EXISTS wg_armies;"
@@ -296,6 +303,124 @@ CREATE TABLE `wg_techs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
 
+qs << "
+CREATE TABLE `wg_tech_tech_req_defs` (
+  /* TABLE FOR TECH TECH REQUIREMENTS */
+  
+  `tech_id` BIGINT UNSIGNED NOT NULL,
+  `req_tech_id` BIGINT UNSIGNED NOT NULL,
+
+  `level` int(11) NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (`tech_id`,`req_tech_id`),
+  
+  FOREIGN KEY (`tech_id`) REFERENCES wg_tech_defs(`tech_id`) 
+    ON DELETE CASCADE,
+    
+  FOREIGN KEY (`req_tech_id`) REFERENCES wg_tech_defs(`tech_id`) 
+    ON DELETE CASCADE  
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
+
+qs << "
+CREATE TABLE `wg_tech_struct_req_defs` (
+  /* TABLE FOR TECH STRUCTURES REQUIREMENTS */
+  
+  `tech_id` BIGINT UNSIGNED NOT NULL,
+  `req_structure_id` BIGINT UNSIGNED NOT NULL,
+
+  `level` int(11) NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (`tech_id`,`req_structure_id`),
+  
+  FOREIGN KEY (`tech_id`) REFERENCES wg_tech_defs(`tech_id`) 
+    ON DELETE CASCADE,
+    
+  FOREIGN KEY (`req_structure_id`) REFERENCES wg_struct_defs(`structure_id`) 
+    ON DELETE CASCADE  
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
+
+qs << "
+CREATE TABLE `wg_struct_tech_req_defs` (
+  /* TABLE FOR STRUCTURE TECH REQUIREMENTS */
+  
+  `structure_id` BIGINT UNSIGNED NOT NULL,
+  `req_tech_id` BIGINT UNSIGNED NOT NULL,
+
+  `level` int(11) NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (`structure_id`,`req_tech_id`),
+  
+  FOREIGN KEY (`structure_id`) REFERENCES wg_struct_defs(`structure_id`) 
+    ON DELETE CASCADE,
+    
+  FOREIGN KEY (`req_tech_id`) REFERENCES wg_tech_defs(`tech_id`) 
+    ON DELETE CASCADE  
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
+
+qs << "
+CREATE TABLE `wg_struct_struct_req_defs` (
+  /* TABLE FOR STRUCTURE STRUCTURES REQUIREMENTS */
+  
+  `structure_id` BIGINT UNSIGNED NOT NULL,
+  `req_structure_id` BIGINT UNSIGNED NOT NULL,
+
+  `level` int(11) NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (`structure_id`,`req_structure_id`),
+  
+  FOREIGN KEY (`structure_id`) REFERENCES wg_struct_defs(`structure_id`) 
+    ON DELETE CASCADE,
+    
+  FOREIGN KEY (`req_structure_id`) REFERENCES wg_struct_defs(`structure_id`) 
+    ON DELETE CASCADE  
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
+
+qs << "
+CREATE TABLE `wg_unit_tech_req_defs` (
+  /* TABLE FOR UNIT TECH REQUIREMENTS */
+  
+  `unit_id` BIGINT UNSIGNED NOT NULL,
+  `req_tech_id` BIGINT UNSIGNED NOT NULL,
+
+  `level` int(11) NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (`unit_id`,`req_tech_id`),
+  
+  FOREIGN KEY (`unit_id`) REFERENCES wg_unit_defs(`unit_id`) 
+    ON DELETE CASCADE,
+    
+  FOREIGN KEY (`req_tech_id`) REFERENCES wg_tech_defs(`tech_id`) 
+    ON DELETE CASCADE  
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
+qs << "
+CREATE TABLE `wg_unit_struct_req_defs` (
+  /* TABLE FOR UNIT STRUCTURES REQUIREMENTS */
+  
+  `unit_id` BIGINT UNSIGNED NOT NULL,
+  `req_structure_id` BIGINT UNSIGNED NOT NULL,
+
+  `level` int(11) NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (`unit_id`,`req_structure_id`),
+  
+  FOREIGN KEY (`unit_id`) REFERENCES wg_unit_defs(`unit_id`) 
+    ON DELETE CASCADE,
+    
+  FOREIGN KEY (`req_structure_id`) REFERENCES wg_struct_defs(`structure_id`) 
+    ON DELETE CASCADE  
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+"
 
 
      ####################################
