@@ -23,9 +23,9 @@ module DB
         return self.started_at + self.time_needed.seconds
       end
       
-      def start( unit_production_level )
+      def start( unit_production_level, start_time = nil )
         self.update_attributes( 
-          :started_at => Time.now, 
+          :started_at => start_time || Time.now, 
           :time_needed => LG::Unit.production_time( self.definition, unit_production_level ) 
         )
       end
