@@ -19,19 +19,34 @@ module LG
       end
       return { :errors => errors } if errors.size != 0
       
-      if city_entry.player_id == logged_user_id
+      if city_entry.player_id == player_entry.player_id
+        ally = player_entry.alliance
         v = {
           :name => city_entry.name,
           :ccode => city_entry.ccode,
-          :gold_production => city_entry.gold_production,
-          :gold_stored => city_entry.gold_stored,
-          :gold_storage_spage => city_entry.gold_storage_space,
-          :steel_production => city_entry.steel_production,
-          :steel_stored => city_entry.steel_stored,
-          :steel_storage_spage => city_entry.steel_storage_space,
-          :oil_production => city_entry.oil_production,
-          :oil_stored => city_entry.oil_stored,
-          :oil_storage_spage => city_entry.oil_storage_space,
+          :player => {
+            :name => player_entry.name,
+            :player_id => player_entry.player_id
+          },
+          :ally => {
+            :name => ally.name,
+            :alliance_id => ally.alliance_id
+          },
+          :production => {
+            :gold => city_entry.gold_production,
+            :steel => city_entry.steel_production,
+            :oil => city_entry.oil_production
+          },
+          :storage_space => {
+            :gold => city_entry.gold_storage_space,
+            :steel => city_entry.steel_storage_space,
+            :oil => city_entry.oil_storage_space
+          },
+          :stored => {
+            :gold => city_entry.gold_stored,
+            :steel => city_entry.steel_stored,
+            :oil => city_entry.oil_stored
+          },
           :queues => { 
             :unit => "To Be Implemented",
             :research => "To Be Implemented",
@@ -46,10 +61,14 @@ module LG
         v = {
           :name => city_entry.name,
           :ccode => city_entry.ccode,
-          :player_name => enemy_player.name,
-          :player_id => enemy_player.player_id,
-          :ally_name => ally.name,
-          :ally_id => ally.alliance_id,
+          :player => {
+            :name => enemy_player.name,
+            :player_id => enemy_player.player_id
+          },
+          :ally => {
+            :name => ally.name,
+            :alliance_id => ally.alliance_id
+          },
           :errors => errors
         }
       end
