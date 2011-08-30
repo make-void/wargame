@@ -353,28 +353,28 @@ module DefaultValues
   #ARMY 1
     DB::Unit::ArmyUnit.create unit_id: 1,
                        army_id: 1,
-                       player_id: 1,
+                       player_id: 3,
                        number: 100 #100 soldiers
 
     DB::Unit::ArmyUnit.create unit_id: 3,
                         army_id: 1,
-                        player_id: 1,
+                        player_id: 3,
                         number: 20 #20 granatiers
 
     DB::Unit::ArmyUnit.create unit_id: 5,
                         army_id: 1,
-                        player_id: 1,
+                        player_id: 3,
                         number: 10 #10 light camions
 
   #ARMY 2
     DB::Unit::ArmyUnit.create unit_id: 2,
                         army_id: 2,
-                        player_id: 1,
+                        player_id: 2,
                         number: 50 #50 special forces
 
     DB::Unit::ArmyUnit.create unit_id: 4,
                         army_id: 2,
-                        player_id: 1,
+                        player_id: 2,
                         number: 5 #5 jeeps
 
   end
