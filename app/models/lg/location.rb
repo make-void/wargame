@@ -1,5 +1,5 @@
 module LG # Logic
-  class Location
+  module Location
 
     CITY_LIMIT = 30
        
