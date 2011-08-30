@@ -488,7 +488,6 @@ CREATE TABLE `wg_struct_queue` (
   `level` int(11) NOT NULL,
   `running` tinyint(1) UNSIGNED DEFAULT 0,
 
-
    /* ENTRY DATA */
   `started_at` datetime DEFAULT NULL,
   `time_needed` int(11) NOT NULL,

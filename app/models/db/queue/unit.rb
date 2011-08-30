@@ -13,21 +13,32 @@ module DB
       
       def active? ; self.running ; end
       
+      #starts the queue
+      def start( unit_production_level, start_time = nil )
+        self.update_attributes( 
+          :started_at => start_time || Time.now, 
+          :time_needed => LG::Unit.production_time( self.definition, unit_production_level )  * self.number
+        )
+      end
+      
+      #Destroys the queue object and returns the units created
+      def finish!
+        return false unless self.finished?
+        v = { number: self.number, unit: self.definition }
+        self.destroy
+        return v
+      end
+      
+      #returns true if finished
       def finished?
         return false unless self.started?
         return ( self.finished_at >= Time.now )
       end
       
+      #calculates time the item is done
       def finished_at
         return nil unless self.started?
         return self.started_at + self.time_needed.seconds
-      end
-      
-      def start( unit_production_level, start_time = nil )
-        self.update_attributes( 
-          :started_at => start_time || Time.now, 
-          :time_needed => LG::Unit.production_time( self.definition, unit_production_level ) 
-        )
       end
       
       def started?
