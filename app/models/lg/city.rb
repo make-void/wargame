@@ -1,8 +1,9 @@
 module LG
   module City
     
-    #Example Call: LG::City.get_city_infos( DB::City.last.city_id, 1 ) #My City
-    #Example Call: LG::City.get_city_infos( DB::City.last.city_id, 2 ) #Not My City
+    #Example Call: 
+    #     LG::City.get_city_infos( DB::City.last.city_id, 2 ) #Not My City
+    #     LG::City.get_city_infos( DB::City.last.city_id, 1 ) #My City
     def self.get_city_infos( city_id, logged_user_id )
       
       errors = []
