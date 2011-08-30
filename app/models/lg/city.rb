@@ -8,22 +8,18 @@ module LG
       
       errors = []
       begin
-        city_entry = DB::City.find(city_id)
-      rescue ActiveRecord::RecordNotFound => e
+        city_entry = DB::City.find( city_id )
+      rescue ActiveRecord::RecordNotFound
         errors.push "City Does Not Exist"
       end
       begin
         player_entry = DB::Player.find( logged_user_id )
-      rescue ActiveRecord::RecordNotFound => e
+      rescue ActiveRecord::RecordNotFound
         errors.push "Player Does Not Exist"
       end
-      
       return { :errors => errors } if errors.size != 0
       
-      v = {}
-      
       if city_entry.player_id == logged_user_id
-        
         v = {
           :name => city_entry.name,
           :ccode => city_entry.ccode,
@@ -43,9 +39,7 @@ module LG
           },
           :errors => errors
         }
-        
       else
-        
         enemy_player = city_entry.player
         ally = enemy_player.alliance
         
@@ -58,7 +52,6 @@ module LG
           :ally_id => ally.alliance_id,
           :errors => errors
         }
-        
       end
       
       loc = city_entry.location
