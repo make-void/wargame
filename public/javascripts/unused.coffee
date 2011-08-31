@@ -22,3 +22,11 @@ class Map
     range.each (lat, lng) ->
       #console.log lat, lng
       self.drawSimpleMarker lat, lng
+  
+  
+  
+  # TODO: fog of war?
+  overlay: ->  
+    boundaries = new google.maps.LatLngBounds(new google.maps.LatLng(43.273978,10.25124454498291), new google.maps.LatLng(44.273978,12.25124454498291));
+    overlay = new google.maps.GroundOverlay("/images/overlay.png", boundaries)
+    overlay.setMap @map

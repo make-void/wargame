@@ -22,6 +22,8 @@ Utils.city_image = (pop, kind) ->
   "http://" + http_host + "/images/map_icons/city_#{kind}#{final_size}.png"
 
 
+Utils.clone_object = (object) ->
+  return eval("#{JSON.stringify(object)}")
 
 class LLRange
   constructor: (lat, lng, range, prec) ->

@@ -333,11 +333,15 @@ module DefaultValues
 
   def create_default_vals_after_location
 
-    florence = DB::Location.create latitude: 43.7687324, longitude: 11.2569013  # firenze
+    latLng = { latitude: 43.7687324, longitude: 11.2569013 }
+    florence = DB::Location.where(latLng).first # firenze
+    florence = DB::Location.create latLng unless florence
 
     DB::City.create name: "Florence", ccode: "it", location_id: florence.id, player_id: 3
 
-    paris = DB::Location.create latitude: 48.866667, longitude: 2.333333
+    latLng = { latitude: 48.866667, longitude: 2.333333 }
+    paris = DB::Location.where(latLng).first
+    paris = DB::Location.create latLng unless paris
 
     DB::City.create name: "Paris", ccode: "fr", location_id: paris.id, player_id: 2
 

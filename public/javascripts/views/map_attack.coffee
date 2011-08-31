@@ -1,6 +1,3 @@
-Object.clone = (object) ->
-  return eval(uneval(object))
-
 class MapAttack extends MapAction  # (View)
   constructor: (@location) ->    
     super
@@ -38,7 +35,7 @@ class MapAttack extends MapAction  # (View)
       icon = Utils.city_image marker.data.city.pts, "selected"
       #icon = "http://#{http_host}/images/map_icons/army_enemy.png"
       if marker.icon != icon
-        marker.nonhover_icon = eval("#{JSON.stringify(marker.icon)}")
+        marker.nonhover_icon = Utils.clone_object(marker.icon)
         marker.icon = icon
         marker.setMap @map
 

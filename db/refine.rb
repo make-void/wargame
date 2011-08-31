@@ -58,28 +58,34 @@ require "#{PATH}/db/default_values"
 include DefaultValues
 `cd #{PATH}/db; rm -f cities_pop.json; unzip #{PATH}/db/cities_pop.json.zip`
 
+require "#{PATH}/lib/tasks_utils"
+
+# slow method (from file)
+def import_cities_from_file
+  cities = JSON.parse File.read("#{PATH}/db/cities_pop.json")
+  cities.each do |city|
+    import city
+  end
+end
+
+# fast method (from dump)
+def import_cities_from_dump
+  unzip_and_import "cities"
+  unzip_and_import "locations"
+end
 
 def step_2
   require "#{PATH}/config/environment"  
   require "#{PATH}/db/recreate_tables"
   
   create_default_vals
-  # batch = 10
-  # lines = []
-  num = 0
   
-  cities = JSON.parse File.read("#{PATH}/db/cities_pop.json")
-  cities.each do |city|
-    num += 1
-    #batching(batch, lines, num)
-    #next unless num % 100 == 0
-    import city
-#    break if num == 50
-  end
+  # import_cities_from_file
+  import_cities_from_dump
+  
   
   create_default_vals_after_location
 
-  
 end
 
 # step_1

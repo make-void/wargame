@@ -1,13 +1,14 @@
-Dialog  = Backbone.View.extend(
-  initialize: (selector) ->
-    #selector = "#dialog-tmpl"
-    this.template = Haml($(selector).html())
+
+Dialog  = Backbone.View.extend(  
   
+  initialize: ->
+    
   afterRender: ->  
   
   render: ->
-    content = this.template this.model.attributes
-    $(this.el).html(content)
+    haml = Haml $(@selector).html()
+    content = haml this.model.attributes
+    $(this.el).html content
     this.afterRender()
     this # returning render method scope lets you chain events (methods)
 )

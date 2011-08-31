@@ -273,11 +273,6 @@ class Map
         this.clearMarkers()
         
     )
-  
-  overlay: ->  
-    boundaries = new google.maps.LatLngBounds(new google.maps.LatLng(43.273978,10.25124454498291), new google.maps.LatLng(44.273978,12.25124454498291));
-    overlay = new google.maps.GroundOverlay("/images/overlay.png", boundaries)
-    overlay.setMap @map
     
   clickInfo: ->
     google.maps.event.addListener(@map, 'click', (evt) ->

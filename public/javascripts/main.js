@@ -29,13 +29,12 @@ CityMarker = LocationMarker.extend({
 });
 ArmyMarker = LocationMarker.extend();
 Dialog = Backbone.View.extend({
-  initialize: function(selector) {
-    return this.template = Haml($(selector).html());
-  },
+  initialize: function() {},
   afterRender: function() {},
   render: function() {
-    var content;
-    content = this.template(this.model.attributes);
+    var content, haml;
+    haml = Haml($(this.selector).html());
+    content = haml(this.model.attributes);
     $(this.el).html(content);
     this.afterRender();
     return this;
@@ -43,9 +42,8 @@ Dialog = Backbone.View.extend({
 });
 CityDialog = Dialog.extend({
   initialize: function() {
-    var selector;
-    selector = "#cityDialog-tmpl";
-    return Dialog.prototype.initialize(selector);
+    this.selector = "#cityDialog-tmpl";
+    return Dialog.prototype.initialize;
   },
   label: function() {
     return city.name;
@@ -53,9 +51,8 @@ CityDialog = Dialog.extend({
 });
 ArmyDialog = Dialog.extend({
   initialize: function() {
-    var selector;
-    selector = "#armyDialog-tmpl";
-    return Dialog.prototype.initialize(selector);
+    this.selector = "#armyDialog-tmpl";
+    return Dialog.prototype.initialize;
   },
   activateButtons: function() {
     var model;
@@ -90,9 +87,6 @@ MapAction = (function() {
   }
   return MapAction;
 })();
-Object.clone = function(object) {
-  return eval(uneval(object));
-};
 MapAttack = (function() {
   __extends(MapAttack, MapAction);
   function MapAttack(location) {
@@ -135,7 +129,7 @@ MapAttack = (function() {
       var icon;
       icon = Utils.city_image(marker.data.city.pts, "selected");
       if (marker.icon !== icon) {
-        marker.nonhover_icon = eval("" + (JSON.stringify(marker.icon)));
+        marker.nonhover_icon = Utils.clone_object(marker.icon);
         marker.icon = icon;
         return marker.setMap(this.map);
       }
@@ -212,6 +206,9 @@ Utils.city_image = function(pop, kind) {
     }
   }
   return "http://" + http_host + ("/images/map_icons/city_" + kind + final_size + ".png");
+};
+Utils.clone_object = function(object) {
+  return eval("" + (JSON.stringify(object)));
 };
 LLRange = (function() {
   function LLRange(lat, lng, range, prec) {
@@ -497,12 +494,6 @@ Map = (function() {
         return this.clearMarkers();
       }
     }, this));
-  };
-  Map.prototype.overlay = function() {
-    var boundaries, overlay;
-    boundaries = new google.maps.LatLngBounds(new google.maps.LatLng(43.273978, 10.25124454498291), new google.maps.LatLng(44.273978, 12.25124454498291));
-    overlay = new google.maps.GroundOverlay("/images/overlay.png", boundaries);
-    return overlay.setMap(this.map);
   };
   Map.prototype.clickInfo = function() {
     return google.maps.event.addListener(this.map, 'click', function(evt) {});
