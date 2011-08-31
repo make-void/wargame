@@ -355,18 +355,22 @@ module DefaultValues
                     player_id: cor3y.id,
                     is_moving: 0
                     
-    latLng = { latitude: 48.866667, longitude: 2.333333 }
+    latLng = { latitude: 43.75, longitude: 11.183333 }
     scandicci = DB::Location.where(latLng).first
     if scandicci
       army_2 = DB::Army.create location_id: scandicci.id,
                       player_id: makevoid.id,
                       is_moving: 0
     end
-
-    army_3 = DB::Army.create location_id: florence.id,
-                    player_id: cor3y.id,
-                    is_moving: 1,
-                    destination_id: paris.id
+    
+    latLng = { latitude: 43.683333, longitude: 11.25 }
+    impruneta = DB::Location.where(latLng).first
+    if impruneta
+      army_3 = DB::Army.create location_id: impruneta.id,
+                      player_id: cor3y.id,
+                      is_moving: 1,
+                      destination_id: paris.id
+    end
 
   #ARMY 1
     DB::Unit::ArmyUnit.create unit_id: 1,
