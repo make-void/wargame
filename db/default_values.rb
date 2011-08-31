@@ -343,13 +343,23 @@ module DefaultValues
     florence = DB::Location.where(latLng).first # firenze
     florence = DB::Location.create latLng unless florence
 
-    DB::City.create name: "Florence", ccode: "it", location_id: florence.id, player_id: makevoid.id
+    f_city = DB::City.find(:first, :conditions => {:name => "Florence"})
+    if f_city.nil?
+      f_city = DB::City.create name: "Florence", ccode: "it", location_id: florence.id, player_id: makevoid.id, pts: 65000
+    else
+      f_city.update_attributes player_id: makevoid.id, pts: 65000
+    end
 
     latLng = { latitude: 48.866667, longitude: 2.333333 }
     paris = DB::Location.where(latLng).first
     paris = DB::Location.create latLng unless paris
 
-    DB::City.create name: "Paris", ccode: "fr", location_id: paris.id, player_id: makevoid.id
+    paris_city = DB::City.find(:first, :conditions => {:name => "Paris"})
+    if paris_city.nil?
+      paris_city = DB::City.create name: "Paris", ccode: "fr", location_id: paris.id, player_id: cor3y.id, pts: 65000
+    else
+      paris_city.update_attributes player_id: cor3y.id, pts:65000
+    end
 
     army_1 = DB::Army.create location_id: florence.id,
                     player_id: cor3y.id,

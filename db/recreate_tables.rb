@@ -79,7 +79,7 @@ CREATE TABLE `wg_locations` (
 qs << "
 CREATE TABLE `wg_cities` (
   `city_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `location_id` BIGINT UNSIGNED NOT NULL,
+  `location_id` BIGINT UNSIGNED NOT NULL UNIQUE,
   `player_id` BIGINT UNSIGNED NOT NULL,
 
   `name` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
