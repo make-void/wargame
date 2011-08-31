@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, ArmyMarker, AttackState, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, MapAction, MapAttack, MapMove, MoveState, Player, Upgrade, Utils, console;
+var Alliance, Army, ArmyDialog, ArmyMarker, AttackState, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, MapAction, MapAttack, MapMove, MoveState, Player, PlayerView, Upgrade, Utils, console;
 var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -19,6 +19,16 @@ AttackState = {
   "default": "wait",
   states: ["wait", "choose", "selected"]
 };
+PlayerView = Backbone.View.extend({
+  render: function() {
+    var content, haml;
+    haml = Haml($("#playerView-tmpl").html());
+    content = haml(this.model.attributes);
+    console.log(content);
+    $(this.el).html(content);
+    return this;
+  }
+});
 LocationMarker = Backbone.View.extend({
   render: function() {
     return this;
@@ -604,6 +614,13 @@ $(function() {
       }
     }
     return window.arm = army;
+  });
+  $.getJSON("/players/me", function(player) {
+    g.current_player = new Player(player);
+    g.playerView = new PlayerView({
+      model: current_player
+    });
+    return $("#player").append(playerView.render().el);
   });
   g.map = new Map;
   map.draw();

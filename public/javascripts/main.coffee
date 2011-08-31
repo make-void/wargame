@@ -49,10 +49,19 @@ $( ->
     # army.dialog.render()
     # $(army.dialog.el).find(".move").trigger("click")
   )
+
+  # --------
+  # player
+  
+  $.getJSON("/players/me", (player) ->
+    g.current_player = new Player player
+    g.playerView = new PlayerView { model: current_player }
+    $("#player").append playerView.render().el
+  )
+
   
   # --------
-  # map
-  
+  # map  
   
   g.map = new Map
   map.draw()

@@ -1,6 +1,7 @@
 module CoffeeUtils
   COFFEE_FILES = [ 
                    "game_state"               ,
+                   "views/player_view"        ,
                    "markers/location_marker"  ,
                    "markers/city_marker"      ,
                    "markers/army_marker"      ,

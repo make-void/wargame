@@ -17,8 +17,10 @@
     #wrap
       #container
         %header
+          #player &nbsp;
           %h1 
             = link_to "WarGame", "/"
+            
         %nav
         #content
           = yield
@@ -26,7 +28,7 @@
     
     - if self.is_on? "game#show"
       = render partial: "game/nav"
-            
+        
     #debug
       = yield :debug
       
@@ -48,6 +50,12 @@
     
     
     // templates    
+    
+    %script{ type: "text/template", id: "playerView-tmpl" }
+      :plain
+        %p 
+          Welcome, 
+          %span= name
     
     %script{ type: "text/template", id: "armyDialog-tmpl" }
       :plain
