@@ -1,6 +1,16 @@
+#use console.log safely
+unless console
+  console = {} 
+  console.log = {}
+
+
 # map utils
 
 Utils = {}
+
+Utils.parseCoords = (string) ->
+  split = string.replace(/\s/, '').split(",")
+  return [split[0], split[1]]
 
 # move in city model (or ancestor)
 Utils.city_image = (pop, kind) ->

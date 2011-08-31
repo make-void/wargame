@@ -207,7 +207,15 @@ class Map
 
     if marker.type == "city"
       dialog.addTab('Overview', content)
-      dialog.addTab('Build', "faaaarming")
+      
+      # TODO: city.owned?(current_player) # => boolean
+      is_owned_by_current_player = true
+      if is_owned_by_current_player
+        dialog.addTab('Structures', "faaaarming")
+        dialog.addTab('Units',      "faaaarming")
+        dialog.addTab('Upgrades',   "faaaarming")
+      
+      dialog.addTab('Debug', "I will be useful...")
     
     this.dialogs.push dialog
     

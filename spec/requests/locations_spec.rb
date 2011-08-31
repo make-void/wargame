@@ -4,10 +4,10 @@ describe "Locations" do
   
   describe "GET /" do
     
-    FI = [43.7687324, 11.2569013]
+    before(:each) { @fi = [43.7687324, 11.2569013] }
     
     it "locations/:lat/:lng" do
-      url = "/locations/#{FI.join("/")}.json"
+      url = "/locations/#{@fi.join("/")}"
       #request.headers["Content-Type"] = :json
       data = get_json url
       

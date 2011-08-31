@@ -20,7 +20,7 @@ module LG # Logic
       return locs.sort_by{|x| x[:location_id]}
       
       
-      # Sort by location_id. If city, first. then armies by army_id
+      # TODO: sort by location_id. If city, first. then armies by army_id
     end
     
     

@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, ArmyMarker, AttackState, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, MapAction, MapAttack, MapMove, MoveState, Player, Upgrade, Utils, console, utils;
+var Alliance, Army, ArmyDialog, ArmyMarker, AttackState, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, MapAction, MapAttack, MapMove, MoveState, Player, Upgrade, Utils, console;
 var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -190,7 +190,16 @@ MapMove = (function() {
   };
   return MapMove;
 })();
+if (!console) {
+  console = {};
+  console.log = {};
+}
 Utils = {};
+Utils.parseCoords = function(string) {
+  var split;
+  split = string.replace(/\s/, '').split(",");
+  return [split[0], split[1]];
+};
 Utils.city_image = function(pop, kind) {
   var final_size, size, sizes, _i, _len;
   if (!kind) {
@@ -399,7 +408,7 @@ Map = (function() {
     });
   };
   Map.prototype.attachDialog = function(marker) {
-    var content, dia, dialog, model, _i, _len, _ref;
+    var content, dia, dialog, is_owned_by_current_player, model, _i, _len, _ref;
     _ref = this.dialogs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       dia = _ref[_i];
@@ -427,7 +436,13 @@ Map = (function() {
     dialog.open(this.map, marker);
     if (marker.type === "city") {
       dialog.addTab('Overview', content);
-      dialog.addTab('Build', "faaaarming");
+      is_owned_by_current_player = true;
+      if (is_owned_by_current_player) {
+        dialog.addTab('Structures', "faaaarming");
+        dialog.addTab('Units', "faaaarming");
+        dialog.addTab('Upgrades', "faaaarming");
+      }
+      dialog.addTab('Debug', "I will be useful...");
     }
     return this.dialogs.push(dialog);
   };
@@ -555,16 +570,6 @@ Map = (function() {
   };
   return Map;
 })();
-utils = {};
-utils.parseCoords = function(string) {
-  var split;
-  split = string.replace(/\s/, '').split(",");
-  return [split[0], split[1]];
-};
-if (!console) {
-  console = {};
-  console.log = {};
-}
 $(function() {
   var g;
   g = window;
@@ -583,7 +588,7 @@ $(function() {
   $("#latLng").bind("submit", function() {
     var coords;
     coords = $(this).find("input").val();
-    coords = utils.parseCoords(coords);
+    coords = Utils.parseCoords(coords);
     map.center(coords[0], coords[1]);
     return false;
   });

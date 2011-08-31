@@ -7,5 +7,5 @@ module LG
       
     end
     
-  module
+  end
 end

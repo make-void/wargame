@@ -4,25 +4,28 @@ module DefaultValues
   
   def create_default_vals
 
-    DB::Alliance.create name: "No Alliance"
+    ally = DB::Alliance.create name: "No Alliance"
+
 
     DB::Player.create name: "Free Lands", 
                   new_password: "NULLABLE", 
                   new_password_confirmation: "NULLABLE", 
                   email: "test@test.test", 
-                  alliance_id: 1
+                  alliance_id: ally.id
+
+    ally = DB::Alliance.create name: "TheMasterers"
                   
     DB::Player.create name: "Cor3y", 
                   new_password: "daniel001", 
                   new_password_confirmation: "daniel001", 
                   email: "test1@test.test", 
-                  alliance_id: 1
+                  alliance_id: ally.id
                   
-    DB::Player.create name: "Makevoid", 
-                  new_password: "final33man", 
-                  new_password_confirmation: "final33man", 
+    DB::Player.create name: "makevoid", 
+                  new_password: "finalman", 
+                  new_password_confirmation: "finalman", 
                   email: "test2@test.test", 
-                  alliance_id: 1
+                  alliance_id: ally.id
     
     #################
     #     UNITS     #
@@ -332,53 +335,64 @@ module DefaultValues
   end
 
   def create_default_vals_after_location
+    cor3y = DB::Player.where(name: "Cor3y").first
+    makevoid = DB::Player.where(name: "makevoid").first
+
 
     latLng = { latitude: 43.7687324, longitude: 11.2569013 }
     florence = DB::Location.where(latLng).first # firenze
     florence = DB::Location.create latLng unless florence
 
-    DB::City.create name: "Florence", ccode: "it", location_id: florence.id, player_id: 3
+    DB::City.create name: "Florence", ccode: "it", location_id: florence.id, player_id: makevoid.id
 
     latLng = { latitude: 48.866667, longitude: 2.333333 }
     paris = DB::Location.where(latLng).first
     paris = DB::Location.create latLng unless paris
 
-    DB::City.create name: "Paris", ccode: "fr", location_id: paris.id, player_id: 2
+    DB::City.create name: "Paris", ccode: "fr", location_id: paris.id, player_id: makevoid.id
 
-    army = DB::Army.create location_id: florence.id,
-                    player_id: 3,
-                    is_moving: 0              
+    army_1 = DB::Army.create location_id: florence.id,
+                    player_id: cor3y.id,
+                    is_moving: 0
+                    
+    latLng = { latitude: 48.866667, longitude: 2.333333 }
+    scandicci = DB::Location.where(latLng).first
+    if scandicci
+      army_2 = DB::Army.create location_id: scandicci.id,
+                      player_id: makevoid.id,
+                      is_moving: 0
+    end
 
-    DB::Army.create location_id: florence.id,
-                    player_id: 2,
+    army_3 = DB::Army.create location_id: florence.id,
+                    player_id: cor3y.id,
                     is_moving: 1,
                     destination_id: paris.id
 
   #ARMY 1
     DB::Unit::ArmyUnit.create unit_id: 1,
-                       army_id: 1,
-                       player_id: 3,
+                       army_id: army_2.id,
+                       player_id: makevoid.id,
                        number: 100 #100 soldiers
 
     DB::Unit::ArmyUnit.create unit_id: 3,
-                        army_id: 1,
-                        player_id: 3,
+                        army_id: army_2.id,
+                        player_id: makevoid.id,
                         number: 20 #20 granatiers
 
     DB::Unit::ArmyUnit.create unit_id: 5,
-                        army_id: 1,
-                        player_id: 3,
+                        army_id: army_2.id,
+                        player_id: makevoid.id,
                         number: 10 #10 light camions
 
   #ARMY 2
     DB::Unit::ArmyUnit.create unit_id: 2,
-                        army_id: 2,
-                        player_id: 2,
+                        army_id: army_3.id,
+                        player_id: cor3y.id,
                         number: 50 #50 special forces
 
     DB::Unit::ArmyUnit.create unit_id: 4,
-                        army_id: 2,
-                        player_id: 2,
+                        army_id: army_1.id,
+                        player_id: cor3y.id,
                         number: 5 #5 jeeps
 
   end

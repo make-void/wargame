@@ -77,17 +77,19 @@ end
 def step_2
   require "#{PATH}/config/environment"  
   require "#{PATH}/db/recreate_tables"
+
+  unless Rails.env == "test"
+    create_default_vals
   
-  create_default_vals
-  
-  # import_cities_from_file
-  import_cities_from_dump
+    # import_cities_from_file
+    import_cities_from_dump
   
   
-  create_default_vals_after_location
+    create_default_vals_after_location
+  end
 
 end
 
 # step_1
-step_2
+step_2 
 

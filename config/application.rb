@@ -38,5 +38,11 @@ module Wargame
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
+    
+    
+    config.generators do |g|
+      options = { routing_specs: false }
+      g.test_framework :rspec, options
+    end
   end
 end
