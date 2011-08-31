@@ -11,6 +11,8 @@ module DB
       validates_presence_of :level
       validates_numericality_of :level
       
+      before_create { started_at = Time.now }
+      
       def active? ; self.running ; end
       
       
@@ -28,7 +30,8 @@ module DB
         
         self.update_attributes( 
           :started_at => start_time || Time.now, 
-          :time_needed => LG::Unit.production_time( self.definition, unit_production_level )  * self.number
+          :time_needed => LG::Unit.production_time( self.definition, unit_production_level )  * self.number,
+          :runnint => true
         )
       end
       
@@ -82,7 +85,7 @@ module DB
         return self.started_at + self.time_needed.seconds
       end
       
-      def started?
+      def active?
         !self.started_at.nil?
       end
       
