@@ -1,8 +1,10 @@
 - content_for :head do
   %meta{ name: "viewport", content: "user-scalable=no" }
 - content_for :maps do
-  %script{ src: "http://maps.googleapis.com/maps/api/js?sensor=true", type: "text/javascript"}
-  -# %script{ src: "/javascripts/map.js", type: "text/javascript"  }
+  - if Rails.env == "production"
+    %script{ src: "http://maps.googleapis.com/maps/api/js?sensor=true", type: "text/javascript"}
+  - else # cached version - not for production!!!!
+    %script{ src: "/javascripts/vendor/gmaps.js"}
 
 - content_for :debug do
   %p #{DB::Location.count} locations, #{DB::City.count} cities

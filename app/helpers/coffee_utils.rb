@@ -15,6 +15,7 @@ module CoffeeUtils
       "utils"                    ,
       "models"                   ,
       "map"                      ,
+      "game"                     ,
       "main"                     ,
     ] # you can use 'folder/*' but that way you have no control on the load order
     files << "debug" unless Rails.env == "production"

@@ -582,26 +582,30 @@ Map = (function() {
 })();
 Game = (function() {
   function Game() {
-    window.map = this.map = new Map;
+    this.map = new Map;
+    this.current_player = null;
+    this.current_playerView = null;
   }
-  Game.prototype.drawMap = function() {
+  Game.prototype.initMap = function() {
     this.map.draw();
     this.map.loadMarkers();
     this.map.listen();
     this.map.startFetchingMarkers();
     return this.map.autoSize();
   };
-  Game.prototype.drawPlayerView = function() {
-    return $.getJSON("/players/me", function(player) {
-      var current_player, playerView;
-      current_player = new Player(player);
-      playerView = new PlayerView({
-        model: current_player
-      });
-      return $("#player").append(playerView.render().el);
-    });
+  Game.prototype.getPlayerView = function() {
+    return $.getJSON("/players/me", __bind(function(player) {
+      return this.initPlayerView(player);
+    }, this));
   };
-  Game.prototype.drawNav = function() {
+  Game.prototype.initPlayerView = function(player) {
+    this.current_player = new Player(player);
+    this.current_playerView = new PlayerView({
+      model: this.current_player
+    });
+    return $("#player").append(this.current_playerView.render().el);
+  };
+  Game.prototype.initNav = function() {
     return $("#nav li").hover(function() {
       return $(this).find("div").show();
     }, function() {
@@ -614,9 +618,9 @@ $(function() {
   var g;
   g = window;
   g.game = new Game;
-  game.drawMap();
-  game.drawPlayerView();
-  return game.drawNav();
+  game.initMap();
+  game.getPlayerView();
+  return game.initNav();
 });
 $("#latLng").bind("submit", function() {
   var coords;

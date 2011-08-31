@@ -32,12 +32,17 @@ group :development do
   gem 'guard-rspec'
 end
 
-group :test do
+group :development, :test do
   gem "rspec-rails", "~> 2.6"
+  gem "jasmine", group: [:development, :test]
+end
+group :test do
   gem "factory_girl_rails"
   gem "capybara"
-  gem "jasmine"
 end
+
+
+
 
 # Use unicorn as the web server
 # gem 'unicorn'

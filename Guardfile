@@ -31,4 +31,4 @@ guard 'rspec' do
   watch('app/controllers/application_controller.rb')  { "spec/requests" }
 end
 
-#guard 'coffeescript', :input => 'public/javascripts'
+guard 'coffeescript', :input => 'spec/javascripts'
