@@ -33,7 +33,8 @@ module LG
           :requirements => {
             :researches => research_requirements,
             :buildings => building_requirements
-          }
+          },
+          :max_level => res.max_level
         }
         
       end
@@ -113,15 +114,90 @@ module LG
           :requirements => {
             :researches => research_requirements,
             :buildings => building_requirements
-          }
+          },
+          :max_level => struct.max_level
         }
-        
         structures[struct.structure_id][:base_production] = struct.base_production unless struct.base_production.nil?
       end
       
       return structures
     end
     
+
+###################################
+#     BUILDING COMPLETE PUTS      #
+###################################
+    
+    def self.get_all_building_infos
+      b_infos = fetch_structures()
+      
+      b_infos.each do |x,y|
+        puts "#{x}: #{y[:name]}"
+        puts "    - #{y[:description]}"
+        puts "    - Requirements: (Researches)"
+        y[:requirements][:researches].map do |res_req|
+          puts "        - #{DB::Research::Definition.find(res_req[:tech_id]).name}: #{res_req[:level]}"
+        end
+        puts "    - Requirements: (Buildings)"
+        y[:requirements][:buildings].map do |build_req|
+          puts "        - #{DB::Structure::Definition.find(build_req[:structure_id]).name}: #{build_req[:level]}"
+        end
+        
+        puts "    - Cost Per Level:"
+        level = 0
+        this_object =  DB::Structure::Definition.find(x)
+        while level < y[:max_level]
+          cost = LG::Structures.cost( this_object, level + 1 )
+          time = LG::Structures.time( this_object, level + 1, 1 )
+          puts "\t Level #{level + 1}: gold #{cost[:gold]}, steel #{cost[:steel]}, oil #{cost[:oil]}, time (seconds) #{time.floor}"
+          level += 1
+        end
+        if ["Warehouse", "Bank"].include?(this_object.name)
+          puts "    - Storage Per Level:"
+          level = 0
+          while level < y[:max_level]
+            puts "\t Level #{level + 1}: #{LG::Structures.storage( this_object, level + 1)}"
+            level += 1
+          end
+        end
+
+        level = 0
+        unless y[:base_production].nil?
+          puts "    - Production Per Level:"
+          while level < y[:max_level]
+            production = LG::Structures.production( this_object, level + 1 )
+            puts "\t Level #{level + 1}: #{production}/h"
+            level += 1
+          end
+        end
+      end
+      return nil
+    end
+
+###################################
+#      BUILDING DEBUG PUTS        #
+###################################
+
+  def self.debug_buildings
+    LG::Game.get_all_base_infos()[:structures].each do |x,y|
+      puts "#{x}: #{y[:name]}"
+      puts "    - #{y[:description]}"
+      puts "    - Cost: gold #{y[:cost][:gold]}, steel #{y[:cost][:steel]}, oil #{y[:cost][:oil]}, time(seconds) #{y[:cost][:base_time]}"
+      puts "    - Max Level: #{y[:max_level]}"
+      puts "    - Requirements: (Researches)"
+      y[:requirements][:researches].map do |res_req|
+        puts "        - #{DB::Research::Definition.find(res_req[:tech_id]).name}: #{res_req[:level]}"
+      end
+      puts "    - Requirements: (Buildings)"
+      y[:requirements][:buildings].map do |build_req|
+        puts "        - #{DB::Structure::Definition.find(build_req[:structure_id]).name}: #{build_req[:level]}"
+      end
+      puts "    - BASE PRODUCTION: #{y[:base_production]}" if y[:base_production]
+
+    end
+    return nil
+  end
+
 ###################################
 #         UNITS DEBUG PUTS        #
 ###################################
@@ -154,6 +230,7 @@ module LG
       puts "#{x}: #{y[:name]}"
       puts "    - #{y[:description]}"
       puts "    - Cost: gold #{y[:cost][:gold]}, steel #{y[:cost][:steel]}, oil #{y[:cost][:oil]}, time(seconds) #{y[:cost][:base_time]}"
+      puts "    - Max Level: #{y[:max_level]}"
       puts "    - Requirements: (Researches)"
       y[:requirements][:researches].map do |res_req|
         puts "        - #{DB::Research::Definition.find(res_req[:tech_id]).name}: #{res_req[:level]}"
@@ -162,29 +239,6 @@ module LG
       y[:requirements][:buildings].map do |build_req|
         puts "        - #{DB::Structure::Definition.find(build_req[:structure_id]).name}: #{build_req[:level]}"
       end
-      
-    end
-    return nil
-  end
-
-###################################
-#      BUILDING DEBUG PUTS        #
-###################################
-
-  def self.debug_buildings
-    LG::Game.get_all_base_infos()[:structures].each do |x,y|
-      puts "#{x}: #{y[:name]}"
-      puts "    - #{y[:description]}"
-      puts "    - Cost: gold #{y[:cost][:gold]}, steel #{y[:cost][:steel]}, oil #{y[:cost][:oil]}, time(seconds) #{y[:cost][:base_time]}"
-      puts "    - Requirements: (Researches)"
-      y[:requirements][:researches].map do |res_req|
-        puts "        - #{DB::Research::Definition.find(res_req[:tech_id]).name}: #{res_req[:level]}"
-      end
-      puts "    - Requirements: (Buildings)"
-      y[:requirements][:buildings].map do |build_req|
-        puts "        - #{DB::Structure::Definition.find(build_req[:structure_id]).name}: #{build_req[:level]}"
-      end
-      puts "    - BASE PRODUCTION: #{y[:base_production]}" if y[:base_production]
       
     end
     return nil

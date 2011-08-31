@@ -145,7 +145,8 @@ module DefaultValues
                  steel_cost: 42,
                  oil_cost: 0,
                  cost_advancement_type: 0,
-                 base_production: 45
+                 base_production: 45,
+                 max_level: 25
 
      DB::Structure::Definition.create name: "Foundry",
                  description: "Produces Steel",
@@ -153,7 +154,8 @@ module DefaultValues
                  steel_cost: 64,
                  oil_cost: 0,
                  cost_advancement_type: 0,
-                 base_production: 35
+                 base_production: 35,
+                 max_level: 25
 
      DB::Structure::Definition.create name: "Refinery",
                  description: "Produces Oil",
@@ -161,49 +163,56 @@ module DefaultValues
                  steel_cost: 59,
                  oil_cost: 0,
                  cost_advancement_type: 0,
-                 base_production: 15
+                 base_production: 15,
+                 max_level: 25
 
      DB::Structure::Definition.create name: "Bank",
                  description: "Storage Room for Gold",
                  gold_cost: 2000,
                  steel_cost: 1300,
                  oil_cost: 0,
-                 cost_advancement_type: 1
+                 cost_advancement_type: 1,
+                 max_level: 10
 
      DB::Structure::Definition.create name: "Warehouse",
                  description: "Storage Room for Steel and Oil",
                  gold_cost: 800,
                  steel_cost: 2000,
                  oil_cost: 500,
-                 cost_advancement_type: 1
+                 cost_advancement_type: 1,
+                 max_level: 10
 
      DB::Structure::Definition.create name: "Barraks",
                  description: "Produces Infantry Units",
                  gold_cost: 400,
                  steel_cost: 200,
                  oil_cost: 100,
-                 cost_advancement_type: 2
+                 cost_advancement_type: 2,
+                 max_level: 15
 
      DB::Structure::Definition.create name: "Factory",
                  description: "Produces Veicles",
                  gold_cost: 600,
                  steel_cost: 800,
                  oil_cost: 150,
-                 cost_advancement_type: 2
+                 cost_advancement_type: 2,
+                 max_level: 15
 
      DB::Structure::Definition.create name: "Research Centre",
                  description: "Produces Researches",
                  gold_cost: 400,
                  steel_cost: 200,
                  oil_cost: 150,
-                 cost_advancement_type: 2
+                 cost_advancement_type: 2,
+                 max_level: 15
 
      DB::Structure::Definition.create name: "Bunker",
                  description: "Increases Defence if City is Attacked",
                  gold_cost: 5000,
                  steel_cost: 10000,
                  oil_cost: 1500,
-                 cost_advancement_type: 2
+                 cost_advancement_type: 2,
+                 max_level: 10
 
      #################
      #  RESEARCHES   #
@@ -212,43 +221,50 @@ module DefaultValues
                  description: "to-be-added",
                  gold_cost: 300,
                  steel_cost: 800,
-                 oil_cost: 0
+                 oil_cost: 0,
+                 max_level: 20
 
      DB::Research::Definition.create name: "Infrantry Armor Upgrade",
                  description: "to-be-added" ,
                  gold_cost: 250,
                  steel_cost: 1000,
-                 oil_cost: 0  
+                 oil_cost: 0,
+                 max_level: 20
 
      DB::Research::Definition.create name: "Vehicle Weapon Upgrade",
                  description: "to-be-added",
                  gold_cost: 500,
                  steel_cost: 1000,
-                 oil_cost: 0
+                 oil_cost: 0,
+                 max_level: 20
 
      DB::Research::Definition.create name: "Vehicle Armor Upgrade",
                  description: "to-be-added",
                  gold_cost: 400,
                  steel_cost: 800,
-                 oil_cost: 400
+                 oil_cost: 400,
+                 max_level: 20
 
      DB::Research::Definition.create name: "Construction Industry Tecniques",
                  description: "to-be-added",
                  gold_cost: 1200,
                  steel_cost: 1500,
-                 oil_cost: 1000   
+                 oil_cost: 1000,
+                 max_level: 20
 
      DB::Research::Definition.create name: "Espionage",
                  description: "to-be-added",
                  gold_cost: 900,
                  steel_cost: 600,
-                 oil_cost: 200
+                 oil_cost: 200,
+                 max_level: 20
 
      DB::Research::Definition.create name: "Engine Power",
                  description: "to-be-added",
                  gold_cost: 1000,
                  steel_cost: 1500,
-                 oil_cost: 1200
+                 oil_cost: 1200,
+                 max_level: 10
                  
                  
                  

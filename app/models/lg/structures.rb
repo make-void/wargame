@@ -3,6 +3,7 @@ module LG
     
     CostAdvancement = lambda{|cost, level , cost_advancement_type| cost * ((COST_ADVANCEMENT_RELATIONS[cost_advancement_type])**(level-1)) }
     ProductionByLevel = lambda{|base_production, level, server_speed| base_production * (level*(1.1**level)) * server_speed }
+    StorageByLevel = lambda{|level| 5000 * (2.5 * Math.exp( (20*level) / 33.0 ) ) }
     
     COST_ADVANCEMENT_RELATIONS = {
       0 => 1.5,
@@ -34,6 +35,12 @@ module LG
       raise ArgumentError, "Need DB::Structure::Definition Object. Got #{struct_definition_object.inspect}" unless struct_definition_object.class == DB::Structure::Definition
       return nil if struct_definition_object.base_production.nil?
       return ProductionByLevel.call(struct_definition_object.base_production, level, server_speed).to_i
+    end
+    
+    def self.storage( struct_definition_object, level, server_speed = 1)
+      raise ArgumentError, "Need DB::Structure::Definition Object. Got #{struct_definition_object.inspect}" unless struct_definition_object.class == DB::Structure::Definition
+      return nil if !["Warehouse", "Bank"].include?(struct_definition_object.name)
+      return StorageByLevel.call( level ).to_i
     end
     
     
