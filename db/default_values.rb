@@ -300,14 +300,14 @@ module DefaultValues
      DB::Unit::Requirement::Building.create :unit_id => 3, :req_structure_id => 7, :level => 2
      #Jeep => 3 Factory
      DB::Unit::Requirement::Building.create :unit_id => 4, :req_structure_id => 7, :level => 2
-     #Light Tank => 6 Factory
-     DB::Unit::Requirement::Building.create :unit_id => 5, :req_structure_id => 7, :level => 6
      #Light Transport => 5 Factory
+     DB::Unit::Requirement::Building.create :unit_id => 5, :req_structure_id => 7, :level => 6
+     #Light Tank => 6 Factory
      DB::Unit::Requirement::Building.create :unit_id => 6, :req_structure_id => 7, :level => 6
+     #Heavy Transport => 8 Factory
+     DB::Unit::Requirement::Building.create :unit_id => 7, :req_structure_id => 7, :level => 8
      #Heavy Tank => 12 Factory
-     DB::Unit::Requirement::Building.create :unit_id => 7, :req_structure_id => 7, :level => 12
-     #Heavy Transport
-     DB::Unit::Requirement::Building.create :unit_id => 8, :req_structure_id => 7, :level => 8
+     DB::Unit::Requirement::Building.create :unit_id => 8, :req_structure_id => 7, :level => 12
      
      #Soldier => 2 Infantry Weapon
      DB::Unit::Requirement::Tech.create :unit_id => 1, :req_tech_id => 1, :level => 2
@@ -319,19 +319,18 @@ module DefaultValues
      DB::Unit::Requirement::Tech.create :unit_id => 3, :req_tech_id => 3, :level => 6
      #Jeep => 1 Engine Power
      DB::Unit::Requirement::Tech.create :unit_id => 4, :req_tech_id => 7, :level => 1
-     #Light Tank => 5 Vehicle Armor, 5 Vehicle Weapon
-     DB::Unit::Requirement::Tech.create :unit_id => 5, :req_tech_id => 3, :level => 5
-     DB::Unit::Requirement::Tech.create :unit_id => 5, :req_tech_id => 4, :level => 5
      #Light Transport => 5 Vehicle Armor, 3 Engine Power
+     DB::Unit::Requirement::Tech.create :unit_id => 5, :req_tech_id => 3, :level => 5
+     DB::Unit::Requirement::Tech.create :unit_id => 5, :req_tech_id => 7, :level => 3
+     #Light Tank => 5 Vehicle Armor, 5 Vehicle Weapon
      DB::Unit::Requirement::Tech.create :unit_id => 6, :req_tech_id => 3, :level => 5
-     DB::Unit::Requirement::Tech.create :unit_id => 6, :req_tech_id => 7, :level => 3
-     #Heavy Tank => 5 Vehicle Armor, 5 Vehicle Weapon
-     DB::Unit::Requirement::Tech.create :unit_id => 7, :req_tech_id => 3, :level => 8
-     DB::Unit::Requirement::Tech.create :unit_id => 7, :req_tech_id => 4, :level => 6
+     DB::Unit::Requirement::Tech.create :unit_id => 6, :req_tech_id => 4, :level => 5
      #Heavy Transport => 5 Vehicle Armor, 3 Engine Power
+     DB::Unit::Requirement::Tech.create :unit_id => 7, :req_tech_id => 3, :level => 8
+     DB::Unit::Requirement::Tech.create :unit_id => 7, :req_tech_id => 7, :level => 6
+     #Heavy Tank => 5 Vehicle Armor, 5 Vehicle Weapon
      DB::Unit::Requirement::Tech.create :unit_id => 8, :req_tech_id => 3, :level => 8
-     DB::Unit::Requirement::Tech.create :unit_id => 8, :req_tech_id => 7, :level => 6
-
+     DB::Unit::Requirement::Tech.create :unit_id => 8, :req_tech_id => 4, :level => 6
   end
 
   def create_default_vals_after_location
