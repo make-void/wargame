@@ -14,7 +14,7 @@ module LG
     # =>  RETURNS: time in seconds
     def self.time( struct_definition_object, level, research_level, server_speed = 1 )
        raise ArgumentError, "Need DB::Structure::Definition Object. Got #{struct_definition_object.inspect}" unless struct_definition_object.class == DB::Structure::Definition
-       structure_cost = Structures.calculate_building_cost( struct_definition_object, level )
+       structure_cost = Structures.cost( struct_definition_object, level )
        values = { gold: structure_cost[:gold], steel: structure_cost[:steel], research_level: research_level, server_speed: server_speed }
        return Helpers::TimeProcs::BuildingTime.call(values)
     end
