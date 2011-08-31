@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, ArmyMarker, AttackState, City, CityDialog, CityMarker, Dialog, GameState, LLRange, Location, LocationMarker, Map, MapAction, MapAttack, MapMove, MoveState, Player, PlayerView, Upgrade, Utils, console;
+var Alliance, Army, ArmyDialog, ArmyMarker, AttackState, City, CityDialog, CityMarker, Dialog, Game, GameState, LLRange, Location, LocationMarker, Map, MapAction, MapAttack, MapMove, MoveState, Player, PlayerView, Upgrade, Utils, console;
 var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -24,7 +24,6 @@ PlayerView = Backbone.View.extend({
     var content, haml;
     haml = Haml($("#playerView-tmpl").html());
     content = haml(this.model.attributes);
-    console.log(content);
     $(this.el).html(content);
     return this;
   }
@@ -427,7 +426,6 @@ Map = (function() {
     model = null;
     content = marker.dialog.render().el;
     dialog = new InfoBubble({
-      content: content,
       shadowStyle: 1,
       padding: 12,
       backgroundColor: "#EEE",
@@ -452,8 +450,10 @@ Map = (function() {
         dialog.addTab('Units', "faaaarming");
         dialog.addTab('Upgrades', "faaaarming");
       }
-      dialog.addTab('Debug', "I will be useful...");
+    } else {
+      dialog.addTab('City', content);
     }
+    dialog.addTab('Debug', "I will be useful...");
     return this.dialogs.push(dialog);
   };
   Map.prototype.drawMarker = function(data) {
@@ -580,52 +580,48 @@ Map = (function() {
   };
   return Map;
 })();
+Game = (function() {
+  function Game() {
+    window.map = this.map = new Map;
+  }
+  Game.prototype.drawMap = function() {
+    this.map.draw();
+    this.map.loadMarkers();
+    this.map.listen();
+    this.map.startFetchingMarkers();
+    return this.map.autoSize();
+  };
+  Game.prototype.drawPlayerView = function() {
+    return $.getJSON("/players/me", function(player) {
+      var current_player, playerView;
+      current_player = new Player(player);
+      playerView = new PlayerView({
+        model: current_player
+      });
+      return $("#player").append(playerView.render().el);
+    });
+  };
+  Game.prototype.drawNav = function() {
+    return $("#nav li").hover(function() {
+      return $(this).find("div").show();
+    }, function() {
+      return $(this).find("div").hide();
+    });
+  };
+  return Game;
+})();
 $(function() {
   var g;
   g = window;
-  g.army_test = new Army({
-    asd: "lol"
-  });
-  g.armyMarker = new ArmyMarker({
-    model: army_test
-  });
-  $("#debug").append(armyMarker.render().el);
-  $("#nav li").hover(function() {
-    return $(this).find("div").show();
-  }, function() {
-    return $(this).find("div").hide();
-  });
-  $("#latLng").bind("submit", function() {
-    var coords;
-    coords = $(this).find("input").val();
-    coords = Utils.parseCoords(coords);
-    map.center(coords[0], coords[1]);
-    return false;
-  });
-  $(window).oneTime(1000, function() {
-    var army, marker, _i, _len, _ref;
-    army = null;
-    _ref = map.markers;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      marker = _ref[_i];
-      if (marker.type === "army") {
-        army = marker;
-        break;
-      }
-    }
-    return window.arm = army;
-  });
-  $.getJSON("/players/me", function(player) {
-    g.current_player = new Player(player);
-    g.playerView = new PlayerView({
-      model: current_player
-    });
-    return $("#player").append(playerView.render().el);
-  });
-  g.map = new Map;
-  map.draw();
-  map.loadMarkers();
-  map.listen();
-  map.startFetchingMarkers();
-  return map.autoSize();
+  g.game = new Game;
+  game.drawMap();
+  game.drawPlayerView();
+  return game.drawNav();
+});
+$("#latLng").bind("submit", function() {
+  var coords;
+  coords = $(this).find("input").val();
+  coords = Utils.parseCoords(coords);
+  map.center(coords[0], coords[1]);
+  return false;
 });

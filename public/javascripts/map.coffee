@@ -184,7 +184,6 @@ class Map
     
     dialog = new InfoBubble({
       # map: map,
-      content: content,
       # position: new google.maps.LatLng(-35, 151),
       shadowStyle: 1,
       padding: 12,
@@ -202,8 +201,9 @@ class Map
       maxWidth: 700
     })
 
-    dialog.open(@map, marker)
+    
     #dialog.open(); # you have to set position
+    dialog.open(@map, marker)
 
     if marker.type == "city"
       dialog.addTab('Overview', content)
@@ -214,8 +214,10 @@ class Map
         dialog.addTab('Structures', "faaaarming")
         dialog.addTab('Units',      "faaaarming")
         dialog.addTab('Upgrades',   "faaaarming")
+    else  
+      dialog.addTab('City', content)
       
-      dialog.addTab('Debug', "I will be useful...")
+    dialog.addTab('Debug', "I will be useful...")
     
     this.dialogs.push dialog
     

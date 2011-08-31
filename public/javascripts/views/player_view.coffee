@@ -7,7 +7,7 @@ PlayerView  = Backbone.View.extend(
   render: () ->
     haml = Haml $("#playerView-tmpl").html()
     content = haml this.model.attributes
-    console.log content
+
     $(this.el).html content
 
     this # returning render method scope lets you chain events (methods)
