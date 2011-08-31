@@ -115,6 +115,13 @@ run:
 ref: https://github.com/mockko/livereload
 
 
+### running the test suite (javascript)
+
+    rake jasmine
+
+open http://localhost:8888/
+
+
 ### WarGame
 
 [europe]
