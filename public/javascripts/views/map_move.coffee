@@ -43,6 +43,6 @@ class MapMove extends MapAction # (View)
     @endMarker = new google.maps.Marker({
       position: @destination,
       map: @map, 
-      # icon: "http://"+http_host+"/images/map_icons/crosshair.png"
-      icon: "http://"+http_host+"/images/map_icons/point_red.png"
+      # icon: "http://#{window.http_host}/images/map_icons/crosshair.png"
+      icon: "http://#{window.http_host}/images/map_icons/point_red.png"
     })

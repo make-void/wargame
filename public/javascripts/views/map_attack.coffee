@@ -32,8 +32,8 @@ class MapAttack extends MapAction  # (View)
     addListener(marker, "mouseover", (evt) => 
       # FIXME: oo design: move the drawing into marker
 
-      icon = Utils.city_image marker.data.city.pts, "selected"
-      #icon = "http://#{http_host}/images/map_icons/army_enemy.png"
+      icon = new CityMarkerIcon(@data.city.pts, "selected")
+      #icon = "http://#{window.http_host}/images/map_icons/army_enemy.png"
       if marker.icon != icon
         marker.nonhover_icon = Utils.clone_object(marker.icon)
         marker.icon = icon

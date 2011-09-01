@@ -1,3 +1,0 @@
-ArmyMarker  = LocationMarker.extend(
-    
-)

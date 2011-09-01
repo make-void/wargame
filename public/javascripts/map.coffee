@@ -1,35 +1,26 @@
 class Map
   
   constructor: ->
-    @markerZoomMin = 7    
+
     @max_simultaneous_markers = 600
     # @max_simultaneous_markers = 200 # if iPad || iPhone v => 4 || Android v >= 3
     # @max_simultaneous_markers = 100 # if iPhone v <= 3 || Android v <= 2
     @dialogs = []
     @markers = []
-    @defaultZoom = 5
     @map = null
     
-  set_default_coords: ->
-    @center_lat = @default_center_lat = 47.2
-    @center_lng = @default_center_lng = 14.4
+  # public
   
-  get_center_and_zoom: ->
-    #console.log(localStorage.center_lat, localStorage.center_lng, localStorage.zoom)
+  draw: ->
+    mapView = new MapView()
+    mapView.controller = this
+    mapView.draw()
+    @map = mapView.map
     
-    if localStorage.center_lat && localStorage.center_lng
-      @center_lat = parseFloat localStorage.center_lat
-      @center_lng = parseFloat localStorage.center_lng
-    else
-      this.set_default_coords()
-      localStorage.center_lat = @center_lat
-      localStorage.center_lng = @center_lng
-      
-    if localStorage.zoom
-      @zoom = parseInt localStorage.zoom
-    else
-      @zoom = @defaultZoom
-      localStorage.zoom = @zoom
+  markersUpdateStart: -> 
+    markersUpdater = new MarkersUpdater(this)
+    markersUpdater.start()
+    
     
   center: (lat, lng) ->
     latLng = new google.maps.LatLng(lat, lng)
@@ -39,37 +30,11 @@ class Map
     # panToBounds latLngBounds
     # infos: http://code.google.com/apis/maps/documentation/javascript/reference.html#LatLngBounds
     
-  draw: ->  
-    this.get_center_and_zoom()
-    mapDiv = document.getElementById 'map_canvas'
-    # console.log "lat: ", @center_lat, "lng: ", @center_lng, "zoom: ", @zoom 
-    @center_lat = @default_center_lat unless @center_lat
-    @center_lng = @default_center_lng unless @center_lng
-    # @zoom = 2
-    @map = new google.maps.Map( mapDiv, {
-      center: new google.maps.LatLng(@center_lat, @center_lng),
-      zoom: @zoom,
-      # mapTypeId: google.maps.MapTypeId.ROADMAP,
-      mapTypeId: google.maps.MapTypeId.TERRAIN,
-      disableDefaultUI: true,
-      navigationControl: true,
-      navigationControlOptions: {
-        style: google.maps.NavigationControlStyle.SMALL,
-        position: google.maps.ControlPosition.RIGHT_TOP
-      }
-    })
-    @map.controller = this
-
-  autoSize: ->
-    this.resize()
-    $(window).resize( =>
-      this.resize()
-    )
   
-  resize: -> 
-    height = $("body").height() - $("h1").height() - 30
-    $("#container, #map_canvas").height height
-
+  # "private"
+  
+  ##
+  
   markersCleanMax: ->
     max_markers = @max_simultaneous_markers
     if @markers.length > max_markers
@@ -77,7 +42,9 @@ class Map
         marker.setMap null 
       @markers = @markers[-max_markers..-1]
 
-  loadMarkers: (callback) ->
+  loadMarkers: ->
+    # markersLoader = new MarkersLoader()
+    # markersLoader.get  ->
     return if localStorage.zoom < @markerZoomMin
     this.markersCleanMax()
 
@@ -86,147 +53,22 @@ class Map
       markers = []
       for marker in data.locations
         markers.push marker
-    
-      @timer = new Date()    
-      this.callback(markers)
+  
+      this.drawMarkers markers
       #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
-    )
-  
-        
-  doMarkerDrawing: (data) ->
-    console.log "ERROR: marker without lat,lng" unless data.latitude
-    
-    latLng = new google.maps.LatLng data.latitude, data.longitude
-    
-    army_image = "http://" + http_host + "/images/map_icons/army_ally.png"
-    
-    # TODO: reuse the same markers
-    marker = new google.maps.Marker({
-      position: latLng,
-      map: @map,
-      player: data.player
-    })
-    
-  
-    unless data.city == undefined
-      marker.name = data.city.name
-      marker.city = data.city
-      marker.army = undefined
-      
-      # TODO: this doesnt works, figure out why!
-      #
-      # size = google.maps.Size(90, 59)
-      # sizeScale = google.maps.Size(180, 118)
-      # city_image = new google.maps.MarkerImage(city_image, null, null, null, sizeScale)
-      marker.icon = Utils.city_image data.city.pts
-      
-      marker.type = "city"
-      data.type = "city"
-    else
-      marker.name = "Army"
-      marker.army = data.army
-      marker.city = undefined;
-      anchor = new google.maps.Point(25, 20)
-      army_icon = new google.maps.MarkerImage(army_image, null, null, anchor, null)
-      marker.icon = army_icon
-      marker.type = "army"
-      data.type = "army"
-    
-    marker.data = data ## TODO: THA SOLUTION! put data inside marker or backbone model
-    
-    
-    marker.model  = null
-    marker.dialog = null
-    
-    
-    
-    if marker.type == "army"
-      # TODO: da disegnare al posto giusto
-      marker.model = new Army data
-      marker.dialog = new ArmyDialog { model: marker.model }
-    else  
-      marker.model = new City data
-      marker.dialog = new CityDialog { model: marker.model }
-    
-    
-    @markers.push marker
-    
-    # TODO: pass more datas
-    
-    
-    that = this
-    google.maps.event.addListener(marker, 'click', ->
-      that.attachDialog(marker)
-    )
-    #console.log(latLng)
-    
-    
-    
+    )  
+          
   attachDialog: (marker) ->
     for dia in this.dialogs
-      dia.close()
-      
-    # content = "
-    # <div class='dialog'>
-    #   <p class='name'>#{marker.name}</p>
-    #   <p>player: #{marker.player.name}</p>
-    #          "
-    # content += "<p>population: x</p>" if marker.type == "city"
-    # content += "</div>"
-    model  = null
+      dia.dialog.close()
     
-    
-    
-    content = marker.dialog.render().el
-
-    #console.log model
-    # console.log content
-    
-    dialog = new InfoBubble({
-      # map: map,
-      # position: new google.maps.LatLng(-35, 151),
-      shadowStyle: 1,
-      padding: 12,
-      backgroundColor: "#EEE",
-      borderRadius: 10,
-      arrowSize: 20,
-      borderWidth: 3,
-      borderColor: '#666',
-      disableAutoPan: true,
-      hideCloseButton: false,
-      arrowPosition: 30,
-      backgroundClassName: 'bubbleBg',
-      arrowStyle: 2,
-      minWidth: 200,
-      maxWidth: 700
-    })
-
-    
-    #dialog.open(); # you have to set position
-    dialog.open(@map, marker)
-
-    if marker.type == "city"
-      dialog.addTab('Overview', content)
-      
-      # TODO: city.owned?(current_player) # => boolean
-      is_owned_by_current_player = true
-      if is_owned_by_current_player
-        dialog.addTab('Structures', "faaaarming")
-        dialog.addTab('Units',      "faaaarming")
-        dialog.addTab('Upgrades',   "faaaarming")
-    else  
-      dialog.addTab('City', content)
-      
-    dialog.addTab('Debug', "I will be useful...")
-    
+    dialog = new DialogView(@map, marker)    
     this.dialogs.push dialog
-    
-    # original InfoWindow
-    #    
-    # dialog = new google.maps.InfoWindow({
-    #   content: content_string
-    # })
-    # dialog.open(@map, marker)
+
+  drawMarkers: (markers) ->
+    @timer = new Date()
+    for marker in markers
+      this.drawMarker marker
 
   drawMarker: (data) ->
     draw = true
@@ -236,111 +78,43 @@ class Map
         
     this.doMarkerDrawing(data) if draw
     # console.log("drawing") if draw
-      
-
-  callback: (markers) ->
-    for marker in markers
-      this.drawMarker marker
-  
-  listen_to_bounds: ->
-    google.maps.event.addListenerOnce(@map, "bounds_changed", =>
-      center = @map.getCenter()
-
-      localStorage.center_lat = center.lat()
-      localStorage.center_lng = center.lng()    
-      
-      setTimeout( => 
-        this.listen_to_bounds()
-        $(window).trigger "boundszoom_changed"
-      , 50)
     
-      
-    )
+  doMarkerDrawing: (data) ->
+    markerView = new MarkerView(this, data)
+    marker = markerView.draw().marker
+    @markers.push marker
+    marker.setMap @map
+  
   
   clearMarkers: ->
     for marker in @markers
       marker.setMap null 
     @markers = []
   
-  listen: ->
-    this.listen_to_bounds()
-    
-    google.maps.event.addListener(@map, 'zoom_changed', =>
-      zoom = @map.getZoom()
-      
-      if (zoom < @defaultZoom) 
-        @map.setZoom(@defaultZoom)
-        zoom = @defaultZoom
-        
-      if (zoom > 11) 
-        @map.setZoom(11)
-        zoom = 11
- 
-      localStorage.zoom = zoom   
-      # $(window).trigger "boundszoom_changed"
-      
-      if zoom < @markerZoomMin
-        this.clearMarkers()
-        
-    )
-    
   clickInfo: ->
     google.maps.event.addListener(@map, 'click', (evt) ->
       # console.log evt.latLng.lat(), evt.latLng.lng()
-    )
+    )    
 
-  drawLine: (points) ->
-    line = new google.maps.Polyline({
-      path: points,
-      strokeColor: "#FF0000",
-      strokeOpacity: 1.0,
-      strokeWeight: 2
-    });
-    line.setMap(@map)
-
-
-  startFetchingMarkers: -> # when latchanges
-    google.maps.event.addListener(@map, 'tilesloaded', =>
-      
-      self = this
-      time2 = new Date()
-      @timer = new Date()    
-      $(window).bind("boundszoom_changed", ->
-        time = new Date() - self.timer   
-        time2 = new Date()
-        if time > 1000
-          self.loadMarkers()
-          time2 = new Date()
-          self.timer = new Date()
-      )
-    
-      $(window).everyTime(1500, (i) ->
-        time3 = new Date() - time2
-        if time3 > 1000 && time3 < 2000
-          self.loadMarkers() 
-      )
-      
-    )
-
-  debug: (what) ->
-    $(window).oneTime(1000, ->
-      army = null
-      for marker in map.markers
-        # console.log marker
-        if marker.type == "army"
-          army = marker          
-          break
-
-      # console.log "loc:", army.dialog.el
-
-
-      # TODO: delete me?
-      #
-
-      window.arm = army
-      army.dialog.render()
-      $(army.dialog.el).find(".#{what}").trigger("click")
-    )
+  # debug: (what) ->
+  #   $(window).oneTime(1000, ->
+  #     army = null
+  #     for marker in map.markers
+  #       # console.log marker
+  #       if marker.type == "army"
+  #         army = marker          
+  #         break
+  # 
+  #     # console.log "loc:", army.dialog.el
+  # 
+  # 
+  #     # TODO: delete me?
+  #     #
+  # 
+  #     window.arm = army
+  #     army.dialog.render()
+  #     $(army.dialog.el).find(".#{what}").trigger("click")
+  #   )
     
   # exceptions
   

@@ -1,12 +1,12 @@
-var Alliance, Army, ArmyDialog, ArmyMarker, AttackState, City, CityDialog, CityMarker, Dialog, Game, GameState, LLRange, Location, LocationMarker, Map, MapAction, MapAttack, MapMove, MoveState, Player, PlayerView, Upgrade, Utils, console;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+var Alliance, Army, ArmyDialog, AttackState, City, CityDialog, CityMarkerIcon, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Upgrade, Utils, console;
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
   ctor.prototype = parent.prototype;
   child.prototype = new ctor;
   child.__super__ = parent.prototype;
   return child;
-}, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+};
 GameState = {
   "default": "browse",
   states: ["browse", "move", "attack"]
@@ -28,15 +28,232 @@ PlayerView = Backbone.View.extend({
     return this;
   }
 });
-LocationMarker = Backbone.View.extend({
-  render: function() {
-    return this;
+MapView = (function() {
+  function MapView(map) {
+    this.map = map;
+    this.controller = null;
+    this.markerZoomMin = 8;
+    this.defaultZoom = 5;
   }
-});
-CityMarker = LocationMarker.extend({
-  initialize: function() {}
-});
-ArmyMarker = LocationMarker.extend();
+  MapView.prototype.draw = function() {
+    this.get_center_and_zoom();
+    this.doDrawing();
+    this.listen_to_bounds();
+    return this.autoSize();
+  };
+  MapView.prototype.doDrawing = function() {
+    var mapDiv;
+    mapDiv = document.getElementById('map_canvas');
+    if (!this.center_lat) {
+      this.center_lat = this.default_center_lat;
+    }
+    if (!this.center_lng) {
+      this.center_lng = this.default_center_lng;
+    }
+    this.map = new google.maps.Map(mapDiv, {
+      center: new google.maps.LatLng(this.center_lat, this.center_lng),
+      zoom: this.zoom,
+      mapTypeId: google.maps.MapTypeId.TERRAIN,
+      disableDefaultUI: true,
+      navigationControl: true,
+      navigationControlOptions: {
+        style: google.maps.NavigationControlStyle.SMALL,
+        position: google.maps.ControlPosition.RIGHT_TOP
+      }
+    });
+    this.map.controller = this.controller;
+    return this.map.view = this;
+  };
+  MapView.prototype.get_center_and_zoom = function() {
+    if (localStorage.center_lat && localStorage.center_lng) {
+      this.center_lat = parseFloat(localStorage.center_lat);
+      this.center_lng = parseFloat(localStorage.center_lng);
+    } else {
+      this.set_default_coords();
+      localStorage.center_lat = this.center_lat;
+      localStorage.center_lng = this.center_lng;
+    }
+    if (localStorage.zoom) {
+      return this.zoom = parseInt(localStorage.zoom);
+    } else {
+      this.zoom = this.map.defaultZoom;
+      return localStorage.zoom = this.zoom;
+    }
+  };
+  MapView.prototype.set_default_coords = function() {
+    this.center_lat = this.default_center_lat = 47.2;
+    return this.center_lng = this.default_center_lng = 14.4;
+  };
+  MapView.prototype.listen_to_bounds = function() {
+    this.listen();
+    return google.maps.event.addListener(this.map, 'zoom_changed', __bind(function() {
+      return this.zoom_changed();
+    }, this));
+  };
+  MapView.prototype.listen = function() {
+    return google.maps.event.addListenerOnce(this.map, "bounds_changed", __bind(function() {
+      var center;
+      center = this.map.getCenter();
+      localStorage.center_lat = center.lat();
+      localStorage.center_lng = center.lng();
+      return setTimeout(__bind(function() {
+        this.listen();
+        return $(window).trigger("boundszoom_changed");
+      }, this), 50);
+    }, this));
+  };
+  MapView.prototype.zoom_changed = function() {
+    var zoom;
+    zoom = this.map.getZoom();
+    if (zoom < this.defaultZoom) {
+      this.map.setZoom(this.defaultZoom);
+      zoom = this.defaultZoom;
+    }
+    if (zoom > 11) {
+      this.map.setZoom(11);
+      zoom = 11;
+    }
+    localStorage.zoom = zoom;
+    if (zoom < this.markerZoomMin) {
+      return this.controller.clearMarkers();
+    }
+  };
+  MapView.prototype.autoSize = function() {
+    this.resize();
+    return $(window).resize(__bind(function() {
+      return this.resize();
+    }, this));
+  };
+  MapView.prototype.resize = function() {
+    var height;
+    height = $("body").height() - $("h1").height() - 30;
+    return $("#container, #map_canvas").height(height);
+  };
+  return MapView;
+})();
+DialogView = (function() {
+  function DialogView(map, marker) {
+    this.map = map;
+    this.marker = marker;
+    this.dialog = null;
+    this.build();
+    this.open();
+  }
+  DialogView.prototype.open = function() {
+    return this.dialog.open(this.map, this.marker);
+  };
+  DialogView.prototype.build = function() {
+    this.dialog = new InfoBubble({
+      shadowStyle: 1,
+      padding: 12,
+      backgroundColor: "#EEE",
+      borderRadius: 10,
+      arrowSize: 20,
+      borderWidth: 3,
+      borderColor: '#666',
+      disableAutoPan: false,
+      hideCloseButton: false,
+      arrowPosition: 30,
+      backgroundClassName: 'bubbleBg',
+      arrowStyle: 2,
+      minWidth: 200,
+      maxWidth: 700
+    });
+    return this.render();
+  };
+  DialogView.prototype.render = function() {
+    var content, is_owned_by_current_player;
+    content = this.marker.dialog.render().el;
+    if (this.marker.type === "city") {
+      this.dialog.addTab('Overview', content);
+      is_owned_by_current_player = true;
+      if (is_owned_by_current_player) {
+        this.dialog.addTab('Structures', "faaaarming");
+        this.dialog.addTab('Units', "faaaarming");
+        this.dialog.addTab('Upgrades', "faaaarming");
+      }
+    } else {
+      this.dialog.addTab('City', content);
+    }
+    return this.dialog.addTab('Debug', "I will be useful...");
+  };
+  return DialogView;
+})();
+MarkerView = (function() {
+  function MarkerView(map, data) {
+    this.map = map;
+    this.data = data;
+    this.marker = null;
+  }
+  MarkerView.prototype.draw = function() {
+    var anchor, army_icon, army_image, icon, latLng, marker, zIndex;
+    if (!this.data.latitude) {
+      console.log("ERROR: marker without lat,lng");
+    }
+    latLng = new google.maps.LatLng(this.data.latitude, this.data.longitude);
+    if (this.data.city !== void 0) {
+      this.data.type = "city";
+    } else {
+      this.data.type = "army";
+    }
+    army_image = "http://" + window.http_host + "/images/map_icons/army_ally.png";
+    zIndex = this.data.type === "army" ? -1 : -2;
+    this.marker = marker = new google.maps.Marker({
+      position: latLng,
+      map: this.map.map,
+      player: this.data.player,
+      zIndex: zIndex
+    });
+    if (this.data.type === "city") {
+      marker.type = "city";
+      marker.name = this.data.city.name;
+      marker.city = this.data.city;
+      marker.army = void 0;
+      icon = new CityMarkerIcon(this.data.city.pts, "enemy");
+      marker.icon = icon.draw();
+    } else {
+      marker.type = "army";
+      marker.name = "Army";
+      marker.army = this.data.army;
+      marker.city = void 0;
+      anchor = new google.maps.Point(25, 20);
+      army_icon = new google.maps.MarkerImage(army_image, null, null, anchor, null);
+      marker.icon = army_icon;
+    }
+    marker.view = self;
+    marker.model = null;
+    marker.dialog = null;
+    if (this.data.type === "army") {
+      marker.model = new Army(this.data);
+      marker.dialog = new ArmyDialog({
+        model: marker.model
+      });
+    } else {
+      marker.model = new City(this.data);
+    }
+    google.maps.event.addListener(marker, 'click', __bind(function() {
+      return this.map.attachDialog(marker);
+    }, this));
+    return this;
+  };
+  return MarkerView;
+})();
+CityMarkerIcon = (function() {
+  function CityMarkerIcon(pts) {
+    this.pts = pts;
+  }
+  CityMarkerIcon.prototype.draw = function() {
+    var anchor, city_image, height, scale, size, width;
+    scale = Utils.city_scale(this.pts);
+    width = 90 * scale;
+    height = 59 * scale;
+    anchor = new google.maps.Point(width / 2, height / 2);
+    size = new google.maps.Size(width, height);
+    city_image = "http://" + window.http_host + "/images/map_icons/city_enemy.png";
+    return new google.maps.MarkerImage(city_image, null, null, anchor, size);
+  };
+  return CityMarkerIcon;
+})();
 Dialog = Backbone.View.extend({
   initialize: function() {},
   afterRender: function() {},
@@ -136,7 +353,7 @@ MapAttack = (function() {
     addListener = google.maps.event.addListener;
     addListener(marker, "mouseover", __bind(function(evt) {
       var icon;
-      icon = Utils.city_image(marker.data.city.pts, "selected");
+      icon = new CityMarkerIcon(this.data.city.pts, "selected");
       if (marker.icon !== icon) {
         marker.nonhover_icon = Utils.clone_object(marker.icon);
         marker.icon = icon;
@@ -194,10 +411,45 @@ MapMove = (function() {
     return this.endMarker = new google.maps.Marker({
       position: this.destination,
       map: this.map,
-      icon: "http://" + http_host + "/images/map_icons/point_red.png"
+      icon: "http://" + window.http_host + "/images/map_icons/point_red.png"
     });
   };
   return MapMove;
+})();
+MarkersUpdater = (function() {
+  function MarkersUpdater(map) {
+    this.map = map;
+    this.tickLast = __bind(this.tickLast, this);
+    this.tick = __bind(this.tick, this);
+  }
+  MarkersUpdater.prototype.start = function() {
+    this.time2 = new Date();
+    this.timer = new Date();
+    $(window).bind("boundszoom_changed", __bind(function() {
+      return this.tick();
+    }, this));
+    return $(window).everyTime(1500, __bind(function() {
+      return this.tickLast(this.time2);
+    }, this));
+  };
+  MarkersUpdater.prototype.tick = function() {
+    var time;
+    time = new Date() - this.timer;
+    this.time2 = new Date();
+    if (time > 1000) {
+      this.map.loadMarkers();
+      this.time2 = new Date();
+      return this.timer = new Date();
+    }
+  };
+  MarkersUpdater.prototype.tickLast = function(external_time) {
+    var time;
+    time = new Date() - external_time;
+    if (time > 1000 && time < 2000) {
+      return this.map.loadMarkers();
+    }
+  };
+  return MarkersUpdater;
 })();
 if (!console) {
   console = {};
@@ -209,21 +461,11 @@ Utils.parseCoords = function(string) {
   split = string.replace(/\s/, '').split(",");
   return [split[0], split[1]];
 };
-Utils.city_image = function(pop, kind) {
-  var final_size, size, sizes, _i, _len;
-  if (!kind) {
-    kind = "enemy";
-  }
-  sizes = [150000, 50000, 30000, 12000, 0];
-  size = sizes[-1];
-  for (_i = 0, _len = sizes.length; _i < _len; _i++) {
-    size = sizes[_i];
-    if (pop >= size) {
-      final_size = _.indexOf(sizes, size);
-      break;
-    }
-  }
-  return "http://" + http_host + ("/images/map_icons/city_" + kind + final_size + ".png");
+Utils.nthroot = function(x, n) {
+  return Math.pow(x, 1 / n);
+};
+Utils.city_scale = function(pop, kind) {
+  return Utils.nthroot(pop / 40000, 5);
 };
 Utils.clone_object = function(object) {
   return eval("" + (JSON.stringify(object)));
@@ -270,71 +512,27 @@ Upgrade = Backbone.Model.extend({});
 Alliance = Backbone.Model.extend({});
 Map = (function() {
   function Map() {
-    this.markerZoomMin = 7;
     this.max_simultaneous_markers = 600;
     this.dialogs = [];
     this.markers = [];
-    this.defaultZoom = 5;
     this.map = null;
   }
-  Map.prototype.set_default_coords = function() {
-    this.center_lat = this.default_center_lat = 47.2;
-    return this.center_lng = this.default_center_lng = 14.4;
+  Map.prototype.draw = function() {
+    var mapView;
+    mapView = new MapView();
+    mapView.controller = this;
+    mapView.draw();
+    return this.map = mapView.map;
   };
-  Map.prototype.get_center_and_zoom = function() {
-    if (localStorage.center_lat && localStorage.center_lng) {
-      this.center_lat = parseFloat(localStorage.center_lat);
-      this.center_lng = parseFloat(localStorage.center_lng);
-    } else {
-      this.set_default_coords();
-      localStorage.center_lat = this.center_lat;
-      localStorage.center_lng = this.center_lng;
-    }
-    if (localStorage.zoom) {
-      return this.zoom = parseInt(localStorage.zoom);
-    } else {
-      this.zoom = this.defaultZoom;
-      return localStorage.zoom = this.zoom;
-    }
+  Map.prototype.markersUpdateStart = function() {
+    var markersUpdater;
+    markersUpdater = new MarkersUpdater(this);
+    return markersUpdater.start();
   };
   Map.prototype.center = function(lat, lng) {
     var latLng;
     latLng = new google.maps.LatLng(lat, lng);
     return this.map.panTo(latLng);
-  };
-  Map.prototype.draw = function() {
-    var mapDiv;
-    this.get_center_and_zoom();
-    mapDiv = document.getElementById('map_canvas');
-    if (!this.center_lat) {
-      this.center_lat = this.default_center_lat;
-    }
-    if (!this.center_lng) {
-      this.center_lng = this.default_center_lng;
-    }
-    this.map = new google.maps.Map(mapDiv, {
-      center: new google.maps.LatLng(this.center_lat, this.center_lng),
-      zoom: this.zoom,
-      mapTypeId: google.maps.MapTypeId.TERRAIN,
-      disableDefaultUI: true,
-      navigationControl: true,
-      navigationControlOptions: {
-        style: google.maps.NavigationControlStyle.SMALL,
-        position: google.maps.ControlPosition.RIGHT_TOP
-      }
-    });
-    return this.map.controller = this;
-  };
-  Map.prototype.autoSize = function() {
-    this.resize();
-    return $(window).resize(__bind(function() {
-      return this.resize();
-    }, this));
-  };
-  Map.prototype.resize = function() {
-    var height;
-    height = $("body").height() - $("h1").height() - 30;
-    return $("#container, #map_canvas").height(height);
   };
   Map.prototype.markersCleanMax = function() {
     var marker, max_markers, _i, _len, _ref;
@@ -348,7 +546,7 @@ Map = (function() {
       return this.markers = this.markers.slice(-max_markers);
     }
   };
-  Map.prototype.loadMarkers = function(callback) {
+  Map.prototype.loadMarkers = function() {
     var center;
     if (localStorage.zoom < this.markerZoomMin) {
       return;
@@ -363,98 +561,28 @@ Map = (function() {
         marker = _ref[_i];
         markers.push(marker);
       }
-      this.timer = new Date();
-      return this.callback(markers);
+      return this.drawMarkers(markers);
     }, this));
   };
-  Map.prototype.doMarkerDrawing = function(data) {
-    var anchor, army_icon, army_image, latLng, marker, that;
-    if (!data.latitude) {
-      console.log("ERROR: marker without lat,lng");
-    }
-    latLng = new google.maps.LatLng(data.latitude, data.longitude);
-    army_image = "http://" + http_host + "/images/map_icons/army_ally.png";
-    marker = new google.maps.Marker({
-      position: latLng,
-      map: this.map,
-      player: data.player
-    });
-    if (data.city !== void 0) {
-      marker.name = data.city.name;
-      marker.city = data.city;
-      marker.army = void 0;
-      marker.icon = Utils.city_image(data.city.pts);
-      marker.type = "city";
-      data.type = "city";
-    } else {
-      marker.name = "Army";
-      marker.army = data.army;
-      marker.city = void 0;
-      anchor = new google.maps.Point(25, 20);
-      army_icon = new google.maps.MarkerImage(army_image, null, null, anchor, null);
-      marker.icon = army_icon;
-      marker.type = "army";
-      data.type = "army";
-    }
-    marker.data = data;
-    marker.model = null;
-    marker.dialog = null;
-    if (marker.type === "army") {
-      marker.model = new Army(data);
-      marker.dialog = new ArmyDialog({
-        model: marker.model
-      });
-    } else {
-      marker.model = new City(data);
-      marker.dialog = new CityDialog({
-        model: marker.model
-      });
-    }
-    this.markers.push(marker);
-    that = this;
-    return google.maps.event.addListener(marker, 'click', function() {
-      return that.attachDialog(marker);
-    });
-  };
   Map.prototype.attachDialog = function(marker) {
-    var content, dia, dialog, is_owned_by_current_player, model, _i, _len, _ref;
+    var dia, dialog, _i, _len, _ref;
     _ref = this.dialogs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       dia = _ref[_i];
-      dia.close();
+      dia.dialog.close();
     }
-    model = null;
-    content = marker.dialog.render().el;
-    dialog = new InfoBubble({
-      shadowStyle: 1,
-      padding: 12,
-      backgroundColor: "#EEE",
-      borderRadius: 10,
-      arrowSize: 20,
-      borderWidth: 3,
-      borderColor: '#666',
-      disableAutoPan: true,
-      hideCloseButton: false,
-      arrowPosition: 30,
-      backgroundClassName: 'bubbleBg',
-      arrowStyle: 2,
-      minWidth: 200,
-      maxWidth: 700
-    });
-    dialog.open(this.map, marker);
-    if (marker.type === "city") {
-      dialog.addTab('Overview', content);
-      is_owned_by_current_player = true;
-      if (is_owned_by_current_player) {
-        dialog.addTab('Structures', "faaaarming");
-        dialog.addTab('Units', "faaaarming");
-        dialog.addTab('Upgrades', "faaaarming");
-      }
-    } else {
-      dialog.addTab('City', content);
-    }
-    dialog.addTab('Debug', "I will be useful...");
+    dialog = new DialogView(this.map, marker);
     return this.dialogs.push(dialog);
+  };
+  Map.prototype.drawMarkers = function(markers) {
+    var marker, _i, _len, _results;
+    this.timer = new Date();
+    _results = [];
+    for (_i = 0, _len = markers.length; _i < _len; _i++) {
+      marker = markers[_i];
+      _results.push(this.drawMarker(marker));
+    }
+    return _results;
   };
   Map.prototype.drawMarker = function(data) {
     var draw, is_a_city, mark, _i, _len, _ref;
@@ -471,26 +599,12 @@ Map = (function() {
       return this.doMarkerDrawing(data);
     }
   };
-  Map.prototype.callback = function(markers) {
-    var marker, _i, _len, _results;
-    _results = [];
-    for (_i = 0, _len = markers.length; _i < _len; _i++) {
-      marker = markers[_i];
-      _results.push(this.drawMarker(marker));
-    }
-    return _results;
-  };
-  Map.prototype.listen_to_bounds = function() {
-    return google.maps.event.addListenerOnce(this.map, "bounds_changed", __bind(function() {
-      var center;
-      center = this.map.getCenter();
-      localStorage.center_lat = center.lat();
-      localStorage.center_lng = center.lng();
-      return setTimeout(__bind(function() {
-        this.listen_to_bounds();
-        return $(window).trigger("boundszoom_changed");
-      }, this), 50);
-    }, this));
+  Map.prototype.doMarkerDrawing = function(data) {
+    var marker, markerView;
+    markerView = new MarkerView(this, data);
+    marker = markerView.draw().marker;
+    this.markers.push(marker);
+    return marker.setMap(this.map);
   };
   Map.prototype.clearMarkers = function() {
     var marker, _i, _len, _ref;
@@ -501,79 +615,8 @@ Map = (function() {
     }
     return this.markers = [];
   };
-  Map.prototype.listen = function() {
-    this.listen_to_bounds();
-    return google.maps.event.addListener(this.map, 'zoom_changed', __bind(function() {
-      var zoom;
-      zoom = this.map.getZoom();
-      if (zoom < this.defaultZoom) {
-        this.map.setZoom(this.defaultZoom);
-        zoom = this.defaultZoom;
-      }
-      if (zoom > 11) {
-        this.map.setZoom(11);
-        zoom = 11;
-      }
-      localStorage.zoom = zoom;
-      if (zoom < this.markerZoomMin) {
-        return this.clearMarkers();
-      }
-    }, this));
-  };
   Map.prototype.clickInfo = function() {
     return google.maps.event.addListener(this.map, 'click', function(evt) {});
-  };
-  Map.prototype.drawLine = function(points) {
-    var line;
-    line = new google.maps.Polyline({
-      path: points,
-      strokeColor: "#FF0000",
-      strokeOpacity: 1.0,
-      strokeWeight: 2
-    });
-    return line.setMap(this.map);
-  };
-  Map.prototype.startFetchingMarkers = function() {
-    return google.maps.event.addListener(this.map, 'tilesloaded', __bind(function() {
-      var self, time2;
-      self = this;
-      time2 = new Date();
-      this.timer = new Date();
-      $(window).bind("boundszoom_changed", function() {
-        var time;
-        time = new Date() - self.timer;
-        time2 = new Date();
-        if (time > 1000) {
-          self.loadMarkers();
-          time2 = new Date();
-          return self.timer = new Date();
-        }
-      });
-      return $(window).everyTime(1500, function(i) {
-        var time3;
-        time3 = new Date() - time2;
-        if (time3 > 1000 && time3 < 2000) {
-          return self.loadMarkers();
-        }
-      });
-    }, this));
-  };
-  Map.prototype.debug = function(what) {
-    return $(window).oneTime(1000, function() {
-      var army, marker, _i, _len, _ref;
-      army = null;
-      _ref = map.markers;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        marker = _ref[_i];
-        if (marker.type === "army") {
-          army = marker;
-          break;
-        }
-      }
-      window.arm = army;
-      army.dialog.render();
-      return $(army.dialog.el).find("." + what).trigger("click");
-    });
   };
   Map.prototype.raise = function(message) {
     return console.log("Exception: ", message);
@@ -589,9 +632,7 @@ Game = (function() {
   Game.prototype.initMap = function() {
     this.map.draw();
     this.map.loadMarkers();
-    this.map.listen();
-    this.map.startFetchingMarkers();
-    return this.map.autoSize();
+    return this.map.markersUpdateStart();
   };
   Game.prototype.getPlayerView = function() {
     return $.getJSON("/players/me", __bind(function(player) {

@@ -1,4 +1,0 @@
-CityMarker  = LocationMarker.extend(
-  initialize: () ->
-    
-)

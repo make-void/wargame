@@ -1,16 +1,3 @@
-beforeEach( ->
-  this.addMatchers({
-    toBeArray: ->
-      typeof(this) == "object" && this.length
-
-    # toBeA: (klass) ->
-    #   switch klass 
-    #     when "Player" then expect(this.attributes.name).toEqual("Cor3y")
-    #     else "Object class: #{klass} -  not found!"
-  })
-)
-
-
 describe("Game", ->
   it "initializes the map", ->
     game = new Game()
@@ -24,7 +11,7 @@ describe("Game", ->
     player = JSON.parse player_json
     loadFixtures("player_view.html")
     game.initPlayerView player
-    console.log "player: ", game.current_player
+    # console.log "player: ", game.current_player
     # expect(game.current_player).toBeA("Player")
     expect(game.current_player.attributes.name).toEqual("Cor3y")
     # toBeTruthy
@@ -33,4 +20,5 @@ describe("Game", ->
     game = new Game()
     game.initPlayerView()
     # toHaveText()
+  
 )

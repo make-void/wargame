@@ -13,23 +13,31 @@ Utils.parseCoords = (string) ->
   return [split[0], split[1]]
 
 # move in city model (or ancestor)
-Utils.city_image = (pop, kind) ->
-  kind = "enemy" unless kind
-  sizes = [
-    150000,
-    50000, 
-    30000,
-    12000,
-    0 # 6000
-  ]
-  size = sizes[-1]
-  
-  for size in sizes
-    if pop >= size
-      final_size = _.indexOf(sizes, size)
-      break
-  
-  "http://" + http_host + "/images/map_icons/city_#{kind}#{final_size}.png"
+
+
+Utils.nthroot = (x, n) ->
+  Math.pow(x,1/n)
+
+Utils.city_scale = (pop, kind) ->
+  Utils.nthroot(pop/40000, 5)
+
+# Utils.city_image = (pop, kind) ->
+#   kind = "enemy" unless kind
+#   sizes = [
+#     150000,
+#     50000, 
+#     30000,
+#     12000,
+#     0 # 6000
+#   ]
+#   size = sizes[-1]
+#   
+#   for size in sizes
+#     if pop >= size
+#       final_size = _.indexOf(sizes, size)
+#       break
+#   
+#   "http://#{window.http_host}/images/map_icons/city_#{kind}#{final_size}.png"
 
 
 Utils.clone_object = (object) ->

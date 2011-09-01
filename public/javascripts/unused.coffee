@@ -4,7 +4,7 @@ class Map
     
   drawSimpleMarker: (lat, lng) ->
     latLng = new google.maps.LatLng lat, lng
-    image = "http://"+http_host+"/images/cross_blue.png"
+    image = "http://#{window.http_host}/images/cross_blue.png"
     marker = new google.maps.Marker({
       position: latLng,
       map: @map,

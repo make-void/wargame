@@ -1,11 +1,4 @@
 (function() {
-  beforeEach(function() {
-    return this.addMatchers({
-      toBeArray: function() {
-        return typeof this === "object" && this.length;
-      }
-    });
-  });
   describe("Game", function() {
     it("initializes the map", function() {
       var game;
@@ -18,7 +11,6 @@
       player = JSON.parse(player_json);
       loadFixtures("player_view.html");
       game.initPlayerView(player);
-      console.log("player: ", game.current_player);
       return expect(game.current_player.attributes.name).toEqual("Cor3y");
     });
     return it("shows the playerView", function() {

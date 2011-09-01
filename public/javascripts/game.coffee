@@ -8,11 +8,8 @@ class Game
     @map.draw()
     # @map.dialogs()
     @map.loadMarkers()
-    @map.listen()
     # @map.clickInfo()
-    @map.startFetchingMarkers()
-    # @map.overlay()
-    @map.autoSize()
+    @map.markersUpdateStart()
     # @map.debug("move")
     # @map.debug("attack")
 
