@@ -569,32 +569,45 @@ Map = (function() {
     }, this));
   };
   Map.prototype.attachDialog = function(marker) {
-    var dia, mark, nextMarker, _i, _j, _len, _len2, _ref, _ref2;
+    var dia, is_army, lastMark, mark, marker_id, nextMarker, _i, _j, _len, _len2, _ref, _ref2;
     _ref = this.dialogs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       dia = _ref[_i];
       dia.dialog.close();
     }
-    if (this.dialogs.length === 0 || _.last(this.dialogs).marker.location_id !== marker.location_id) {
-      return setTimeout(__bind(function() {
-        var dialog;
-        dialog = new DialogView(this.map, marker);
-        return this.dialogs.push(dialog);
-      }, this), 10);
+    if (this.dialogs.length !== 0) {
+      lastMark = _.last(this.dialogs).marker;
+    }
+    if (this.dialogs.length === 0 || lastMark.location_id !== marker.location_id) {
+      return this.openDialog(marker);
     } else {
+      nextMarker = marker;
+      is_army = function(m) {
+        return !m.model.attributes.city;
+      };
+      marker_id = function(m) {
+        if (is_army(m)) {
+          return "" + m.type + "_" + m.model.attributes.army.id;
+        } else {
+          return "" + m.type + "_" + m.model.attributes.city.id;
+        }
+      };
       _ref2 = this.markers;
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         mark = _ref2[_j];
-        if (marker.location_id === mark.location_id && _.last(this.dialogs).marker !== mark) {
+        if (lastMark.location_id === mark.location_id && marker_id(mark) !== marker_id(lastMark)) {
           nextMarker = mark;
         }
       }
-      return setTimeout(__bind(function() {
-        var dialog;
-        dialog = new DialogView(this.map, nextMarker);
-        return this.dialogs.push(dialog);
-      }, this), 10);
+      return this.openDialog(nextMarker);
     }
+  };
+  Map.prototype.openDialog = function(marker) {
+    return setTimeout(__bind(function() {
+      var dialog;
+      dialog = new DialogView(this.map, marker);
+      return this.dialogs.push(dialog);
+    }, this), 10);
   };
   Map.prototype.drawMarkers = function(markers) {
     var marker, _i, _len, _results;

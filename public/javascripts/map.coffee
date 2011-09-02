@@ -61,22 +61,29 @@ class Map
       
     # if this.dialogs.length != 0
     #   console.log(_.last(this.dialogs).marker.location_id)
+    lastMark = _.last(this.dialogs).marker if this.dialogs.length != 0  
       
-    if this.dialogs.length == 0 ||  _.last(this.dialogs).marker.location_id != marker.location_id
-      # open a dialog
-      setTimeout( => # FIXME: a set timeout is not the best detector of this but still... check if it works on mobile
-        dialog = new DialogView(@map, marker)    
-        this.dialogs.push dialog
-      , 10)
-    else
+    
+    
+    if this.dialogs.length == 0 || lastMark.location_id != marker.location_id
+      this.openDialog(marker)
+    else  
+      nextMarker = marker
+      is_army = (m) -> !m.model.attributes.city
+      marker_id = (m) -> if is_army(m) then "#{m.type}_#{m.model.attributes.army.id}" else "#{m.type}_#{m.model.attributes.city.id}"
+      
       for mark in @markers
-        if marker.location_id == mark.location_id && _.last(this.dialogs).marker != mark
+        if lastMark.location_id == mark.location_id && marker_id(mark) != marker_id(lastMark) 
+          # console.log(mark, marker)
           nextMarker = mark
-      # open a hidden dialog on the same location
-      setTimeout( => # FIXME: a set timeout is not the best detector of this but still... check if it works on mobile
-        dialog = new DialogView(@map, nextMarker)    
-        this.dialogs.push dialog
-      , 10)
+          
+      this.openDialog(nextMarker)
+      
+  openDialog: (marker) ->
+    setTimeout( => # FIXME: a set timeout is not the best detector of this but still... check if it works on mobile
+      dialog = new DialogView(@map, marker)    
+      this.dialogs.push dialog
+    , 10)
 
   drawMarkers: (markers) ->
     @timer = new Date()
