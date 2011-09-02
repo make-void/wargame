@@ -59,9 +59,8 @@ class Map
     for dia in this.dialogs
       dia.dialog.close()
       
-
-    if this.dialogs.length != 0
-      console.log(_.last(this.dialogs).marker.location_id)
+    # if this.dialogs.length != 0
+    #   console.log(_.last(this.dialogs).marker.location_id)
       
     if this.dialogs.length == 0 ||  _.last(this.dialogs).marker.location_id != marker.location_id
       # open a dialog
@@ -70,9 +69,12 @@ class Map
         this.dialogs.push dialog
       , 10)
     else
+      for mark in @markers
+        if marker.location_id == mark.location_id && _.last(this.dialogs).marker != mark
+          nextMarker = mark
       # open a hidden dialog on the same location
       setTimeout( => # FIXME: a set timeout is not the best detector of this but still... check if it works on mobile
-        dialog = new DialogView(@map, marker)    
+        dialog = new DialogView(@map, nextMarker)    
         this.dialogs.push dialog
       , 10)
 
