@@ -41,6 +41,7 @@ Utils.city_scale = (pop, kind) ->
 
 
 Utils.clone_object = (object) ->
+  console.log("cloning: ", object)
   return eval("#{JSON.stringify(object)}")
 
 class LLRange

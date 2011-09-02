@@ -243,8 +243,9 @@ MarkerView = (function() {
   return MarkerView;
 })();
 CityMarkerIcon = (function() {
-  function CityMarkerIcon(pts) {
+  function CityMarkerIcon(pts, type) {
     this.pts = pts;
+    this.type = type;
   }
   CityMarkerIcon.prototype.draw = function() {
     var anchor, city_image, height, scale, size, width;
@@ -253,7 +254,7 @@ CityMarkerIcon = (function() {
     height = 59 * scale;
     anchor = new google.maps.Point(width / 2, height / 2);
     size = new google.maps.Size(width, height);
-    city_image = "http://" + window.http_host + "/images/map_icons/city_enemy.png";
+    city_image = "http://" + window.http_host + "/images/map_icons/city_" + this.type + ".png";
     return new google.maps.MarkerImage(city_image, null, null, anchor, size);
   };
   return CityMarkerIcon;
@@ -313,7 +314,7 @@ ArmyDialog = Dialog.extend({
 });
 MapAction = (function() {
   function MapAction() {
-    this.map = window.map.map;
+    this.map = window.game.map.map;
   }
   return MapAction;
 })();
@@ -340,7 +341,7 @@ MapAttack = (function() {
       strokeWeight: 3
     });
     this.circle.setMap(this.map);
-    return console.log(this.map);
+    return this;
   };
   MapAttack.prototype.hoverCities = function() {
     var marker, _i, _len, _ref, _results;
@@ -357,16 +358,18 @@ MapAttack = (function() {
     addListener = google.maps.event.addListener;
     addListener(marker, "mouseover", __bind(function(evt) {
       var icon;
-      icon = new CityMarkerIcon(this.data.city.pts, "selected");
-      if (marker.icon !== icon) {
-        marker.nonhover_icon = Utils.clone_object(marker.icon);
+      icon = new CityMarkerIcon(marker.city.pts, "selected").draw();
+      console.log(marker.icon);
+      if (marker.icon.url.match(/_enemy\.png/)) {
         marker.icon = icon;
         return marker.setMap(this.map);
       }
     }, this));
     return addListener(marker, "mouseout", __bind(function(evt) {
-      if (marker.nonhover_icon) {
-        marker.icon = marker.nonhover_icon;
+      var icon;
+      icon = new CityMarkerIcon(marker.city.pts, "enemy").draw();
+      if (marker.icon.url.match(/_selected\.png/)) {
+        marker.icon = icon;
         return marker.setMap(this.map);
       }
     }, this));
@@ -472,6 +475,7 @@ Utils.city_scale = function(pop, kind) {
   return Utils.nthroot(pop / 40000, 5);
 };
 Utils.clone_object = function(object) {
+  console.log("cloning: ", object);
   return eval("" + (JSON.stringify(object)));
 };
 LLRange = (function() {

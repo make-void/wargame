@@ -1,3 +1,3 @@
 class MapAction
   constructor: ->
-    @map = window.map.map
+    @map = window.game.map.map

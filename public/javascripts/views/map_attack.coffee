@@ -19,7 +19,8 @@ class MapAttack extends MapAction  # (View)
       strokeWeight: 3
     })
     @circle.setMap @map
-    console.log @map
+    # console.log @map
+    this
     
     
   hoverCities: ->
@@ -31,11 +32,11 @@ class MapAttack extends MapAction  # (View)
     
     addListener(marker, "mouseover", (evt) => 
       # FIXME: oo design: move the drawing into marker
-
-      icon = new CityMarkerIcon(@data.city.pts, "selected")
+      icon = new CityMarkerIcon(marker.city.pts, "selected").draw()
       #icon = "http://#{window.http_host}/images/map_icons/army_enemy.png"
-      if marker.icon != icon
-        marker.nonhover_icon = Utils.clone_object(marker.icon)
+      console.log(marker.icon)
+      if marker.icon.url.match(/_enemy\.png/) # FIXME: bad hack
+        # marker.nonhover_icon =  new CityMarkerIcon(marker.city.pts, "enemy")#Utils.clone_object(marker.icon)
         marker.icon = icon
         marker.setMap @map
 
@@ -45,7 +46,8 @@ class MapAttack extends MapAction  # (View)
     )
 
     addListener(marker, "mouseout", (evt) =>  
-      if marker.nonhover_icon
-        marker.icon = marker.nonhover_icon
+      icon =  new CityMarkerIcon(marker.city.pts, "enemy").draw()
+      if marker.icon.url.match(/_selected\.png/)
+        marker.icon = icon
         marker.setMap @map
     )
