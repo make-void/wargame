@@ -21,7 +21,6 @@ class Map
     markersUpdater = new MarkersUpdater(this)
     markersUpdater.start()
     
-    
   center: (lat, lng) ->
     latLng = new google.maps.LatLng(lat, lng)
     # @map.setCenter latLng
@@ -32,8 +31,6 @@ class Map
     
   
   # "private"
-  
-  ##
   
   markersCleanMax: ->
     max_markers = @max_simultaneous_markers
@@ -61,12 +58,27 @@ class Map
   attachDialog: (marker) ->
     for dia in this.dialogs
       dia.dialog.close()
-    
-    dialog = new DialogView(@map, marker)    
-    this.dialogs.push dialog
+      
+
+    if this.dialogs.length != 0
+      console.log(_.last(this.dialogs).marker.location_id)
+      
+    if this.dialogs.length == 0 ||  _.last(this.dialogs).marker.location_id != marker.location_id
+      # open a dialog
+      setTimeout( => # FIXME: a set timeout is not the best detector of this but still... check if it works on mobile
+        dialog = new DialogView(@map, marker)    
+        this.dialogs.push dialog
+      , 10)
+    else
+      # open a hidden dialog on the same location
+      setTimeout( => # FIXME: a set timeout is not the best detector of this but still... check if it works on mobile
+        dialog = new DialogView(@map, marker)    
+        this.dialogs.push dialog
+      , 10)
 
   drawMarkers: (markers) ->
     @timer = new Date()
+    
     for marker in markers
       this.drawMarker marker
 
@@ -85,7 +97,6 @@ class Map
     @markers.push marker
     marker.setMap @map
   
-  
   clearMarkers: ->
     for marker in @markers
       marker.setMap null 
@@ -95,6 +106,12 @@ class Map
     google.maps.event.addListener(@map, 'click', (evt) ->
       # console.log evt.latLng.lat(), evt.latLng.lng()
     )    
+    
+
+  # exceptions
+
+  raise: (message) ->
+    console.log "Exception: ", message    
 
   # debug: (what) ->
   #   $(window).oneTime(1000, ->
@@ -116,12 +133,3 @@ class Map
   #     $(army.dialog.el).find(".#{what}").trigger("click")
   #   )
     
-  # exceptions
-  
-  raise: (message) ->
-    console.log "Exception: ", message    
-
-      
-
-  
-

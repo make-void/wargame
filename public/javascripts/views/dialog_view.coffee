@@ -42,7 +42,7 @@ class DialogView
         @dialog.addTab('Units',      "faaaarming")
         @dialog.addTab('Upgrades',   "faaaarming")
     else  
-      @dialog.addTab('City', content)
+      @dialog.addTab('Army', content)
       
     @dialog.addTab('Debug', "I will be useful...")
     

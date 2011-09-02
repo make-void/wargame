@@ -29,6 +29,9 @@ class MarkerView
       zIndex: zIndex
     })
     
+    # TODO: cmon, this is not a view!!!!! move out... now!
+    
+    marker.location_id = @data.id
     if @data.type == "city"
       marker.type = "city"
       marker.name = @data.city.name
@@ -59,7 +62,6 @@ class MarkerView
     else  
       marker.model = new City @data
       marker.dialog = new CityDialog { model: marker.model }
-    
     
     # TODO: pass more datas
     

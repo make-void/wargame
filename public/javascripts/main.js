@@ -173,7 +173,7 @@ DialogView = (function() {
         this.dialog.addTab('Upgrades', "faaaarming");
       }
     } else {
-      this.dialog.addTab('City', content);
+      this.dialog.addTab('Army', content);
     }
     return this.dialog.addTab('Debug', "I will be useful...");
   };
@@ -204,6 +204,7 @@ MarkerView = (function() {
       player: this.data.player,
       zIndex: zIndex
     });
+    marker.location_id = this.data.id;
     if (this.data.type === "city") {
       marker.type = "city";
       marker.name = this.data.city.name;
@@ -568,14 +569,28 @@ Map = (function() {
     }, this));
   };
   Map.prototype.attachDialog = function(marker) {
-    var dia, dialog, _i, _len, _ref;
+    var dia, _i, _len, _ref;
     _ref = this.dialogs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       dia = _ref[_i];
       dia.dialog.close();
     }
-    dialog = new DialogView(this.map, marker);
-    return this.dialogs.push(dialog);
+    if (this.dialogs.length !== 0) {
+      console.log(_.last(this.dialogs).marker.location_id);
+    }
+    if (this.dialogs.length === 0 || _.last(this.dialogs).marker.location_id !== marker.location_id) {
+      return setTimeout(__bind(function() {
+        var dialog;
+        dialog = new DialogView(this.map, marker);
+        return this.dialogs.push(dialog);
+      }, this), 10);
+    } else {
+      return setTimeout(__bind(function() {
+        var dialog;
+        dialog = new DialogView(this.map, marker);
+        return this.dialogs.push(dialog);
+      }, this), 10);
+    }
   };
   Map.prototype.drawMarkers = function(markers) {
     var marker, _i, _len, _results;
