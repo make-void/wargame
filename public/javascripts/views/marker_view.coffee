@@ -58,7 +58,7 @@ class MarkerView
       marker.dialog = new ArmyDialog { model: marker.model }
     else  
       marker.model = new City @data
-      # marker.dialog = new CityDialog { model: marker.model }
+      marker.dialog = new CityDialog { model: marker.model }
     
     
     # TODO: pass more datas

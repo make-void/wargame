@@ -230,6 +230,9 @@ MarkerView = (function() {
       });
     } else {
       marker.model = new City(this.data);
+      marker.dialog = new CityDialog({
+        model: marker.model
+      });
     }
     google.maps.event.addListener(marker, 'click', __bind(function() {
       return this.map.attachDialog(marker);
