@@ -18,17 +18,22 @@ describe "Players" do
         @player = DB::Player.create @cor3y.merge( alliance_id: @ally.id )
         @location = DB::Location.create @fi
         @city = DB::City.create @florence.merge(location_id: @location.id, player_id: @player.id)
+        @army = DB::Army.create location_id: @location.id, player_id: @player.id, is_moving: 0
       end
       
       it "should return current_player's locations" do
         url = "/players/me/locations/#{@fi[:latitude]}/#{@fi[:longitude]}" 
         data = get_json url
-        data[:name].should == "Firenze"
+        # puts "DATA: "
+        # puts data
+        data[:locations].first["latitude"].should == @fi[:latitude]
+        data[:locations].first["longitude"].should == @fi[:longitude]        
       end
       
       
       after :all do
         @city.destroy
+        @army.destroy
         @player.destroy
         @ally.destroy
         @location.destroy

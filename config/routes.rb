@@ -4,7 +4,11 @@ Wargame::Application.routes.draw do
   get "/locations/:lat/:lng", to: "locations#index", as: :cities, constraints: { :lat => latlng, :lng => latlng }
   
   get "/players/me", to: "players#me", as: :players_me
-  get "/players/me/locations/:lat/:lng", to: "players_locations#index", as: :player_locations, constraints: { :lat => latlng, :lng => latlng }
+  
+  
+  locations = LocationsController.action(:index) # TODO: handle with PlayerLocationsController
+  # locations = "players_locations#index"
+  get "/players/me/locations/:lat/:lng", to: locations, as: :player_locations, constraints: { :lat => latlng, :lng => latlng }
   
   
 #  get "/game", to: "game#show", as: :game
