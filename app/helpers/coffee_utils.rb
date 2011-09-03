@@ -31,9 +31,13 @@ module CoffeeUtils
   # private
 
   def coffee_dir
+    "#{APP_ROOT}/app/javascripts"
+  end
+  
+  def output_dir
     "#{APP_ROOT}/public/javascripts"
   end
-
+  
   def coffee_files_string
     coffee_files.map do |c|
       if c =~ /\*/ 
@@ -54,7 +58,7 @@ module CoffeeUtils
   end
 
   def do_compilation
-    puts `#{cd_js} coffee -j main.js -b  -c #{coffee_files_string}`
+    puts `#{cd_js} coffee -j #{output_dir}/main.js -b  -c #{coffee_files_string}`
   end
 
   
