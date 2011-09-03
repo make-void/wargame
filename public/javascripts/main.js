@@ -136,6 +136,7 @@ DialogView = (function() {
     this.map = map;
     this.marker = marker;
     this.dialog = null;
+    this.marker.dialog_view = this;
     this.build();
     this.open();
   }
@@ -157,25 +158,31 @@ DialogView = (function() {
       backgroundClassName: 'bubbleBg',
       arrowStyle: 2,
       minWidth: 200,
-      maxWidth: 700
+      maxWidth: 700,
+      minHeight: 200,
+      maxHeight: 700
     });
     return this.render();
   };
   DialogView.prototype.render = function() {
-    var content, is_owned_by_current_player;
+    var content, is_owned_by_current_player, loading_text;
     content = this.marker.dialog.render().el;
     if (this.marker.type === "city") {
-      this.dialog.addTab('Overview', content);
+      this.dialog.addTab('Overview', content, "city");
       is_owned_by_current_player = true;
+      loading_text = "loading...";
       if (is_owned_by_current_player) {
-        this.dialog.addTab('Structures', "faaaarming");
-        this.dialog.addTab('Units', "faaaarming");
-        this.dialog.addTab('Upgrades', "faaaarming");
+        this.dialog.addTab('Structures', loading_text, "city_structs");
+        this.dialog.addTab('Units', loading_text, "city_units");
+        this.dialog.addTab('Upgrades', loading_text, "city_techs");
       }
     } else {
-      this.dialog.addTab('Army', content);
+      this.dialog.addTab('Army', content, "army");
     }
-    return this.dialog.addTab('Debug', "I will be useful...");
+    return this.dialog.addTab('Debug', "I will be useful...", "debug");
+  };
+  DialogView.prototype.switchTab = function(tab) {
+    return $(".bubble .tabs ." + tab).trigger("click");
   };
   return DialogView;
 })();
@@ -264,7 +271,11 @@ Dialog = Backbone.View.extend({
     this.type = type;
     return this.selector = "#" + this.type + "Dialog-tmpl";
   },
-  afterRender: function() {},
+  afterRender: function() {
+    if (this.initializeTabs) {
+      return this.initializeTabs();
+    }
+  },
   render: function() {
     var content, haml;
     if (!this.selector) {
@@ -284,6 +295,52 @@ CityDialog = Dialog.extend({
   },
   label: function() {
     return city.name;
+  },
+  initializeTabs: function() {
+    console.log("init tabs");
+    console.log($(".bubble .tabs div"));
+    return setTimeout(__bind(function() {
+      var self;
+      self = this;
+      return $(".bubble .tabs div").bind("click", function() {
+        var type;
+        type = $(this).attr("data-dialog_type");
+        console.log("clicked on tab: ", type);
+        return self.initTab(type);
+      });
+    }, this), 500);
+  },
+  initTab: function(type) {
+    var content, dialog, model;
+    dialog = (function() {
+      switch (type) {
+        case "city_structs":
+          model = new Structs({
+            definitions: game.struct_def.definitions
+          });
+          return new StructsDialog({
+            model: model
+          });
+        case "city_units":
+          model = new Units({
+            definitions: game.unit_def.definitions
+          });
+          return new UnitsDialog({
+            model: model
+          });
+        case "city_techs":
+          model = new Techs({
+            definitions: game.tech_def.definitions
+          });
+          return new TechsDialog({
+            model: model
+          });
+      }
+    })();
+    if (dialog) {
+      content = dialog.render().el;
+      return $(".bubbleBg").html(content);
+    }
   }
 });
 ArmyDialog = Dialog.extend({
@@ -320,19 +377,19 @@ ArmyDialog = Dialog.extend({
 });
 StructsDialog = Dialog.extend({
   initialize: function() {
-    this.type = "structs";
+    this.type = "city_structs";
     return Dialog.prototype.initialize(this.type);
   }
 });
 UnitsDialog = Dialog.extend({
   initialize: function() {
-    this.type = "units";
+    this.type = "city_units";
     return Dialog.prototype.initialize(this.type);
   }
 });
 TechsDialog = Dialog.extend({
   initialize: function() {
-    this.type = "techs";
+    this.type = "city_techs";
     return Dialog.prototype.initialize(this.type);
   }
 });
@@ -561,7 +618,13 @@ City = Location.extend({});
 Player = Backbone.Model.extend({});
 Upgrade = Backbone.Model.extend({});
 Alliance = Backbone.Model.extend({});
-Structs = Backbone.Model.extend({});
+Structs = (function() {
+  __extends(Structs, Backbone.Model);
+  function Structs() {
+    Structs.__super__.constructor.apply(this, arguments);
+  }
+  return Structs;
+})();
 Units = Backbone.Model.extend({});
 Techs = Backbone.Model.extend({});
 Struct = Backbone.Model.extend({});
@@ -766,7 +829,10 @@ Game = (function() {
     this.current_player = null;
     this.current_playerView = null;
     this.struct_def;
+    this.tech_def;
+    this.unit_def;
   }
+  Game.prototype.debug = function() {};
   Game.prototype.initModels = function() {
     var definitions;
     definitions = new Definitions();
@@ -810,7 +876,8 @@ $(function() {
   game.initModels();
   game.initMap();
   game.getPlayerView();
-  return game.initNav();
+  game.initNav();
+  return game.debug();
 });
 $("#latLng").bind("submit", function() {
   var coords;

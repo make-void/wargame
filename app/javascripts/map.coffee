@@ -62,8 +62,6 @@ class Map
     # if this.dialogs.length != 0
     #   console.log(_.last(this.dialogs).marker.location_id)
     lastMark = _.last(this.dialogs).marker if this.dialogs.length != 0  
-      
-    
     
     if this.dialogs.length == 0 || lastMark.location_id != marker.location_id
       this.openDialog(marker)
@@ -83,6 +81,7 @@ class Map
     setTimeout( => # FIXME: a set timeout is not the best detector of this but still... check if it works on mobile
       dialog = new DialogView(@map, marker)    
       this.dialogs.push dialog
+      # dialog.open() # needed?
     , 10)
 
   drawMarkers: (markers) ->
@@ -102,7 +101,7 @@ class Map
     
   doMarkerDrawing: (data) ->
     markerView = new MarkerView(this, data)
-    marker = markerView.draw().marker
+    marker = markerView.draw().marker # you can access the view with marker.view
     @markers.push marker
     marker.setMap @map
   

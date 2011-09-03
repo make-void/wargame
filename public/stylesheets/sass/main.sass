@@ -189,6 +189,32 @@ body.game
   p.name
     font-weight: bold
     margin-bottom: 5px
+  p.desc
+    margin-bottom: 10px
+  a.btn
+    float: right
+    +button_rdy
+    font-size: 0.6em
+    .upgrade
+    margin: 10px 5px 0 0
+    
+ul.structures
+  li
+    background: #FFF
+    display: block
+    padding: 5px
+  li:hover
+    background: #DDD
+  li 
+    .cost
+      5px
+      p 
+        display: inline
+        position: relative
+        top: -7px
+      img
+        margin: 0 6px 0 0
+        width: 30px
 
 .tool
   label, input
@@ -277,6 +303,7 @@ body.game
   padding: 10px
   div
     +button_rdy
+    
 
 @media (max-width:480px)
   body.game

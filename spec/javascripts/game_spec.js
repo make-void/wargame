@@ -3,8 +3,7 @@
     it("initializes the models", function() {
       var game;
       game = new Game();
-      game.initModels();
-      return expect(Structs.all().lenght).toEqual(0);
+      return game.initModels();
     });
     it("initializes the map", function() {
       var game;

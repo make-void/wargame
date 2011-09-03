@@ -1440,7 +1440,7 @@ InfoBubble.prototype['minHeight_changed'] =
  * @param {string} label The label of the tab.
  * @param {string|Element} content The content of the tab.
  */
-InfoBubble.prototype.addTab = function(label, content) {
+InfoBubble.prototype.addTab = function(label, content, dialog_type) {
   var tab = document.createElement('DIV');
   tab.innerHTML = label;
 
@@ -1462,8 +1462,9 @@ InfoBubble.prototype.addTab = function(label, content) {
     this.setTabActive_(tab);
   }
 
-  tab.className = tab.className + ' ' + this.animationName_;
-
+  tab.className = tab.className + ' ' + this.animationName_ + " " + dialog_type;
+  tab["data-dialog_type"] = dialog_type
+  
   this.redraw_();
 };
 InfoBubble.prototype['addTab'] = InfoBubble.prototype.addTab;

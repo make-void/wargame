@@ -7,5 +7,6 @@ $( ->
   game.getPlayerView()
   game.initNav()
 
+  game.debug() # TODO: remove in production
   #note: if (navigator.userAgent.match("iPad")) ...
 )

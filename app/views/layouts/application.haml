@@ -72,6 +72,38 @@
           %p.population 
             pop: 
             = city.pts
+            
+    %script{ type: "text/template", id: "city_structsDialog-tmpl" }
+      :plain
+        .dialog.city_structs
+          %ul.structures
+            :each struct in definitions
+              %li
+                %a.btn.upgrade{ href: "javascript:void(0)" } Upgrade
+                %p.name= struct.name
+                %p.desc= struct.description
+                %p.prod
+                  produces:
+                  = struct.base_production
+                %div.cost
+                  %p= struct.gold_cost
+                  %img{ src: "/images/icons/gold.png"}
+                  %p= struct.steel_cost
+                  %img{ src: "/images/icons/steel.png"}
+                  %p= struct.oil_cost
+                  %img{ src: "/images/icons/oil.png"}
+        
+          
+    %script{ type: "text/template", id: "city_unitsDialog-tmpl" }
+      :plain
+        .dialog.city_units
+          city units...
+          
+    %script{ type: "text/template", id: "city_techsDialog-tmpl" }
+      :plain
+        .dialog.city_techs
+          city techs...
+
           
           
     %script{ type: "text/template", id: "armyActionsMenu-tmpl" }    

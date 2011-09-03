@@ -4,7 +4,8 @@ Dialog  = Backbone.View.extend(
     @selector = "##{@type}Dialog-tmpl"
     
   afterRender: ->  
-  
+    this.initializeTabs() if this.initializeTabs
+    
   render: ->  
     console.log "ERROR: can't create dialog with null selector" unless @selector
     haml = Haml $(@selector).html()

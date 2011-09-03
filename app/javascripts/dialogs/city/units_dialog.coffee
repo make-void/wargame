@@ -1,5 +1,5 @@
 UnitsDialog  = Dialog.extend(
   initialize: ->
-    @type = "units"
+    @type = "city_units"
     Dialog.prototype.initialize @type# how to call super in js
 )

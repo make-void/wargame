@@ -13,7 +13,12 @@ class Game
     @current_player = null
     @current_playerView = null
     @struct_def
-  
+    @tech_def   
+    @unit_def   
+    
+  debug: ->
+
+    
   initModels: ->  
     definitions = new Definitions()
     definitions.get( (defs) =>

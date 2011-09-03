@@ -1,6 +1,7 @@
 class DialogView
   constructor: (@map, @marker) ->
     @dialog = null
+    @marker.dialog_view = this
     this.build()
     this.open()
     
@@ -24,7 +25,9 @@ class DialogView
       backgroundClassName: 'bubbleBg',
       arrowStyle: 2,
       minWidth: 200,
-      maxWidth: 700
+      maxWidth: 700,
+      minHeight: 200,
+      maxHeight: 700
     })
 
     this.render()
@@ -33,20 +36,27 @@ class DialogView
     content = @marker.dialog.render().el
 
     if @marker.type == "city"
-      @dialog.addTab('Overview', content)
+      @dialog.addTab('Overview', content, "city")
       
       # TODO: city.owned?(current_player) # => boolean
       is_owned_by_current_player = true
+      loading_text = "loading..."
       if is_owned_by_current_player
-        @dialog.addTab('Structures', "faaaarming")
-        @dialog.addTab('Units',      "faaaarming")
-        @dialog.addTab('Upgrades',   "faaaarming")
+        @dialog.addTab('Structures', loading_text, "city_structs")
+        @dialog.addTab('Units',      loading_text, "city_units")
+        @dialog.addTab('Upgrades',   loading_text, "city_techs")
     else  
-      @dialog.addTab('Army', content)
+      @dialog.addTab('Army', content, "army")
       
-    @dialog.addTab('Debug', "I will be useful...")
+    @dialog.addTab('Debug', "I will be useful...", "debug")
+
+  # actions
+  
+  switchTab: (tab) ->
+    $(".bubble .tabs .#{tab}").trigger "click"
     
-    
+  
+  
 # original InfoWindow notes
 #    
 # dialog = new google.maps.InfoWindow({

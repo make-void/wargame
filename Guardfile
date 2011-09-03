@@ -8,12 +8,10 @@ guard 'livereload' do
   watch(%r{.+\.(rb|ru)})
   watch(%r{app/(models|controllers|mailers)/.+\.(rb|yml|haml)})
   watch(%r{app/views/\w+/.+\.(html|erb|haml)})  
-  watch(%r{public/javascripts/.+\.(js|coffee)})
-  watch(%r{public/javascripts/(^spec)/.+\.(js|coffee)})
+  watch(%r{(app|public|spec)/javascripts/(^spec)/.+\.(coffee)})
+  watch(%r{(app|public|spec)/javascripts/.+\.(coffee)})
   watch(%r{public/stylesheets/.+\.(css)})
   watch(%r{public/stylesheets/sass/.+\.(sass)})
-  watch(%r{spec/javascripts/.+/.+\.(coffee)})
-  watch(%r{spec/javascripts/.+\.(coffee)})
 end
 
 

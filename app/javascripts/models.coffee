@@ -6,7 +6,8 @@ Player    = Backbone.Model.extend {}
 Upgrade   = Backbone.Model.extend {}
 Alliance  = Backbone.Model.extend {}
 
-Structs = Backbone.Model.extend {}
+class Structs extends Backbone.Model
+  
 Units = Backbone.Model.extend {}
 Techs = Backbone.Model.extend {}
 
