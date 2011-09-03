@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, AttackState, City, CityDialog, CityMarkerIcon, Definition, Definitions, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Struct, StructDef, Structs, StructsDialog, Tech, Techs, TechsDef, TechsDialog, Unit, Units, UnitsDef, UnitsDialog, Upgrade, Utils, console;
+var Alliance, Army, ArmyDialog, AttackState, City, CityDialog, CityMarkerIcon, Definition, Definitions, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -496,6 +496,13 @@ Array.prototype.last = function() {
 String.prototype.pluralize = function() {
   return this + "s";
 };
+String.prototype.singularize = function() {
+  if (this[-1] && this[-1].toLowerCase() === "s") {
+    return this.slice(0, -1);
+  } else {
+    return this;
+  }
+};
 String.prototype.capitalize = function() {
   return "" + (this[0].toUpperCase()) + this.slice(1);
 };
@@ -560,44 +567,45 @@ Techs = Backbone.Model.extend({});
 Struct = Backbone.Model.extend({});
 Unit = Backbone.Model.extend({});
 Tech = Backbone.Model.extend({});
-Definitions = (function() {
-  function Definitions() {}
-  Definitions.prototype.get = function() {
-    return $.getJSON("/definitions", function(data) {
-      return console.log(data);
-    });
-  };
-  return Definitions;
-})();
 Definition = (function() {
-  function Definition(objects) {
-    this.objects = this.load(objects);
+  function Definition(definitions) {
+    this.definitions = this.load(definitions);
   }
-  Definition.prototype.load = function(objects) {
-    return objects;
+  Definition.prototype.load = function(definitions) {
+    var definition, defs, _i, _len, _ref;
+    defs = [];
+    _ref = definitions[this.type.pluralize()];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      definition = _ref[_i];
+      defs.push(definition["definition"]);
+    }
+    return defs;
   };
   return Definition;
 })();
 StructDef = (function() {
   __extends(StructDef, Definition);
-  function StructDef() {
-    StructDef.__super__.constructor.apply(this, arguments);
+  function StructDef(objects) {
+    this.type = "struct";
+    StructDef.__super__.constructor.call(this, objects);
   }
   return StructDef;
 })();
-TechsDef = (function() {
-  __extends(TechsDef, Definition);
-  function TechsDef() {
-    TechsDef.__super__.constructor.apply(this, arguments);
+TechDef = (function() {
+  __extends(TechDef, Definition);
+  function TechDef(objects) {
+    this.type = "tech";
+    TechDef.__super__.constructor.call(this, objects);
   }
-  return TechsDef;
+  return TechDef;
 })();
-UnitsDef = (function() {
-  __extends(UnitsDef, Definition);
-  function UnitsDef() {
-    UnitsDef.__super__.constructor.apply(this, arguments);
+UnitDef = (function() {
+  __extends(UnitDef, Definition);
+  function UnitDef(objects) {
+    this.type = "unit";
+    UnitDef.__super__.constructor.call(this, objects);
   }
-  return UnitsDef;
+  return UnitDef;
 })();
 Map = (function() {
   function Map() {
@@ -743,20 +751,31 @@ Map = (function() {
   };
   return Map;
 })();
+Definitions = (function() {
+  function Definitions() {}
+  Definitions.prototype.get = function(fn) {
+    return $.getJSON("/definitions", function(data) {
+      return fn(data);
+    });
+  };
+  return Definitions;
+})();
 Game = (function() {
   function Game() {
     this.map = new Map;
     this.current_player = null;
     this.current_playerView = null;
+    this.struct_def;
   }
   Game.prototype.initModels = function() {
     var definitions;
     definitions = new Definitions();
-    return definitions.get = __bind(function(def) {
+    definitions.get(__bind(function(defs) {
       this.struct_def = new StructDef(defs);
       this.tech_def = new TechDef(defs);
       return this.unit_def = new UnitDef(defs);
-    }, this);
+    }, this));
+    return this;
   };
   Game.prototype.initMap = function() {
     this.map.draw();

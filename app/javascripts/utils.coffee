@@ -20,6 +20,8 @@ Array::last = ->
 
 String::pluralize = -> 
   this+"s"
+String::singularize = -> 
+  if this[-1] && this[-1].toLowerCase() == "s" then this[0..-2] else this
 
 # casing
 

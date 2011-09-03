@@ -15,22 +15,32 @@ Unit = Backbone.Model.extend {}
 Tech = Backbone.Model.extend {}
 
 
-class Definitions
-  constructor: ->
-    
-  get: ->
-    $.getJSON("/definitions", (data) ->
-      console.log(data)
-    )
 
 
 class Definition
-  constructor: (objects) ->
-    @objects = this.load(objects)
+  constructor: (definitions) ->
+    @definitions = this.load(definitions)
+    # console.log @definitions
     
-  load: (objects) ->
-    objects
+  load: (definitions) ->
+    defs = []
+    for definition in definitions[@type.pluralize()]
+      defs.push definition["definition"]
+    defs
+      
     
 class StructDef extends Definition  
-class TechsDef extends Definition
-class UnitsDef extends Definition  
+  constructor: (objects) ->
+    @type = "struct"
+    super objects
+  
+    
+class TechDef extends Definition
+  constructor: (objects) ->
+    @type = "tech"
+    super objects
+      
+class UnitDef extends Definition  
+  constructor: (objects) ->
+    @type = "unit"
+    super objects

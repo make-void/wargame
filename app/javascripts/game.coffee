@@ -1,21 +1,35 @@
+
+class Definitions
+  constructor: ->
+    
+  get: (fn) ->
+    $.getJSON("/definitions", (data) ->
+      fn(data)
+    )
+    
 class Game
   constructor: ->
     @map = new Map
     @current_player = null
     @current_playerView = null
+    @struct_def
   
   initModels: ->  
-    
     definitions = new Definitions()
-    definitions.get = (def) =>
+    definitions.get( (defs) =>
       @struct_def  = new StructDef (defs)
       @tech_def    = new TechDef   (defs)
       @unit_def    = new UnitDef   (defs)    
+      # console.log @unit_def
+      
+      # TODO: insert event trigger here to listen somewhere afterwards 
+    )
     # types = ["struct", "tech", "unit"]
     # for type in types
     #   klass = type.pluralize().capitalize()
     #   klass = eval klass
     #   dialog = eval "#{klass}Dialog"
+    this
 
   
   initMap: ->  
