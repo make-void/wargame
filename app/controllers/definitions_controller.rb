@@ -9,12 +9,22 @@ class DefinitionsController < ApplicationController
   
   layout nil
   
+  def index
+    resources = {}
+    klasses.each do |cla|
+      model = eval("DB::#{klass(cla)}::Definition")
+      name = cla.downcase()
+      resources[name] = model.all
+    end
+    render json: resources
+  end
+  
   def show
     @type = params[:type].to_sym
     filter_bad_intentions
-    model = eval("DB::#{klass}::Definition")
-    @resources = model.all
-    render json: @resources
+    model = eval("DB::#{klass(@type)}::Definition")
+    resources = model.all
+    render json: resources
   end
   
   private
@@ -27,8 +37,14 @@ class DefinitionsController < ApplicationController
     forbidden unless NAMES.keys.include? @type
   end
   
-  def klass
-    NAMES.fetch(@type).fetch(:klass).to_s.singularize.camelcase
+  def klasses
+    NAMES.keys.each do |name|
+      klass name
+    end
+  end
+  
+  def klass(type)
+    NAMES.fetch(type).fetch(:klass).to_s.singularize.camelcase
   end
   
 end

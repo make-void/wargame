@@ -1,11 +1,12 @@
 Dialog  = Backbone.View.extend(  
   
-  initialize: ->
-    @selector = "##{@type}-tmpl"
+  initialize: (@type) ->
+    @selector = "##{@type}Dialog-tmpl"
     
   afterRender: ->  
   
-  render: ->
+  render: ->  
+    console.log "ERROR: can't create dialog with null selector" unless @selector
     haml = Haml $(@selector).html()
     content = haml this.model.attributes
     $(this.el).html content

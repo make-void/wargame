@@ -1,8 +1,11 @@
-DB::City.destroy_all
-DB::Army.destroy_all
-DB::Player.destroy_all
-DB::Alliance.destroy_all
-DB::Location.destroy_all
+path = File.expand_path "../../", __FILE__
 
+
+
+require "#{path}/db/default_values"
+include DefaultValues
+
+recreate_db_structure
+create_default_vals
 
 

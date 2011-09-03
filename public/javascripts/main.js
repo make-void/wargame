@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, AttackState, City, CityDialog, CityMarkerIcon, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Struct, Structs, StructsDialog, Tech, Techs, TechsDialog, Unit, Units, UnitsDialog, Upgrade, Utils, console;
+var Alliance, Army, ArmyDialog, AttackState, City, CityDialog, CityMarkerIcon, Definition, Definitions, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Struct, StructDef, Structs, StructsDialog, Tech, Techs, TechsDef, TechsDialog, Unit, Units, UnitsDef, UnitsDialog, Upgrade, Utils, console;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -260,12 +260,16 @@ CityMarkerIcon = (function() {
   return CityMarkerIcon;
 })();
 Dialog = Backbone.View.extend({
-  initialize: function() {
-    return this.selector = "#" + this.type + "-tmpl";
+  initialize: function(type) {
+    this.type = type;
+    return this.selector = "#" + this.type + "Dialog-tmpl";
   },
   afterRender: function() {},
   render: function() {
     var content, haml;
+    if (!this.selector) {
+      console.log("ERROR: can't create dialog with null selector");
+    }
     haml = Haml($(this.selector).html());
     content = haml(this.model.attributes);
     $(this.el).html(content);
@@ -276,7 +280,7 @@ Dialog = Backbone.View.extend({
 CityDialog = Dialog.extend({
   initialize: function() {
     this.type = "city";
-    return Dialog.prototype.initialize;
+    return Dialog.prototype.initialize(this.type);
   },
   label: function() {
     return city.name;
@@ -285,7 +289,7 @@ CityDialog = Dialog.extend({
 ArmyDialog = Dialog.extend({
   initialize: function() {
     this.type = "army";
-    return Dialog.prototype.initialize;
+    return Dialog.prototype.initialize(this.type);
   },
   activateButtons: function() {
     var model;
@@ -317,19 +321,19 @@ ArmyDialog = Dialog.extend({
 StructsDialog = Dialog.extend({
   initialize: function() {
     this.type = "structs";
-    return Dialog.prototype.initialize;
+    return Dialog.prototype.initialize(this.type);
   }
 });
 UnitsDialog = Dialog.extend({
   initialize: function() {
     this.type = "units";
-    return Dialog.prototype.initialize;
+    return Dialog.prototype.initialize(this.type);
   }
 });
 TechsDialog = Dialog.extend({
   initialize: function() {
     this.type = "techs";
-    return Dialog.prototype.initialize;
+    return Dialog.prototype.initialize(this.type);
   }
 });
 MapAction = (function() {
@@ -483,6 +487,18 @@ if (!console) {
   console.log = {};
 }
 Utils = {};
+Array.prototype.first = function() {
+  return this[0];
+};
+Array.prototype.last = function() {
+  return this[-1];
+};
+String.prototype.pluralize = function() {
+  return this + "s";
+};
+String.prototype.capitalize = function() {
+  return "" + (this[0].toUpperCase()) + this.slice(1);
+};
 Utils.parseCoords = function(string) {
   var split;
   split = string.replace(/\s/, '').split(",");
@@ -538,12 +554,51 @@ City = Location.extend({});
 Player = Backbone.Model.extend({});
 Upgrade = Backbone.Model.extend({});
 Alliance = Backbone.Model.extend({});
-Struct = Backbone.Model.extend({});
-Unit = Backbone.Model.extend({});
-Tech = Backbone.Model.extend({});
 Structs = Backbone.Model.extend({});
 Units = Backbone.Model.extend({});
 Techs = Backbone.Model.extend({});
+Struct = Backbone.Model.extend({});
+Unit = Backbone.Model.extend({});
+Tech = Backbone.Model.extend({});
+Definitions = (function() {
+  function Definitions() {}
+  Definitions.prototype.get = function() {
+    return $.getJSON("/definitions", function(data) {
+      return console.log(data);
+    });
+  };
+  return Definitions;
+})();
+Definition = (function() {
+  function Definition(objects) {
+    this.objects = this.load(objects);
+  }
+  Definition.prototype.load = function(objects) {
+    return objects;
+  };
+  return Definition;
+})();
+StructDef = (function() {
+  __extends(StructDef, Definition);
+  function StructDef() {
+    StructDef.__super__.constructor.apply(this, arguments);
+  }
+  return StructDef;
+})();
+TechsDef = (function() {
+  __extends(TechsDef, Definition);
+  function TechsDef() {
+    TechsDef.__super__.constructor.apply(this, arguments);
+  }
+  return TechsDef;
+})();
+UnitsDef = (function() {
+  __extends(UnitsDef, Definition);
+  function UnitsDef() {
+    UnitsDef.__super__.constructor.apply(this, arguments);
+  }
+  return UnitsDef;
+})();
 Map = (function() {
   function Map() {
     this.max_simultaneous_markers = 600;
@@ -695,8 +750,13 @@ Game = (function() {
     this.current_playerView = null;
   }
   Game.prototype.initModels = function() {
-    var types;
-    return types = ["struct", "tech", "unit"];
+    var definitions;
+    definitions = new Definitions();
+    return definitions.get = __bind(function(def) {
+      this.struct_def = new StructDef(defs);
+      this.tech_def = new TechDef(defs);
+      return this.unit_def = new UnitDef(defs);
+    }, this);
   };
   Game.prototype.initMap = function() {
     this.map.draw();

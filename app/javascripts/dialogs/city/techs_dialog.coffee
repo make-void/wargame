@@ -1,5 +1,5 @@
 TechsDialog  = Dialog.extend(
   initialize: ->
     @type = "techs"
-    Dialog.prototype.initialize # how to call super in js
+    Dialog.prototype.initialize @type# how to call super in js
 )

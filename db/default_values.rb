@@ -2,8 +2,44 @@ module DefaultValues
 
   PTS_FILTER = 6000 # cities with population > 6000 (6132 cities)
   
-  def create_default_vals
+  # utils - TODO: move in another class/module
+  
+  # require "#{Rails.root}/db/default_values"
+  # include DefaultValues
+  # drop_all_foreigns DB::Research::Requirements::Tech
+  
+  # def drop_all_foreigns(model)
+  #   table_name = model.table_name
+  #   cmd = ActiveRecord::Base.connection.execute("SHOW CREATE TABLE #{table_name}").to_a[0][1]
+  #   foreigns = cmd.scan(/FOREIGN KEY \(`((\w|_)+)`\)/)
+  #   foreigns.map do |foreign|
+  #     foreign = foreign.first
+  #     drop_foreign table_name, foreign
+  #   end
+  # end
+  # 
+  # def drop_foreign(table, key)
+  #   puts "dropping foreign key '#{key}' from '#{table}'" 
+  #   execute_query "ALTER TABLE #{table} DROP FOREIGN KEY #{key}"
+  # end
+  
+  def execute_query(query)
+    ActiveRecord::Base.connection.execute query
+  end
+  
+  def recreate_db_structure # testing purposes
+    queries = eval(File.read "#{Rails.root}/db/recreate_tables.rb")
+    queries.each do |cmd|
+      execute_query cmd
+    end
+  end
 
+  
+  # ----
+  
+  
+  def create_default_vals
+    
     ally = DB::Alliance.create name: "No Alliance"
 
 
@@ -13,19 +49,7 @@ module DefaultValues
                   email: "test@test.test", 
                   alliance_id: ally.id
 
-    ally = DB::Alliance.create name: "TheMasterers"
-                  
-    DB::Player.create name: "Cor3y", 
-                  new_password: "daniel001", 
-                  new_password_confirmation: "daniel001", 
-                  email: "test1@test.test", 
-                  alliance_id: ally.id
-                  
-    DB::Player.create name: "makevoid", 
-                  new_password: "finalman", 
-                  new_password_confirmation: "finalman", 
-                  email: "test2@test.test", 
-                  alliance_id: ally.id
+   
     
     #################
     #     UNITS     #
@@ -347,83 +371,6 @@ module DefaultValues
      #Heavy Tank => 5 Vehicle Armor, 5 Vehicle Weapon
      DB::Unit::Requirement::Tech.create :unit_id => 8, :req_tech_id => 3, :level => 8
      DB::Unit::Requirement::Tech.create :unit_id => 8, :req_tech_id => 4, :level => 6
-  end
-
-  def create_default_vals_after_location
-    cor3y = DB::Player.where(name: "Cor3y").first
-    makevoid = DB::Player.where(name: "makevoid").first
-
-
-    latLng = { latitude: 43.7687324, longitude: 11.2569013 }
-    florence = DB::Location.where(latLng).first # firenze
-    florence = DB::Location.create latLng unless florence
-
-    f_city = DB::City.find(:first, :conditions => {:name => "Florence"})
-    if f_city.nil?
-      f_city = DB::City.create name: "Florence", ccode: "it", location_id: florence.id, player_id: makevoid.id, pts: 65000
-    else
-      f_city.update_attributes player_id: makevoid.id, pts: 65000
-    end
-
-    latLng = { latitude: 48.866667, longitude: 2.333333 }
-    paris = DB::Location.where(latLng).first
-    paris = DB::Location.create latLng unless paris
-
-    paris_city = DB::City.find(:first, :conditions => {:name => "Paris"})
-    if paris_city.nil?
-      paris_city = DB::City.create name: "Paris", ccode: "fr", location_id: paris.id, player_id: cor3y.id, pts: 65000
-    else
-      paris_city.update_attributes player_id: cor3y.id, pts:65000
-    end
-
-    army_1 = DB::Army.create location_id: florence.id,
-                    player_id: cor3y.id,
-                    is_moving: 0
-                    
-    latLng = { latitude: 43.75, longitude: 11.183333 }
-    scandicci = DB::Location.where(latLng).first
-    if scandicci
-      army_2 = DB::Army.create location_id: scandicci.id,
-                      player_id: makevoid.id,
-                      is_moving: 0
-    end
-    
-    latLng = { latitude: 43.683333, longitude: 11.25 }
-    impruneta = DB::Location.where(latLng).first
-    if impruneta
-      army_3 = DB::Army.create location_id: impruneta.id,
-                      player_id: cor3y.id,
-                      is_moving: 1,
-                      destination_id: paris.id
-    end
-
-  #ARMY 1
-    DB::Unit::ArmyUnit.create unit_id: 1,
-                       army_id: army_2.id,
-                       player_id: makevoid.id,
-                       number: 100 #100 soldiers
-
-    DB::Unit::ArmyUnit.create unit_id: 3,
-                        army_id: army_2.id,
-                        player_id: makevoid.id,
-                        number: 20 #20 granatiers
-
-    DB::Unit::ArmyUnit.create unit_id: 5,
-                        army_id: army_2.id,
-                        player_id: makevoid.id,
-                        number: 10 #10 light camions
-
-  #ARMY 2
-    DB::Unit::ArmyUnit.create unit_id: 2,
-                        army_id: army_3.id,
-                        player_id: cor3y.id,
-                        number: 50 #50 special forces
-
-    DB::Unit::ArmyUnit.create unit_id: 4,
-                        army_id: army_1.id,
-                        player_id: cor3y.id,
-                        number: 5 #5 jeeps
-
   end
   
 end

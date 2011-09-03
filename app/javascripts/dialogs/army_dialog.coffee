@@ -1,7 +1,7 @@
 ArmyDialog  = Dialog.extend(
   initialize: ->
     @type = "army"
-    Dialog.prototype.initialize # how to call super in js
+    Dialog.prototype.initialize @type # how to call super in js
   
   activateButtons: ->
     model = this.model

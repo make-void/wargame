@@ -30,11 +30,13 @@ group :development do
   gem "guard-livereload"
   #gem "guard-coffeescript"
   gem 'guard-rspec'
+  gem 'guard-spork'  
 end
 
 group :development, :test do
   gem "rspec-rails", "~> 2.6"
   gem "jasmine", group: [:development, :test]
+  gem "spork"
 end
 group :test do
   gem "factory_girl_rails"

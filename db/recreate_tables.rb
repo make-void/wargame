@@ -1,27 +1,28 @@
 qs = queries = []
 
 
-qs << "DROP TABLE IF EXISTS wg_struct_queue;"
-qs << "DROP TABLE IF EXISTS wg_tech_queue;"
-qs << "DROP TABLE IF EXISTS wg_unit_queue;"
-qs << "DROP TABLE IF EXISTS wg_tech_tech_req_defs;"
-qs << "DROP TABLE IF EXISTS wg_tech_struct_req_defs;"
-qs << "DROP TABLE IF EXISTS wg_unit_tech_req_defs;"
-qs << "DROP TABLE IF EXISTS wg_unit_struct_req_defs;"
-qs << "DROP TABLE IF EXISTS wg_struct_tech_req_defs;"
+qs << "DROP TABLE IF EXISTS wg_struct_queue;"         
+qs << "DROP TABLE IF EXISTS wg_tech_queue;"            
+qs << "DROP TABLE IF EXISTS wg_unit_queue;"            
+qs << "DROP TABLE IF EXISTS wg_tech_tech_req_defs;"    
+qs << "DROP TABLE IF EXISTS wg_tech_struct_req_defs;"  
+qs << "DROP TABLE IF EXISTS wg_unit_tech_req_defs;"    
+qs << "DROP TABLE IF EXISTS wg_unit_struct_req_defs;"  
+qs << "DROP TABLE IF EXISTS wg_struct_tech_req_defs;"  
 qs << "DROP TABLE IF EXISTS wg_struct_struct_req_defs;"
-qs << "DROP TABLE IF EXISTS wg_city_unit;"
-qs << "DROP TABLE IF EXISTS wg_army_unit;"
-qs << "DROP TABLE IF EXISTS wg_armies;"
-qs << "DROP TABLE IF EXISTS wg_struct;"
-qs << "DROP TABLE IF EXISTS wg_techs;"
-qs << "DROP TABLE IF EXISTS wg_cities;"
-qs << "DROP TABLE IF EXISTS wg_players;"
-qs << "DROP TABLE IF EXISTS wg_locations;"
-qs << "DROP TABLE IF EXISTS wg_alliances;"
-qs << "DROP TABLE IF EXISTS wg_unit_defs;"
-qs << "DROP TABLE IF EXISTS wg_struct_defs;"
-qs << "DROP TABLE IF EXISTS wg_tech_defs;"
+qs << "DROP TABLE IF EXISTS wg_city_unit;"             
+qs << "DROP TABLE IF EXISTS wg_army_unit;"             
+qs << "DROP TABLE IF EXISTS wg_armies;"                
+qs << "DROP TABLE IF EXISTS wg_struct;"                
+qs << "DROP TABLE IF EXISTS wg_techs;"                 
+qs << "DROP TABLE IF EXISTS wg_cities;"                
+qs << "DROP TABLE IF EXISTS wg_players;"               
+qs << "DROP TABLE IF EXISTS wg_locations;"             
+qs << "DROP TABLE IF EXISTS wg_alliances;"             
+qs << "DROP TABLE IF EXISTS wg_unit_defs;"             
+qs << "DROP TABLE IF EXISTS wg_struct_defs;"           
+qs << "DROP TABLE IF EXISTS wg_tech_defs;"             
+
 qs << "DROP VIEW IF EXISTS wg_v_army_unit;"
 qs << "DROP VIEW IF EXISTS wg_v_city_locations;"
 qs << "DROP VIEW IF EXISTS wg_v_army_locations;"
@@ -603,8 +604,12 @@ qs << "CREATE OR REPLACE VIEW wg_v_army_locations AS
 # "
 
 
-puts "recreating tables..."
-queries.each do |query|
-  puts query.split(/\n/)[0..1].join + "..."  
-  ActiveRecord::Base.connection.execute query
+if !defined?(Rails) || Rails.env != "test"
+  puts "recreating tables..."
+  queries.each do |query|
+    puts query.split(/\n/)[0..1].join + "..."  
+    ActiveRecord::Base.connection.execute query
+  end
+else
+  qs
 end

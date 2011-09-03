@@ -56,6 +56,8 @@ end
 
 require "#{PATH}/db/default_values"
 include DefaultValues
+require "#{PATH}/db/default_values_dev"
+include DefaultValuesDev
 `cd #{PATH}/db; rm -f cities_pop.json; unzip #{PATH}/db/cities_pop.json.zip`
 
 require "#{PATH}/lib/tasks_utils"
@@ -85,7 +87,7 @@ def step_2
     import_cities_from_dump
   
   
-    create_default_vals_after_location
+    create_default_vals_dev
   end
 
 end

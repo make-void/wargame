@@ -9,4 +9,11 @@ namespace :db do
     end
     
   end
+  
+  
+  task :drop_some_tables => :environment do       
+    require "#{Rails.root}/db/default_values"
+    include DefaultValues
+    drop_all_foreigns DB::Research::Requirement::Tech
+  end
 end

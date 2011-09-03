@@ -8,6 +8,26 @@ unless console
 
 Utils = {}
 
+# arrays
+
+Array::first = ->
+  this[0]
+  
+Array::last = ->
+  this[-1]
+
+# inflections
+
+String::pluralize = -> 
+  this+"s"
+
+# casing
+
+String::capitalize = -> 
+  "#{this[0].toUpperCase()}#{this[1..-1]}"
+
+# coords
+
 Utils.parseCoords = (string) ->
   split = string.replace(/\s/, '').split(",")
   return [split[0], split[1]]
