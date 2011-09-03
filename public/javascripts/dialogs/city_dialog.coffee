@@ -1,6 +1,6 @@
 CityDialog  = Dialog.extend(
   initialize: ->
-    @selector = "#cityDialog-tmpl"
+    @type = "city"
     Dialog.prototype.initialize # how to call super in js
     
   label: ->

@@ -10,6 +10,7 @@ Wargame::Application.routes.draw do
   # locations = "players_locations#index"
   get "/players/me/locations/:lat/:lng", to: locations, as: :player_locations, constraints: { :lat => latlng, :lng => latlng }
   
+  get "/definitions/:type", to: "definitions#show"
   
 #  get "/game", to: "game#show", as: :game
   resource :game, controller: :game

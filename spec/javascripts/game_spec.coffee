@@ -1,4 +1,10 @@
 describe("Game", ->
+  
+  it "initializes the models", ->
+    game = new Game()
+    game.initModels()
+    expect(Structs.all().lenght).toEqual(0)
+  
   it "initializes the map", ->
     game = new Game()
     # game.initMap()

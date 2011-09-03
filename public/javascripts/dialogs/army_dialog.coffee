@@ -1,6 +1,6 @@
 ArmyDialog  = Dialog.extend(
   initialize: ->
-    @selector = "#armyDialog-tmpl"
+    @type = "army"
     Dialog.prototype.initialize # how to call super in js
   
   activateButtons: ->

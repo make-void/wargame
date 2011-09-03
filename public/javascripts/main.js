@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, AttackState, City, CityDialog, CityMarkerIcon, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Upgrade, Utils, console;
+var Alliance, Army, ArmyDialog, AttackState, City, CityDialog, CityMarkerIcon, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Struct, Structs, StructsDialog, Tech, Techs, TechsDialog, Unit, Units, UnitsDialog, Upgrade, Utils, console;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -260,7 +260,9 @@ CityMarkerIcon = (function() {
   return CityMarkerIcon;
 })();
 Dialog = Backbone.View.extend({
-  initialize: function() {},
+  initialize: function() {
+    return this.selector = "#" + this.type + "-tmpl";
+  },
   afterRender: function() {},
   render: function() {
     var content, haml;
@@ -273,7 +275,7 @@ Dialog = Backbone.View.extend({
 });
 CityDialog = Dialog.extend({
   initialize: function() {
-    this.selector = "#cityDialog-tmpl";
+    this.type = "city";
     return Dialog.prototype.initialize;
   },
   label: function() {
@@ -282,7 +284,7 @@ CityDialog = Dialog.extend({
 });
 ArmyDialog = Dialog.extend({
   initialize: function() {
-    this.selector = "#armyDialog-tmpl";
+    this.type = "army";
     return Dialog.prototype.initialize;
   },
   activateButtons: function() {
@@ -310,6 +312,24 @@ ArmyDialog = Dialog.extend({
   },
   label: function() {
     return player.name;
+  }
+});
+StructsDialog = Dialog.extend({
+  initialize: function() {
+    this.type = "structs";
+    return Dialog.prototype.initialize;
+  }
+});
+UnitsDialog = Dialog.extend({
+  initialize: function() {
+    this.type = "units";
+    return Dialog.prototype.initialize;
+  }
+});
+TechsDialog = Dialog.extend({
+  initialize: function() {
+    this.type = "techs";
+    return Dialog.prototype.initialize;
   }
 });
 MapAction = (function() {
@@ -518,6 +538,12 @@ City = Location.extend({});
 Player = Backbone.Model.extend({});
 Upgrade = Backbone.Model.extend({});
 Alliance = Backbone.Model.extend({});
+Struct = Backbone.Model.extend({});
+Unit = Backbone.Model.extend({});
+Tech = Backbone.Model.extend({});
+Structs = Backbone.Model.extend({});
+Units = Backbone.Model.extend({});
+Techs = Backbone.Model.extend({});
 Map = (function() {
   function Map() {
     this.max_simultaneous_markers = 600;
@@ -668,6 +694,10 @@ Game = (function() {
     this.current_player = null;
     this.current_playerView = null;
   }
+  Game.prototype.initModels = function() {
+    var types;
+    return types = ["struct", "tech", "unit"];
+  };
   Game.prototype.initMap = function() {
     this.map.draw();
     this.map.loadMarkers();
@@ -698,6 +728,7 @@ $(function() {
   var g;
   g = window;
   g.game = new Game;
+  game.initModels();
   game.initMap();
   game.getPlayerView();
   return game.initNav();

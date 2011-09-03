@@ -1,6 +1,7 @@
 Dialog  = Backbone.View.extend(  
   
   initialize: ->
+    @selector = "##{@type}-tmpl"
     
   afterRender: ->  
   

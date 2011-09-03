@@ -1,5 +1,11 @@
 (function() {
   describe("Game", function() {
+    it("initializes the models", function() {
+      var game;
+      game = new Game();
+      game.initModels();
+      return expect(Structs.all().lenght).toEqual(0);
+    });
     it("initializes the map", function() {
       var game;
       return game = new Game();
