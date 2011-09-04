@@ -18,7 +18,7 @@ class Game
     
   debug: ->
     debug = new Debug this
-    # debug.debug()
+    debug.debug()
     
   initModels: ->  
     definitions = new Definitions()

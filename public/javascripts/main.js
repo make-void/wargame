@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, AttackState, AttackType, City, CityDialog, CityMarkerIcon, Debug, Definition, Definitions, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
+var Alliance, Army, ArmyDialog, AttackState, AttackType, City, CityDialog, CityMarkerIcon, Debug, Definition, Definitions, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Queue, Struct, StructDef, Structs, StructsDialog, StructsQueue, Tech, TechDef, Techs, TechsDialog, TechsQueue, Unit, UnitDef, Units, UnitsDialog, UnitsQueue, Upgrade, Utils, console;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -689,6 +689,34 @@ Techs = Backbone.Model.extend({});
 Struct = Backbone.Model.extend({});
 Unit = Backbone.Model.extend({});
 Tech = Backbone.Model.extend({});
+Queue = (function() {
+  __extends(Queue, Backbone.Model);
+  function Queue() {
+    Queue.__super__.constructor.apply(this, arguments);
+  }
+  return Queue;
+})();
+StructsQueue = (function() {
+  __extends(StructsQueue, Queue);
+  function StructsQueue() {
+    StructsQueue.__super__.constructor.apply(this, arguments);
+  }
+  return StructsQueue;
+})();
+UnitsQueue = (function() {
+  __extends(UnitsQueue, Queue);
+  function UnitsQueue() {
+    UnitsQueue.__super__.constructor.apply(this, arguments);
+  }
+  return UnitsQueue;
+})();
+TechsQueue = (function() {
+  __extends(TechsQueue, Queue);
+  function TechsQueue() {
+    TechsQueue.__super__.constructor.apply(this, arguments);
+  }
+  return TechsQueue;
+})();
 Map = (function() {
   function Map() {
     this.max_simultaneous_markers = 600;
@@ -853,7 +881,8 @@ Game = (function() {
   }
   Game.prototype.debug = function() {
     var debug;
-    return debug = new Debug(this);
+    debug = new Debug(this);
+    return debug.debug();
   };
   Game.prototype.initModels = function() {
     var definitions;
@@ -920,7 +949,7 @@ Debug = (function() {
         if (marker.type === "city") {
           this.map.attachDialog(marker);
           setTimeout(function() {
-            return marker.dialog_view.switchTab("city_units");
+            return marker.dialog_view.switchTab("city_structs");
           }, 1000);
         }
         return;

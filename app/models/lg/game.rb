@@ -70,7 +70,7 @@ module LG
           },
           :stats => {
             :power => unit.power,
-            :defence => unit.defence,
+            :defense => unit.defense,
             :movement_speed => unit.movement_speed,
             :movement_cost => unit.movement_cost,
             :cargo_capacity => unit.cargo_capacity,
@@ -204,7 +204,7 @@ module LG
 
     def self.debug_units
       LG::Game.get_all_base_infos()[:units].each do |x,y|
-        puts "#{x}: #{y[:name]} (#{y[:stats][:power]}/#{y[:stats][:defence]})"
+        puts "#{x}: #{y[:name]} (#{y[:stats][:power]}/#{y[:stats][:defense]})"
         puts "    - AttackType: #{y[:attack_type]}"
         puts "    - Movement: Speed #{y[:stats][:movement_speed]}, Cost #{y[:stats][:movement_cost]}"
         puts "    - Transport: Units #{y[:stats][:transport_capacity]}, Resources #{y[:stats][:cargo_capacity]}"

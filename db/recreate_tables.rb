@@ -158,7 +158,7 @@ CREATE TABLE `wg_unit_defs` (
   `attack_type` int(11) UNSIGNED NOT NULL DEFAULT 0,
 
   `power` int(11) NOT NULL,
-  `defence` int(11) NOT NULL,
+  `defense` int(11) NOT NULL,
   `movement_speed` int(11) NOT NULL,
   `movement_cost` int(11) NOT NULL DEFAULT 0,
   `cargo_capacity` int(11) NOT NULL,
@@ -522,7 +522,7 @@ qs << "CREATE OR REPLACE VIEW wg_v_army_unit AS
     u_def.attack_type AS attack_type,
     u_aunit.number AS number,
     u_def.power AS power,
-    u_def.defence AS defence,
+    u_def.defense AS defense,
     u_def.movement_speed AS speed,
     u_def.movement_cost AS cost,
     u_def.cargo_capacity AS resources_transported,

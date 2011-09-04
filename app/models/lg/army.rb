@@ -73,9 +73,9 @@ module LG
       return count
     end
     
-    def overall_defence
+    def overall_defense
       count = 0
-      @units.each{|x| count += (x.defence * x.number) }
+      @units.each{|x| count += (x.defense * x.number) }
       return count    end
     
     def refresh!

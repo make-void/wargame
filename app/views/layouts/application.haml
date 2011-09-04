@@ -80,11 +80,15 @@
             :each struct in definitions
               %li
                 %a.btn.upgrade{ href: "javascript:void(0)" } Upgrade
-                %p.name= struct.name
+                %p.name
+                  = struct.name
+                  %span level:
+                  %span.level 0
                 %p.desc= struct.description
-                %p.prod
-                  produces:
-                  = struct.base_production
+                :if struct.base_production
+                  %p.prod
+                    production:
+                    %span= struct.base_production
                 %div.cost
                   %p= struct.gold_cost
                   %img{ src: "/images/icons/gold.png"}
@@ -106,8 +110,8 @@
                 %p.stats
                   attack: 
                   %span= unit.power
-                  defence: 
-                  %span= unit.defence
+                  defense: 
+                  %span= unit.defense
                   attack type:
                   %span= new AttackType(unit.attack_type).toString()
                 %div.cost

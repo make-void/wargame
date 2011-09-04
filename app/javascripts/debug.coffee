@@ -17,7 +17,7 @@ class Debug
         if marker.type == "city"
           @map.attachDialog marker
           setTimeout( -> # TODO: remove this damneds setTimeouts!!!!
-            marker.dialog_view.switchTab("city_units")
+            marker.dialog_view.switchTab("city_structs")
           , 1000)
         return 
     , 1500)

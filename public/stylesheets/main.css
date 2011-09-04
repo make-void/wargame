@@ -229,6 +229,10 @@ body.game h1 {
   background: #dddddd; }
 .dialog ul li p span {
   padding: 0 5px; }
+.dialog ul li p span.level {
+  padding: 0; }
+.dialog ul li p.name span {
+  font-size: 0.8em; }
 .dialog ul li .cost p {
   display: inline;
   position: relative;
