@@ -544,6 +544,17 @@ if (!console) {
   console.log = {};
 }
 Utils = {};
+Number.prototype.format = function() {
+  return $.map(_(this.toString().split("")).reverse(), function(d, idx) {
+    var p;
+    if ((idx % 3) === 0 && idx !== 0) {
+      p = ".";
+    } else {
+      p = "";
+    }
+    return p + d;
+  }).join("").split("").reverse().join("");
+};
 Array.prototype.first = function() {
   return this[0];
 };

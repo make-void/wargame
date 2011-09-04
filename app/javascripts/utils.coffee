@@ -8,6 +8,13 @@ unless console
 
 Utils = {}
 
+
+Number::format = ->
+  $.map(_(this.toString().split("")).reverse(), (d, idx) -> 
+    if ((idx%3)==0 && idx!=0) then p = "." else p=""  
+    return p+d
+  ).join("").split("").reverse().join("")
+
 # arrays
 
 Array::first = ->

@@ -71,7 +71,7 @@
           %p.player= player.name
           %p.population 
             pop: 
-            = city.pts
+            = city.pts.format()
             
     %script{ type: "text/template", id: "city_structsDialog-tmpl" }
       :plain
