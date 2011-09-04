@@ -1,0 +1,1 @@
+route_for(controller: "pages", action: "index").should == "/"

@@ -28,8 +28,11 @@ gg!
 
 ### TODO:
 
-- Signup and Choice of the Capital...
-- All via GoogleMap (after signup mail confirmation).
+- signup
+- choose city
+- production
+- movement
+- attack
 
 milestone:
 
@@ -38,6 +41,15 @@ milestone:
 locations:
 
 - manca la serbia!!
+
+db:
+
+- test mongodb vs mysql geocoder
+- check acqua
+- csv citta
+  - population da wolfram
+- resque queues?
+- citta' alla ogame non alla travian
 
 
 ### feature ideas:
@@ -122,19 +134,12 @@ ref: https://github.com/mockko/livereload
 open http://localhost:8888/
 
 
-### WarGame
-
-[europe]
-- test mongodb vs mysql geocoder
-- check acqua
-- csv citta
-  - population da wolfram
-- resque queues?
-- citta' alla ogame non alla travian
-
-
 
 -----
+
+fiko: https://github.com/carllerche/astaire
+
+--- 
 
 imagemagick favicon notes:
    

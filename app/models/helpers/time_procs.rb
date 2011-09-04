@@ -1,7 +1,7 @@
 module Helpers
   module TimeProcs
     
-    # =>  values = { gold: int, steel: int, level: int, res_centre: int, server_speed: 1}
+    # =>  values = { gold: int, steel: int, level: int, res_center: int, server_speed: 1}
     # =>  RETURNS: time in seconds
     ResearchTime = lambda{|values| ( ( values[:gold] + values[:steel] ) / ( values[:server_speed] * 1000 * (1 + values[:research_level]) ).to_f ) * 3600 }
     

@@ -6,6 +6,7 @@ describe "Players" do
     describe "GET /players/me/locations/:lat/:lng" do
             
       before :all do
+        # FIXME: refactor: same in queues spec
         @fi = { latitude: 43.7687324, longitude: 11.2569013 } 
         @the_masterers = { name: "TheMasterers" }
         @cor3y = { name: "Cor3y", 

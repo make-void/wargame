@@ -206,7 +206,7 @@ module DefaultValues
                  cost_advancement_type: 1,
                  max_level: 10
 
-     DB::Structure::Definition.create name: "Barraks",
+     DB::Structure::Definition.create name: "Barracks",
                  description: "Produces Infantry Units",
                  gold_cost: 400,
                  steel_cost: 200,
@@ -222,7 +222,7 @@ module DefaultValues
                  cost_advancement_type: 2,
                  max_level: 15
 
-     DB::Structure::Definition.create name: "Research Centre",
+     DB::Structure::Definition.create name: "Research Center",
                  description: "Produces Researches",
                  gold_cost: 400,
                  steel_cost: 200,
@@ -296,13 +296,13 @@ module DefaultValues
       #  RESEARCH REQUIREMENTS #
       ##########################
 
-     #Vehicle Weapon => 2 Research Centre
+     #Vehicle Weapon => 2 Research Center
      DB::Research::Requirement::Building.create :tech_id => 3, :req_structure_id => 8, :level => 2
-     #Vehicle Armor => 2 Research Centre
+     #Vehicle Armor => 2 Research Center
      DB::Research::Requirement::Building.create :tech_id => 4, :req_structure_id => 8, :level => 2
-     #Construction Industry Tecniques => 10 Research Centre
+     #Construction Industry Tecniques => 10 Research Center
      DB::Research::Requirement::Building.create :tech_id => 5, :req_structure_id => 8, :level => 10
-     #Engine Power => 5 Research Centre, 2 Factory
+     #Engine Power => 5 Research Center, 2 Factory
      DB::Research::Requirement::Building.create :tech_id => 7, :req_structure_id => 7, :level => 2
      DB::Research::Requirement::Building.create :tech_id => 7, :req_structure_id => 8, :level => 5
 

@@ -15,7 +15,15 @@ guard 'livereload' do
 end
 
 
-guard 'rspec' do
+guard 'spork' do
+  watch('config/application.rb')
+  watch('config/environment.rb')
+  watch(%r{^config/environments/.+\.rb$})
+  watch(%r{^config/initializers/.+\.rb$})
+  watch('spec/spec_helper.rb')
+end
+
+guard 'rspec', :cli => "--drb" do
   
   watch('spec/spec_helper.rb')                        { "spec" }
   watch('config/routes.rb')                           { "spec/routing" }
@@ -32,3 +40,4 @@ guard 'rspec' do
 end
 
 guard 'coffeescript', :input => 'spec/javascripts'
+

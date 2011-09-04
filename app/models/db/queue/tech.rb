@@ -14,10 +14,10 @@ module DB
       def active? ; self.running ; end
       
       #starts the queue
-      def start( research_centre_level, start_time = nil )
+      def start( research_center_level, start_time = nil )
         self.update_attributes( 
           :started_at => start_time || Time.now, 
-          :time_needed => LG::Research.time( self.definition, self.level, research_centre_level, unit_production_level ) 
+          :time_needed => LG::Research.time( self.definition, self.level, research_center_level, unit_production_level ) 
         )
       end
       
