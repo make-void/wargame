@@ -7,8 +7,8 @@ describe "Players" do
     # let(:user) { Factory(:user) }
     
     before :all do
-      @ally = DB::Alliance.create name: "TheMasterers"
-      @player = DB::Player.create name: "Cor3y", 
+      @ally = DB::Alliance.create! name: "TheMasterers"
+      @player = DB::Player.create! name: "Cor3y", 
                     new_password: "daniel001", 
                     new_password_confirmation: "daniel001", 
                     email: "test1@test.test", 

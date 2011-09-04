@@ -11,8 +11,9 @@ Wargame::Application.routes.draw do
   get "/players/me/locations/:lat/:lng", to: locations, as: :player_locations, constraints: { :lat => latlng, :lng => latlng }
   
 
-  get "/players/me/cities/:city_id/queues", to: "queues#show", as: :queues
-  
+  get "/players/me/cities/:city_id/queues", to: "queues#index", as: :queues
+  post "/players/me/cities/:city_id/queues", to: "queues#create"
+  delete "/players/me/queues/:id", to: "queues#destroy"
 
   # resources :definitions
   get "/definitions", to: "definitions#index"

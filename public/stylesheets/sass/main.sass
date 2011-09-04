@@ -185,7 +185,13 @@ body.game
     padding: 10px 0 0 20px
     font-size: 1em
 
+    
+.dialog .commands
+  div
+    +button_rdy
+
 .dialog
+  font-size: 0.9em
   p.name
     font-weight: bold
     margin-bottom: 5px
@@ -200,11 +206,15 @@ body.game
     
   ul 
     li
-      background: #FFF
+      $li_bg: #FFF
+      background: $li_bg
+      +rounded(4px)
       display: block
       padding: 5px
+      border: 2px solid $li_bg
     li:hover
-      background: #DDD
+      background: #E3E3E3
+      border: 2px solid #AAA
     li 
       p 
         span
@@ -305,10 +315,6 @@ body.game
   div.tabs div
     font-size: 0.8em
     
-.dialog .commands
-  padding: 10px
-  div
-    +button_rdy
     
 
 @media (max-width:480px)

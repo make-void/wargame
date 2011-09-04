@@ -11,8 +11,14 @@ module LG
     
     
     def self.get( city_id, player_id )
-      return @@queue_cache["#{city_id}_#{player_id}"] unless @@queue_cache["#{city_id}_#{player_id}"].nil?
-      @@queue_cache["#{city_id}_#{player_id}"] = self.send(:new, city_id, player_id)
+      return @@queue_cache["#{city_id}_#{player_id}"] if !@@queue_cache["#{city_id}_#{player_id}"].nil? && Rails.env != "testing"
+      @@queue_cache["#{city_id}_#{player_id}"] = new(city_id, player_id).get
+    end
+    
+    def get
+      # { city: @city, player: @player } 
+      get_queue :all
+      { units: unit_queue, structs: building_queue, techs: research_queue  }
     end
     
     def initialize( city_id, player_id )
@@ -25,7 +31,7 @@ module LG
       @errors.push("City #{city_id} Is Not Of Player #{player_id}") unless ( ( !@city.nil? ) && ( @city.player_id == @player.player_id ) )
       
       @unit_queue = []
-      @builgind_queue = []
+      @building_queue = []
       @research_queue = []
     end
     

@@ -179,13 +179,7 @@ body.game h1 {
   padding: 10px 0 0 20px;
   font-size: 1em; }
 
-.dialog p.name {
-  font-weight: bold;
-  margin-bottom: 5px; }
-.dialog p.desc {
-  margin-bottom: 10px; }
-.dialog a.btn {
-  float: right;
+.dialog .commands div {
   display: inline-block;
   padding: 0.1em 1em 0.12em;
   outline: none;
@@ -209,37 +203,85 @@ body.game h1 {
   margin: 5px 0;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
-  border-radius: 10px;
-  font-size: 0.6em;
-  margin: 10px 5px 0 0; }
-  .dialog a.btn:hover {
+  border-radius: 10px; }
+  .dialog .commands div:hover {
     text-decoration: none; }
-  .dialog a.btn:active {
+  .dialog .commands div:active {
     position: relative;
     top: 1px; }
-  .dialog a.btn:hover {
+  .dialog .commands div:hover {
     background: #ca6931;
     background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
-.dialog ul li {
-  background: white;
-  display: block;
-  padding: 5px; }
-.dialog ul li:hover {
-  background: #dddddd; }
-.dialog ul li p span {
-  padding: 0 5px; }
-.dialog ul li p span.level {
-  padding: 0; }
-.dialog ul li p.name span {
-  font-size: 0.8em; }
-.dialog ul li .cost p {
-  display: inline;
-  position: relative;
-  top: -7px; }
-.dialog ul li .cost img {
-  margin: 0 6px 0 0;
-  width: 30px; }
+
+.dialog {
+  font-size: 0.9em; }
+  .dialog p.name {
+    font-weight: bold;
+    margin-bottom: 5px; }
+  .dialog p.desc {
+    margin-bottom: 10px; }
+  .dialog a.btn {
+    float: right;
+    display: inline-block;
+    padding: 0.1em 1em 0.12em;
+    outline: none;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.3em;
+    -webkit-border-radius: ".5em";
+    -moz-border-radius: ".5em";
+    border-radius: ".5em";
+    border: solid 1px #cccccc;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    background: #fff6c7;
+    background-image: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
+    font-size: 0.85em;
+    padding: 5px 12px;
+    margin: 5px 0;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    font-size: 0.6em;
+    margin: 10px 5px 0 0; }
+    .dialog a.btn:hover {
+      text-decoration: none; }
+    .dialog a.btn:active {
+      position: relative;
+      top: 1px; }
+    .dialog a.btn:hover {
+      background: #ca6931;
+      background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
+      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
+  .dialog ul li {
+    background: white;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    display: block;
+    padding: 5px;
+    border: 2px solid white; }
+  .dialog ul li:hover {
+    background: #e3e3e3;
+    border: 2px solid #aaaaaa; }
+  .dialog ul li p span {
+    padding: 0 5px; }
+  .dialog ul li p span.level {
+    padding: 0; }
+  .dialog ul li p.name span {
+    font-size: 0.8em; }
+  .dialog ul li .cost p {
+    display: inline;
+    position: relative;
+    top: -7px; }
+  .dialog ul li .cost img {
+    margin: 0 6px 0 0;
+    width: 30px; }
 
 .tool label, .tool input {
   display: inline; }
@@ -327,43 +369,6 @@ body.game h1 {
 
 .bubble div.tabs div {
   font-size: 0.8em; }
-
-.dialog .commands {
-  padding: 10px; }
-  .dialog .commands div {
-    display: inline-block;
-    padding: 0.1em 1em 0.12em;
-    outline: none;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    font-size: 1.3em;
-    -webkit-border-radius: ".5em";
-    -moz-border-radius: ".5em";
-    border-radius: ".5em";
-    border: solid 1px #cccccc;
-    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-    background: #fff6c7;
-    background-image: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
-    font-size: 0.85em;
-    padding: 5px 12px;
-    margin: 5px 0;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px; }
-    .dialog .commands div:hover {
-      text-decoration: none; }
-    .dialog .commands div:active {
-      position: relative;
-      top: 1px; }
-    .dialog .commands div:hover {
-      background: #ca6931;
-      background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
-      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
 
 @media (max-width:480px) {
   body.game h1 {

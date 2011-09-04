@@ -34,7 +34,7 @@ def import(city)
   # ad,aixas,Aix‡s,06,,42.4833333,1.4666667
   ccode, name, pop, lat, lng = city.split(",")
   # begin
-    loc = DB::Location.create latitude: lat.to_f, longitude: lng.to_f 
+    loc = DB::Location.create! latitude: lat.to_f, longitude: lng.to_f 
     
     # SORRY, no time for this, prefilter out taking the most populated location
     
@@ -47,7 +47,7 @@ def import(city)
   if loc.id.nil?
     # puts "not inserted: #{name}" 
   else
-    DB::City.create name: name, ccode: ccode, location_id: loc.id, player_id: 1, pts: pop
+    DB::City.create! name: name, ccode: ccode, location_id: loc.id, player_id: 1, pts: pop
   end
 end
 
