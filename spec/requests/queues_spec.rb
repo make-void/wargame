@@ -1,5 +1,9 @@
 require 'spec_helper'
 
+load "#{Rails.root}/app/controllers/queues_controller.rb"
+load "#{Rails.root}/app/models/db/queue/building.rb"
+load "#{Rails.root}/app/models/lg/queue.rb"
+
 describe "Queues" do
   
   before :all do
@@ -10,6 +14,7 @@ describe "Queues" do
                   new_password_confirmation: "daniel001", 
                   email: "test1@test.test" }     
     @florence = { name: "Florence", ccode: "it" }
+    @level = 1
     
     @ally = DB::Alliance.create! @the_masterers
     @player = DB::Player.create! @cor3y.merge( alliance_id: @ally.id )
@@ -19,16 +24,18 @@ describe "Queues" do
     @structure_type = DB::Structure::Definition.first
     structure = { city_id: @city.id, structure_id: @structure_type.id, player_id: @player.id}
     @structure = DB::Structure::Building.create! structure
-    @queue = DB::Queue::Building.create! structure
+    @queue = DB::Queue::Building.create! structure.merge( level: @level, time_needed: 0 )
   end
   
   it "index" do
-    
     # GET /players/me/cities/:id/queues
     data = get_json "/players/me/cities/#{@city.id}/queues"
     data.keys.should == [:units, :structs, :techs]
-    p data[:structs]
-    
+    struct = data[:structs].first.symbolize_keys
+    struct[:city_id].should be(@city.id)
+    struct[:structure_id].should be(@structure_type.id)
+    struct[:level].should be(@level)
+    # structs[:time_needed].should be(?)        
   end
   
   it "create" do

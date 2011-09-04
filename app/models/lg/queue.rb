@@ -18,7 +18,10 @@ module LG
     def get
       # { city: @city, player: @player } 
       get_queue :all
-      { units: unit_queue, structs: building_queue, techs: research_queue  }
+      structs = building_queue.map{ |bq| bq.attributes }
+      techs   = research_queue.map{ |bq| bq.attributes }
+      units   = unit_queue.map{ |bq| bq.attributes }
+      { units: units, structs: structs, techs: techs  }
     end
     
     def initialize( city_id, player_id )
