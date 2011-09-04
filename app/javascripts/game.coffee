@@ -17,7 +17,8 @@ class Game
     @unit_def   
     
   debug: ->
-
+    debug = new Debug this
+    # debug.debug()
     
   initModels: ->  
     definitions = new Definitions()

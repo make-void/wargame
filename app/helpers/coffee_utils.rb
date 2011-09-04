@@ -18,6 +18,7 @@ module CoffeeUtils
       "views/map_move"           ,   
       "map/markers_updater"      ,                
       "utils"                    ,
+      "definitions"              ,
       "models"                   ,
       "map"                      ,
       "game"                     ,

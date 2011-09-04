@@ -2,6 +2,28 @@
 
 # debug
 
+class Debug
+  constructor: (@game) ->
+    @map = @game.map
+    
+  debug: ->
+    this.debugDialog()
+    
+  debugDialog: ->
+    setTimeout( => 
+      console.log "markers: #{@map.markers.length}"
+      for marker in @map.markers
+        console.log marker.type
+        if marker.type == "city"
+          @map.attachDialog marker
+          setTimeout( -> # TODO: remove this damneds setTimeouts!!!!
+            marker.dialog_view.switchTab("city_units")
+          , 1000)
+        return 
+    , 1500)
+    
+    
+
 $("#latLng").bind("submit", ->
   coords = $(this).find("input").val()
   coords = Utils.parseCoords(coords)

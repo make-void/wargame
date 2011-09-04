@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, AttackState, City, CityDialog, CityMarkerIcon, Definition, Definitions, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
+var Alliance, Army, ArmyDialog, AttackState, AttackType, City, CityDialog, CityMarkerIcon, Debug, Definition, Definitions, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -159,7 +159,7 @@ DialogView = (function() {
       arrowStyle: 2,
       minWidth: 200,
       maxWidth: 700,
-      minHeight: 200,
+      minHeight: 400,
       maxHeight: 700
     });
     return this.render();
@@ -612,24 +612,6 @@ LLRange = (function() {
   };
   return LLRange;
 })();
-Location = Backbone.Model.extend({});
-Army = Location.extend({});
-City = Location.extend({});
-Player = Backbone.Model.extend({});
-Upgrade = Backbone.Model.extend({});
-Alliance = Backbone.Model.extend({});
-Structs = (function() {
-  __extends(Structs, Backbone.Model);
-  function Structs() {
-    Structs.__super__.constructor.apply(this, arguments);
-  }
-  return Structs;
-})();
-Units = Backbone.Model.extend({});
-Techs = Backbone.Model.extend({});
-Struct = Backbone.Model.extend({});
-Unit = Backbone.Model.extend({});
-Tech = Backbone.Model.extend({});
 Definition = (function() {
   function Definition(definitions) {
     this.definitions = this.load(definitions);
@@ -658,6 +640,7 @@ TechDef = (function() {
   __extends(TechDef, Definition);
   function TechDef(objects) {
     this.type = "tech";
+    console.log(objects);
     TechDef.__super__.constructor.call(this, objects);
   }
   return TechDef;
@@ -670,6 +653,42 @@ UnitDef = (function() {
   }
   return UnitDef;
 })();
+AttackType = (function() {
+  function AttackType(type) {
+    this.type = type;
+  }
+  AttackType.prototype.toString = function() {
+    switch (this.type) {
+      case 0:
+        return "normal";
+      case 1:
+        return "anti-vehicle";
+      case 2:
+        return "????";
+      default:
+        return console.log("Error: Attack type '" + this.type + "' not found!");
+    }
+  };
+  return AttackType;
+})();
+Location = Backbone.Model.extend({});
+Army = Location.extend({});
+City = Location.extend({});
+Player = Backbone.Model.extend({});
+Upgrade = Backbone.Model.extend({});
+Alliance = Backbone.Model.extend({});
+Structs = (function() {
+  __extends(Structs, Backbone.Model);
+  function Structs() {
+    Structs.__super__.constructor.apply(this, arguments);
+  }
+  return Structs;
+})();
+Units = Backbone.Model.extend({});
+Techs = Backbone.Model.extend({});
+Struct = Backbone.Model.extend({});
+Unit = Backbone.Model.extend({});
+Tech = Backbone.Model.extend({});
 Map = (function() {
   function Map() {
     this.max_simultaneous_markers = 600;
@@ -832,7 +851,10 @@ Game = (function() {
     this.tech_def;
     this.unit_def;
   }
-  Game.prototype.debug = function() {};
+  Game.prototype.debug = function() {
+    var debug;
+    return debug = new Debug(this);
+  };
   Game.prototype.initModels = function() {
     var definitions;
     definitions = new Definitions();
@@ -879,6 +901,34 @@ $(function() {
   game.initNav();
   return game.debug();
 });
+Debug = (function() {
+  function Debug(game) {
+    this.game = game;
+    this.map = this.game.map;
+  }
+  Debug.prototype.debug = function() {
+    return this.debugDialog();
+  };
+  Debug.prototype.debugDialog = function() {
+    return setTimeout(__bind(function() {
+      var marker, _i, _len, _ref;
+      console.log("markers: " + this.map.markers.length);
+      _ref = this.map.markers;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        marker = _ref[_i];
+        console.log(marker.type);
+        if (marker.type === "city") {
+          this.map.attachDialog(marker);
+          setTimeout(function() {
+            return marker.dialog_view.switchTab("city_units");
+          }, 1000);
+        }
+        return;
+      }
+    }, this), 1500);
+  };
+  return Debug;
+})();
 $("#latLng").bind("submit", function() {
   var coords;
   coords = $(this).find("input").val();

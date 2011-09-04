@@ -26,7 +26,7 @@ class DialogView
       arrowStyle: 2,
       minWidth: 200,
       maxWidth: 700,
-      minHeight: 200,
+      minHeight: 400,
       maxHeight: 700
     })
 

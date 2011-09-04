@@ -221,18 +221,19 @@ body.game h1 {
     background: #ca6931;
     background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
-
-ul.structures li {
+.dialog ul li {
   background: white;
   display: block;
   padding: 5px; }
-ul.structures li:hover {
+.dialog ul li:hover {
   background: #dddddd; }
-ul.structures li .cost p {
+.dialog ul li p span {
+  padding: 0 5px; }
+.dialog ul li .cost p {
   display: inline;
   position: relative;
   top: -7px; }
-ul.structures li .cost img {
+.dialog ul li .cost img {
   margin: 0 6px 0 0;
   width: 30px; }
 

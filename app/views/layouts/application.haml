@@ -97,12 +97,55 @@
     %script{ type: "text/template", id: "city_unitsDialog-tmpl" }
       :plain
         .dialog.city_units
-          city units...
+          %ul.units
+            :each unit in definitions
+              %li
+                %a.btn.recruit{ href: "javascript:void(0)" } Recruit
+                %p.name= unit.name
+                %p.type= unit.unit_type
+                %p.stats
+                  attack: 
+                  %span= unit.power
+                  defence: 
+                  %span= unit.defence
+                  attack type:
+                  %span= new AttackType(unit.attack_type).toString()
+                %div.cost
+                  %p= unit.gold_cost
+                  %img{ src: "/images/icons/gold.png"}
+                  %p= unit.steel_cost
+                  %img{ src: "/images/icons/steel.png"}
+                  %p= unit.oil_cost
+                  %img{ src: "/images/icons/oil.png"}
+                %p.movement
+                  Moves at 
+                  %span= unit.movement_speed
+                  consuming 
+                  %span= unit.movement_cost
+                %p.transport
+                  Transports
+                  %span= unit.transport_capacity
+                  units,
+                  %span= unit.cargo_capacity
+                  resources
+
           
     %script{ type: "text/template", id: "city_techsDialog-tmpl" }
       :plain
         .dialog.city_techs
-          city techs...
+          %ul.techs
+            :each tech in definitions
+              %li
+                %a.btn.upgrade{ href: "javascript:void(0)" } Research
+                %p.name= tech.name
+                %p.desc= tech.description
+                %div.cost
+                  %p= tech.gold_cost
+                  %img{ src: "/images/icons/gold.png"}
+                  %p= tech.steel_cost
+                  %img{ src: "/images/icons/steel.png"}
+                  %p= tech.oil_cost
+                  %img{ src: "/images/icons/oil.png"}
 
           
           
