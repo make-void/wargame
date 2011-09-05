@@ -55,20 +55,23 @@ class MarkerView
     marker.dialog = null
     
     
-    if @data.type == "army"
-      # TODO: da disegnare al posto giusto
-      marker.model = new Army @data
-      marker.dialog = new ArmyDialog { model: marker.model }
-    else  
-      marker.model = new City @data
-      marker.dialog = new CityDialog { model: marker.model }
     
     # TODO: pass more datas
     
   
     google.maps.event.addListener(marker, 'click', =>
-      @map.attachDialog(marker)
+      this.doAttachDialog()
     )
     #console.log(latLng)
     this
-    
+  
+  doAttachDialog: ->
+    if @data.type == "army"
+      # TODO: da disegnare al posto giusto
+      @marker.model = new Army @data
+      @marker.dialog = new ArmyDialog { model: @marker.model }
+    else  
+      @marker.model = new City @data
+      @marker.dialog = new CityDialog { model: @marker.model }
+      
+    @map.attachDialog(@marker)

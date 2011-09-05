@@ -221,21 +221,24 @@ MarkerView = (function() {
     marker.view = self;
     marker.model = null;
     marker.dialog = null;
-    if (this.data.type === "army") {
-      marker.model = new Army(this.data);
-      marker.dialog = new ArmyDialog({
-        model: marker.model
-      });
-    } else {
-      marker.model = new City(this.data);
-      marker.dialog = new CityDialog({
-        model: marker.model
-      });
-    }
     google.maps.event.addListener(marker, 'click', __bind(function() {
-      return this.map.attachDialog(marker);
+      return this.doAttachDialog();
     }, this));
     return this;
+  };
+  MarkerView.prototype.doAttachDialog = function() {
+    if (this.data.type === "army") {
+      this.marker.model = new Army(this.data);
+      this.marker.dialog = new ArmyDialog({
+        model: this.marker.model
+      });
+    } else {
+      this.marker.model = new City(this.data);
+      this.marker.dialog = new CityDialog({
+        model: this.marker.model
+      });
+    }
+    return this.map.attachDialog(this.marker);
   };
   return MarkerView;
 })();
