@@ -58,7 +58,7 @@ class Map
   attachDialog: (marker) ->
     for dia in this.dialogs
       dia.dialog.close()
-    this.dialogs = []
+    this.dialogs = [] if this.dialogs.length > 2
     
     # if this.dialogs.length != 0
     #   console.log(_.last(this.dialogs).marker.location_id)

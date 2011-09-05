@@ -58,6 +58,10 @@ class MarkerView
     
     # TODO: pass more datas
     
+    if @data.type == "army"
+      @marker.model = new Army @data
+    else  
+      @marker.model = new City @data
   
     google.maps.event.addListener(marker, 'click', =>
       this.doAttachDialog()
@@ -67,11 +71,8 @@ class MarkerView
   
   doAttachDialog: ->
     if @data.type == "army"
-      # TODO: da disegnare al posto giusto
-      @marker.model = new Army @data
       @marker.dialog = new ArmyDialog { model: @marker.model }
     else  
-      @marker.model = new City @data
       @marker.dialog = new CityDialog { model: @marker.model }
       
     @map.attachDialog(@marker)

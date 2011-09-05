@@ -221,6 +221,11 @@ MarkerView = (function() {
     marker.view = self;
     marker.model = null;
     marker.dialog = null;
+    if (this.data.type === "army") {
+      this.marker.model = new Army(this.data);
+    } else {
+      this.marker.model = new City(this.data);
+    }
     google.maps.event.addListener(marker, 'click', __bind(function() {
       return this.doAttachDialog();
     }, this));
@@ -228,12 +233,10 @@ MarkerView = (function() {
   };
   MarkerView.prototype.doAttachDialog = function() {
     if (this.data.type === "army") {
-      this.marker.model = new Army(this.data);
       this.marker.dialog = new ArmyDialog({
         model: this.marker.model
       });
     } else {
-      this.marker.model = new City(this.data);
       this.marker.dialog = new CityDialog({
         model: this.marker.model
       });
@@ -827,7 +830,9 @@ Map = (function() {
       dia = _ref[_i];
       dia.dialog.close();
     }
-    this.dialogs = [];
+    if (this.dialogs.length > 2) {
+      this.dialogs = [];
+    }
     if (this.dialogs.length !== 0) {
       lastMark = _.last(this.dialogs).marker;
     }
