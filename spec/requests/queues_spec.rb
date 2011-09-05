@@ -3,6 +3,7 @@ require 'spec_helper'
 load "#{Rails.root}/app/controllers/queues_controller.rb"
 load "#{Rails.root}/app/models/db/queue/building.rb"
 load "#{Rails.root}/app/models/lg/queue.rb"
+load "#{Rails.root}/config/routes.rb"
 
 describe "Queues" do
   
@@ -25,6 +26,7 @@ describe "Queues" do
     structure = { city_id: @city.id, structure_id: @structure_type.id, player_id: @player.id}
     @structure = DB::Structure::Building.create! structure
     @queue = DB::Queue::Building.create! structure.merge( level: @level, time_needed: 0 )
+    # DB::Queue::Building.new.start @level # TODO: test the queue but elsewhere (model spec?)
   end
   
   it "index" do
@@ -39,7 +41,12 @@ describe "Queues" do
   end
   
   it "create" do
-    # POST /players/me/queues/:type/:id/
+    # POST /players/me/queues/:type
+    type = "struct"
+    type_id = DB::Structure::Definition.last.id
+    data = post_json "/players/me/cities/#{@city.id}/queues/#{type}/#{type_id}"
+    data[:time_needed].should > 0
+    data[:started_at].should be_a(String) # TODO: write matcher be_a_timestring
   end
   
   it "destroy" do

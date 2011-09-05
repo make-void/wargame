@@ -1,7 +1,7 @@
 class Map
   
   constructor: ->
-
+    @markerZoomMin = 8
     @max_simultaneous_markers = 600
     # @max_simultaneous_markers = 200 # if iPad || iPhone v => 4 || Android v >= 3
     # @max_simultaneous_markers = 100 # if iPhone v <= 3 || Android v <= 2
@@ -58,13 +58,14 @@ class Map
   attachDialog: (marker) ->
     for dia in this.dialogs
       dia.dialog.close()
-      
+    this.dialogs = []
+    
     # if this.dialogs.length != 0
     #   console.log(_.last(this.dialogs).marker.location_id)
     lastMark = _.last(this.dialogs).marker if this.dialogs.length != 0  
     
-    if this.dialogs.length == 0 || lastMark.location_id != marker.location_id
-      this.openDialog(marker)
+    mark = if this.dialogs.length == 0 || lastMark.location_id != marker.location_id
+      marker
     else  
       nextMarker = marker
       is_army = (m) -> !m.model.attributes.city
@@ -75,14 +76,25 @@ class Map
           # console.log(mark, marker)
           nextMarker = mark
           
-      this.openDialog(nextMarker)
+      nextMarker
+    
+    return this.openDialog(mark)
       
-  openDialog: (marker) ->
-    setTimeout( => # FIXME: a set timeout is not the best detector of this but still... check if it works on mobile
-      dialog = new DialogView(@map, marker)    
-      this.dialogs.push dialog
+  openDialog: (marker) ->    
+    # $("#bubbleEvents").bind("dialog_content_changed", ->
+    # setTimeout( => # FIXME: a set timeout is not the best detector of this but still... check if it works on mobile
+
+    dialog = new DialogView(@map, marker)    
+    # console.log "rendering: ", dialog
+    dialog.render()
+    
+    this.dialogs.push dialog
+      # dialog.open @map, marker
+    
+    dialog
       # dialog.open() # needed?
-    , 10)
+    # )
+    # , 40)
 
   drawMarkers: (markers) ->
     @timer = new Date()

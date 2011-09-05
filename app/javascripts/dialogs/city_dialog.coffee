@@ -5,21 +5,31 @@ CityDialog  = Dialog.extend(
     
   label: ->
     city.name
-    
+  
+  # overview
+  
+  initializeOverview: ->
+    # initQueue
+    queueData = {}
+    queue = new Queue queueData
+    queueView = new QueueView model: queue
+    content = queueView.render().el
+    $(".bubbleBg .dialog .city").append content
+  
+  # tabs
+  
   initializeTabs: ->
-    console.log "init tabs"
-    console.log  $(".bubble .tabs div")
-    setTimeout( =>
-      self = this
-      $(".bubble .tabs div").bind("click", ->
-        # console.log $(this).getClass()
-        type = $(this).attr("data-dialog_type")
-        console.log "clicked on tab: ", type
-        
-        self.initTab type
-      )
-    , 500) # FIXME: setTimeout is bad, seearch InfoBubble code and find dialogOpenedEvent
+    this.initTabs()
     
+  initTabs: ->
+    self = this
+    $(".bubble .nav li").bind("click", ->
+      # console.log $(this).getClass()
+      type = $(this).attr("class")
+      # console.log "clicked on tab: ", type
+      self.initTab type
+    )  
+  
   initTab: (type) ->
     dialog = switch type
       when "city_structs"
@@ -31,8 +41,13 @@ CityDialog  = Dialog.extend(
       when "city_techs"
         model = new Techs { definitions: game.tech_def.definitions }
         new TechsDialog model: model
+      when "city_overview"
+        new CityOverview model: @model
+      when "debug"
+        console.log "no debug atm"
         
     if dialog
       content = dialog.render().el
-      $(".bubbleBg").html content
+      $(".dialog").replaceWith content
+      
 )

@@ -190,7 +190,26 @@ body.game
   div
     +button_rdy
 
+.bubble     
+  .city
+    .name
+      font-size: 1.1em
+      font-weight: bold
+    ul.nav
+      min-width: 400px
+      font-size: 0.85em
+      li
+        +button_rdy
+        margin: 10px 4px 0 0
+        padding: 4px 8px
+  .info
+    padding: 3px 5px 5px 
+    margin: 0 0 10px
+    border: 3px solid #CCC
+    +rounded(10px)
+
 .dialog
+  margin-top: 10px
   font-size: 0.9em
   p.name
     font-weight: bold
@@ -203,7 +222,7 @@ body.game
     font-size: 0.6em
     .upgrade
     margin: 10px 5px 0 0
-    
+  
   ul 
     li
       $li_bg: #FFF

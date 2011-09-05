@@ -848,6 +848,8 @@ InfoBubble.prototype.onAdd = function() {
     panes.floatPane.appendChild(this.bubble_);
     panes.floatShadow.appendChild(this.bubbleShadow_);
   }
+  // console.log("triggering from infobubble")
+  $("#bubbleEvents").trigger("dialog_content_changed")
 };
 InfoBubble.prototype['onAdd'] = InfoBubble.prototype.onAdd;
 
@@ -1021,6 +1023,7 @@ InfoBubble.prototype.open = function(opt_map, opt_anchor) {
       that.panToView();
     }, 200);
   }
+  
 };
 InfoBubble.prototype['open'] = InfoBubble.prototype.open;
 
@@ -1184,6 +1187,8 @@ InfoBubble.prototype.content_changed = function() {
   this.removeChildren_(this.content_);
   var content = this.getContent();
   if (content) {
+    
+    
     if (typeof content == 'string') {
       content = this.htmlToDocumentFragment_(content);
     }
@@ -1200,6 +1205,9 @@ InfoBubble.prototype.content_changed = function() {
       });
     }
     google.maps.event.trigger(this, 'domready');
+    
+    
+    // $("#bubbleEvents").trigger("dialog_content_changed")
   }
   this.redraw_();
 };

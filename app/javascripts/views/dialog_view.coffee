@@ -2,16 +2,15 @@ class DialogView
   constructor: (@map, @marker) ->
     @dialog = null
     @marker.dialog_view = this
-    this.build()
-    this.open()
     
   open: ->
     @dialog.open @map, @marker
     
-  build: ->
+  build: (content) ->
     @dialog = new InfoBubble({
       # map: map,
       # position: new google.maps.LatLng(-35, 151),
+      content: content,
       shadowStyle: 1,
       padding: 12,
       backgroundColor: "#EEE",
@@ -24,31 +23,39 @@ class DialogView
       arrowPosition: 30,
       backgroundClassName: 'bubbleBg',
       arrowStyle: 2,
-      minWidth: 200,
+      minWidth: 360,
       maxWidth: 700,
       minHeight: 400,
       maxHeight: 700
     })
 
-    this.render()
     
-  render: ->
+  render: ->      
     content = @marker.dialog.render().el
-
-    if @marker.type == "city"
-      @dialog.addTab('Overview', content, "city")
-      
-      # TODO: city.owned?(current_player) # => boolean
-      is_owned_by_current_player = true
-      loading_text = "loading..."
-      if is_owned_by_current_player
-        @dialog.addTab('Structures', loading_text, "city_structs")
-        @dialog.addTab('Units',      loading_text, "city_units")
-        @dialog.addTab('Upgrades',   loading_text, "city_techs")
-    else  
-      @dialog.addTab('Army', content, "army")
-      
-    @dialog.addTab('Debug', "I will be useful...", "debug")
+    this.build(content)
+    this.open()
+    $("#bubbleEvents").bind("dialog_content_changed", =>
+      @marker.dialog.afterRender()
+    )
+    # $("#bubbleEvents").bind("dialog_content_changed", =>
+    #   console.log "diahane"
+    # )
+    
+    # if @marker.type == "city"
+    #   @dialog.addTab('Overview', content, "city")
+    #   
+    #   # TODO: city.owned?(current_player) # => boolean
+    #   is_owned_by_current_player = true
+    #   loading_text = "loading..."
+    #   if is_owned_by_current_player
+    #     @dialog.addTab('Structures', loading_text, "city_structs")
+    #     @dialog.addTab('Units',      loading_text, "city_units")
+    #     @dialog.addTab('Upgrades',   loading_text, "city_techs")
+    # else  
+    #   @dialog.addTab('Army', content, "army")
+    #   
+    # @dialog.addTab('Debug', "I will be useful...", "debug")
+    this
 
   # actions
   

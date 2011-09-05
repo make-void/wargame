@@ -3,7 +3,6 @@ class MapView
   constructor: (@map) ->
     @controller = null
     # bounds change events
-    @markerZoomMin = 8    
     @defaultZoom = 5
     
   draw: ->
@@ -93,8 +92,7 @@ class MapView
 
     localStorage.zoom = zoom   
     # $(window).trigger "boundszoom_changed" 
-
-    if zoom < @markerZoomMin
+    if zoom < @controller.markerZoomMin
       @controller.clearMarkers()  
     
       

@@ -12,7 +12,9 @@ Wargame::Application.routes.draw do
   
 
   get "/players/me/cities/:city_id/queues", to: "queues#index", as: :queues
-  post "/players/me/cities/:city_id/queues", to: "queues#create"
+  # TODO: implement GET queues_all
+  # get "/players/me/queues", to: "queues#index", as: :queues_all
+  post "/players/me/cities/:city_id/queues/:type/:id", to: "queues#create"
   delete "/players/me/queues/:id", to: "queues#destroy"
 
   # resources :definitions

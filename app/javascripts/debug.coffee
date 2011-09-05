@@ -7,7 +7,7 @@ class Debug
     @map = @game.map
     
   debug: ->
-    this.debugDialog()
+    # this.debugDialog()
     
   debugDialog: ->
     setTimeout( => 
@@ -16,9 +16,10 @@ class Debug
         console.log marker.type
         if marker.type == "city"
           @map.attachDialog marker
-          setTimeout( -> # TODO: remove this damneds setTimeouts!!!!
+          $("#bubbleEvents").bind("dialog_content_changed", ->
             marker.dialog_view.switchTab("city_structs")
-          , 1000)
+          )
+          
         return 
     , 1500)
     

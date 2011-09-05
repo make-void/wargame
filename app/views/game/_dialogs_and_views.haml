@@ -1,0 +1,142 @@
+// templates    
+
+%script{ type: "text/template", id: "queueView-tmpl" }
+  :plain
+    %p 
+      Queuing the queue....
+      
+%script{ type: "text/template", id: "playerView-tmpl" }
+  :plain
+    %p 
+      Welcome, 
+      %span= name
+
+%script{ type: "text/template", id: "armyDialog-tmpl" }
+  :plain
+    .dialog.army
+      %p.player.name= player.name
+      .commands
+        
+      
+%script{ type: "text/template", id: "cityDialog-tmpl" }
+  :plain
+    .city
+      %p.name= city.name
+    %ul.nav
+      %li.city_overview
+        %a{ href: "javascript:void(0)" } City
+      %li.city_structs 
+        %a{ href: "javascript:void(0)" } Buildings
+      %li.city_units 
+        %a{ href: "javascript:void(0)" } Units
+      %li.city_techs 
+        %a{ href: "javascript:void(0)" } Research
+      %li.debug 
+        %a{ href: "javascript:void(0)" } Debug  
+    .dialog.city
+      .info
+        %p.player= player.name
+        %p.population 
+          pop: 
+          = city.pts.format()
+          
+      %p Queue
+      .queue
+        current queue
+        
+        
+
+%script{ type: "text/template", id: "city_overviewDialog-tmpl" }
+  :plain
+    .dialog.city_overview
+      .info
+        %p.player= player.name
+        %p.population 
+          pop: 
+          = city.pts.format()
+
+%script{ type: "text/template", id: "city_structsDialog-tmpl" }
+  :plain
+    .dialog.city_structs
+      %ul.structures
+        :each struct in definitions
+          %li
+            %a.btn.upgrade{ href: "javascript:void(0)" } Upgrade
+            %p.name
+              = struct.name
+              %span level:
+              %span.level 0
+            %p.desc= struct.description
+            :if struct.base_production
+              %p.prod
+                production:
+                %span= struct.base_production
+            %div.cost
+              %p= struct.gold_cost
+              %img{ src: "/images/icons/gold.png"}
+              %p= struct.steel_cost
+              %img{ src: "/images/icons/steel.png"}
+              %p= struct.oil_cost
+              %img{ src: "/images/icons/oil.png"}
+    
+      
+%script{ type: "text/template", id: "city_unitsDialog-tmpl" }
+  :plain
+    .dialog.city_units
+      %ul.units
+        :each unit in definitions
+          %li
+            %a.btn.recruit{ href: "javascript:void(0)" } Recruit
+            %p.name= unit.name
+            %p.type= unit.unit_type
+            %p.stats
+              attack: 
+              %span= unit.power
+              defense: 
+              %span= unit.defense
+              attack type:
+              %span= new AttackType(unit.attack_type).toString()
+            %div.cost
+              %p= unit.gold_cost
+              %img{ src: "/images/icons/gold.png"}
+              %p= unit.steel_cost
+              %img{ src: "/images/icons/steel.png"}
+              %p= unit.oil_cost
+              %img{ src: "/images/icons/oil.png"}
+            %p.movement
+              Moves at 
+              %span= unit.movement_speed
+              consuming 
+              %span= unit.movement_cost
+            %p.transport
+              Transports
+              %span= unit.transport_capacity
+              units,
+              %span= unit.cargo_capacity
+              resources
+
+      
+%script{ type: "text/template", id: "city_techsDialog-tmpl" }
+  :plain
+    .dialog.city_techs
+      %ul.techs
+        :each tech in definitions
+          %li
+            %a.btn.upgrade{ href: "javascript:void(0)" } Research
+            %p.name= tech.name
+            %p.desc= tech.description
+            %div.cost
+              %p= tech.gold_cost
+              %img{ src: "/images/icons/gold.png"}
+              %p= tech.steel_cost
+              %img{ src: "/images/icons/steel.png"}
+              %p= tech.oil_cost
+              %img{ src: "/images/icons/oil.png"}
+
+      
+      
+%script{ type: "text/template", id: "armyActionsMenu-tmpl" }    
+  .move 
+    Move
+  .attack
+    Attack

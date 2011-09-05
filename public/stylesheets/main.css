@@ -214,7 +214,58 @@ body.game h1 {
     background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
 
+.bubble .city .name {
+  font-size: 1.1em;
+  font-weight: bold; }
+.bubble .city ul.nav {
+  min-width: 400px;
+  font-size: 0.85em; }
+  .bubble .city ul.nav li {
+    display: inline-block;
+    padding: 0.1em 1em 0.12em;
+    outline: none;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.3em;
+    -webkit-border-radius: ".5em";
+    -moz-border-radius: ".5em";
+    border-radius: ".5em";
+    border: solid 1px #cccccc;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    background: #fff6c7;
+    background-image: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
+    font-size: 0.85em;
+    padding: 5px 12px;
+    margin: 5px 0;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    margin: 10px 4px 0 0;
+    padding: 4px 8px; }
+    .bubble .city ul.nav li:hover {
+      text-decoration: none; }
+    .bubble .city ul.nav li:active {
+      position: relative;
+      top: 1px; }
+    .bubble .city ul.nav li:hover {
+      background: #ca6931;
+      background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
+      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
+.bubble .info {
+  padding: 3px 5px 5px;
+  margin: 0 0 10px;
+  border: 3px solid #cccccc;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px; }
+
 .dialog {
+  margin-top: 10px;
   font-size: 0.9em; }
   .dialog p.name {
     font-weight: bold;

@@ -19,7 +19,6 @@ class StructDef extends Definition
 class TechDef extends Definition
   constructor: (objects) ->
     @type = "tech"
-    console.log objects
     super objects
       
 class UnitDef extends Definition  

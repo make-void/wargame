@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, AttackState, AttackType, City, CityDialog, CityMarkerIcon, Debug, Definition, Definitions, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Queue, Struct, StructDef, Structs, StructsDialog, StructsQueue, Tech, TechDef, Techs, TechsDialog, TechsQueue, Unit, UnitDef, Units, UnitsDialog, UnitsQueue, Upgrade, Utils, console;
+var Alliance, Army, ArmyDialog, AttackState, AttackType, City, CityDialog, CityMarkerIcon, CityOverview, Debug, Definition, Definitions, Dialog, DialogView, Game, GameState, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Queue, QueueView, Struct, StructDef, Structs, StructsDialog, StructsQueue, Tech, TechDef, Techs, TechsDialog, TechsQueue, Unit, UnitDef, Units, UnitsDialog, UnitsQueue, Upgrade, Utils, console;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -32,7 +32,6 @@ MapView = (function() {
   function MapView(map) {
     this.map = map;
     this.controller = null;
-    this.markerZoomMin = 8;
     this.defaultZoom = 5;
   }
   MapView.prototype.draw = function() {
@@ -114,7 +113,7 @@ MapView = (function() {
       zoom = 11;
     }
     localStorage.zoom = zoom;
-    if (zoom < this.markerZoomMin) {
+    if (zoom < this.controller.markerZoomMin) {
       return this.controller.clearMarkers();
     }
   };
@@ -137,14 +136,13 @@ DialogView = (function() {
     this.marker = marker;
     this.dialog = null;
     this.marker.dialog_view = this;
-    this.build();
-    this.open();
   }
   DialogView.prototype.open = function() {
     return this.dialog.open(this.map, this.marker);
   };
-  DialogView.prototype.build = function() {
-    this.dialog = new InfoBubble({
+  DialogView.prototype.build = function(content) {
+    return this.dialog = new InfoBubble({
+      content: content,
       shadowStyle: 1,
       padding: 12,
       backgroundColor: "#EEE",
@@ -157,29 +155,21 @@ DialogView = (function() {
       arrowPosition: 30,
       backgroundClassName: 'bubbleBg',
       arrowStyle: 2,
-      minWidth: 200,
+      minWidth: 360,
       maxWidth: 700,
       minHeight: 400,
       maxHeight: 700
     });
-    return this.render();
   };
   DialogView.prototype.render = function() {
-    var content, is_owned_by_current_player, loading_text;
+    var content;
     content = this.marker.dialog.render().el;
-    if (this.marker.type === "city") {
-      this.dialog.addTab('Overview', content, "city");
-      is_owned_by_current_player = true;
-      loading_text = "loading...";
-      if (is_owned_by_current_player) {
-        this.dialog.addTab('Structures', loading_text, "city_structs");
-        this.dialog.addTab('Units', loading_text, "city_units");
-        this.dialog.addTab('Upgrades', loading_text, "city_techs");
-      }
-    } else {
-      this.dialog.addTab('Army', content, "army");
-    }
-    return this.dialog.addTab('Debug', "I will be useful...", "debug");
+    this.build(content);
+    this.open();
+    $("#bubbleEvents").bind("dialog_content_changed", __bind(function() {
+      return this.marker.dialog.afterRender();
+    }, this));
+    return this;
   };
   DialogView.prototype.switchTab = function(tab) {
     return $(".bubble .tabs ." + tab).trigger("click");
@@ -249,6 +239,20 @@ MarkerView = (function() {
   };
   return MarkerView;
 })();
+QueueView = (function() {
+  __extends(QueueView, Backbone.View);
+  function QueueView() {
+    QueueView.__super__.constructor.apply(this, arguments);
+  }
+  QueueView.prototype.render = function() {
+    var content, haml;
+    haml = Haml($("#queueView-tmpl").html());
+    content = haml(this.model.attributes);
+    $(this.el).html(content);
+    return this;
+  };
+  return QueueView;
+})();
 CityMarkerIcon = (function() {
   function CityMarkerIcon(pts, type) {
     this.pts = pts;
@@ -273,7 +277,10 @@ Dialog = Backbone.View.extend({
   },
   afterRender: function() {
     if (this.initializeTabs) {
-      return this.initializeTabs();
+      this.initializeTabs();
+    }
+    if (this.initializeOverview) {
+      return this.initializeOverview();
     }
   },
   render: function() {
@@ -284,7 +291,6 @@ Dialog = Backbone.View.extend({
     haml = Haml($(this.selector).html());
     content = haml(this.model.attributes);
     $(this.el).html(content);
-    this.afterRender();
     return this;
   }
 });
@@ -296,19 +302,27 @@ CityDialog = Dialog.extend({
   label: function() {
     return city.name;
   },
+  initializeOverview: function() {
+    var content, queue, queueData, queueView;
+    queueData = {};
+    queue = new Queue(queueData);
+    queueView = new QueueView({
+      model: queue
+    });
+    content = queueView.render().el;
+    return $(".bubbleBg .dialog .city").append(content);
+  },
   initializeTabs: function() {
-    console.log("init tabs");
-    console.log($(".bubble .tabs div"));
-    return setTimeout(__bind(function() {
-      var self;
-      self = this;
-      return $(".bubble .tabs div").bind("click", function() {
-        var type;
-        type = $(this).attr("data-dialog_type");
-        console.log("clicked on tab: ", type);
-        return self.initTab(type);
-      });
-    }, this), 500);
+    return this.initTabs();
+  },
+  initTabs: function() {
+    var self;
+    self = this;
+    return $(".bubble .nav li").bind("click", function() {
+      var type;
+      type = $(this).attr("class");
+      return self.initTab(type);
+    });
   },
   initTab: function(type) {
     var content, dialog, model;
@@ -335,11 +349,17 @@ CityDialog = Dialog.extend({
           return new TechsDialog({
             model: model
           });
+        case "city_overview":
+          return new CityOverview({
+            model: this.model
+          });
+        case "debug":
+          return console.log("no debug atm");
       }
-    })();
+    }).call(this);
     if (dialog) {
       content = dialog.render().el;
-      return $(".bubbleBg").html(content);
+      return $(".dialog").replaceWith(content);
     }
   }
 });
@@ -373,6 +393,12 @@ ArmyDialog = Dialog.extend({
   },
   label: function() {
     return player.name;
+  }
+});
+CityOverview = Dialog.extend({
+  initialize: function() {
+    this.type = "city_overview";
+    return Dialog.prototype.initialize(this.type);
   }
 });
 StructsDialog = Dialog.extend({
@@ -503,6 +529,15 @@ MapMove = (function() {
     });
   };
   return MapMove;
+})();
+Definitions = (function() {
+  function Definitions() {}
+  Definitions.prototype.get = function(fn) {
+    return $.getJSON("/definitions", function(data) {
+      return fn(data);
+    });
+  };
+  return Definitions;
 })();
 MarkersUpdater = (function() {
   function MarkersUpdater(map) {
@@ -651,7 +686,6 @@ TechDef = (function() {
   __extends(TechDef, Definition);
   function TechDef(objects) {
     this.type = "tech";
-    console.log(objects);
     TechDef.__super__.constructor.call(this, objects);
   }
   return TechDef;
@@ -730,6 +764,7 @@ TechsQueue = (function() {
 })();
 Map = (function() {
   function Map() {
+    this.markerZoomMin = 8;
     this.max_simultaneous_markers = 600;
     this.dialogs = [];
     this.markers = [];
@@ -783,45 +818,50 @@ Map = (function() {
     }, this));
   };
   Map.prototype.attachDialog = function(marker) {
-    var dia, is_army, lastMark, mark, marker_id, nextMarker, _i, _j, _len, _len2, _ref, _ref2;
+    var dia, is_army, lastMark, mark, marker_id, nextMarker, _i, _len, _ref;
     _ref = this.dialogs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       dia = _ref[_i];
       dia.dialog.close();
     }
+    this.dialogs = [];
     if (this.dialogs.length !== 0) {
       lastMark = _.last(this.dialogs).marker;
     }
-    if (this.dialogs.length === 0 || lastMark.location_id !== marker.location_id) {
-      return this.openDialog(marker);
-    } else {
-      nextMarker = marker;
-      is_army = function(m) {
-        return !m.model.attributes.city;
-      };
-      marker_id = function(m) {
-        if (is_army(m)) {
-          return "" + m.type + "_" + m.model.attributes.army.id;
-        } else {
-          return "" + m.type + "_" + m.model.attributes.city.id;
+    mark = (function() {
+      var _j, _len2, _ref2;
+      if (this.dialogs.length === 0 || lastMark.location_id !== marker.location_id) {
+        return marker;
+      } else {
+        nextMarker = marker;
+        is_army = function(m) {
+          return !m.model.attributes.city;
+        };
+        marker_id = function(m) {
+          if (is_army(m)) {
+            return "" + m.type + "_" + m.model.attributes.army.id;
+          } else {
+            return "" + m.type + "_" + m.model.attributes.city.id;
+          }
+        };
+        _ref2 = this.markers;
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          mark = _ref2[_j];
+          if (lastMark.location_id === mark.location_id && marker_id(mark) !== marker_id(lastMark)) {
+            nextMarker = mark;
+          }
         }
-      };
-      _ref2 = this.markers;
-      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-        mark = _ref2[_j];
-        if (lastMark.location_id === mark.location_id && marker_id(mark) !== marker_id(lastMark)) {
-          nextMarker = mark;
-        }
+        return nextMarker;
       }
-      return this.openDialog(nextMarker);
-    }
+    }).call(this);
+    return this.openDialog(mark);
   };
   Map.prototype.openDialog = function(marker) {
-    return setTimeout(__bind(function() {
-      var dialog;
-      dialog = new DialogView(this.map, marker);
-      return this.dialogs.push(dialog);
-    }, this), 10);
+    var dialog;
+    dialog = new DialogView(this.map, marker);
+    dialog.render();
+    this.dialogs.push(dialog);
+    return dialog;
   };
   Map.prototype.drawMarkers = function(markers) {
     var marker, _i, _len, _results;
@@ -871,15 +911,6 @@ Map = (function() {
     return console.log("Exception: ", message);
   };
   return Map;
-})();
-Definitions = (function() {
-  function Definitions() {}
-  Definitions.prototype.get = function(fn) {
-    return $.getJSON("/definitions", function(data) {
-      return fn(data);
-    });
-  };
-  return Definitions;
 })();
 Game = (function() {
   function Game() {
@@ -946,9 +977,7 @@ Debug = (function() {
     this.game = game;
     this.map = this.game.map;
   }
-  Debug.prototype.debug = function() {
-    return this.debugDialog();
-  };
+  Debug.prototype.debug = function() {};
   Debug.prototype.debugDialog = function() {
     return setTimeout(__bind(function() {
       var marker, _i, _len, _ref;
@@ -959,9 +988,9 @@ Debug = (function() {
         console.log(marker.type);
         if (marker.type === "city") {
           this.map.attachDialog(marker);
-          setTimeout(function() {
+          $("#bubbleEvents").bind("dialog_content_changed", function() {
             return marker.dialog_view.switchTab("city_structs");
-          }, 1000);
+          });
         }
         return;
       }
