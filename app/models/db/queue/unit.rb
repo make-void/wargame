@@ -31,7 +31,7 @@ module DB
         self.update_attributes( 
           :started_at => start_time || Time.now, 
           :time_needed => LG::Unit.production_time( self.definition, unit_production_level )  * self.number,
-          :runnint => true
+          :running => true
         )
       end
       

@@ -1,5 +1,5 @@
-TechsDialog  = Dialog.extend(
+TechsDialog  = GenericDialog.extend(
   initialize: ->
     @type = "city_techs"
-    Dialog.prototype.initialize @type# how to call super in js
+    GenericDialog.prototype.initialize @type# how to call super in js
 )

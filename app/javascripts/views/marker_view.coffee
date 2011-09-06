@@ -62,10 +62,8 @@ class MarkerView
       @marker.model = new Army @data
     else  
       @marker.model = new City @data
-  
-    google.maps.event.addListener(marker, 'click', =>
-      this.doAttachDialog()
-    )
+    
+    
     #console.log(latLng)
     this
   
@@ -75,4 +73,4 @@ class MarkerView
     else  
       @marker.dialog = new CityDialog { model: @marker.model }
       
-    @map.attachDialog(@marker)
+    

@@ -1,7 +1,7 @@
-ArmyDialog  = Dialog.extend(
+ArmyDialog  = GenericDialog.extend(
   initialize: ->
     @type = "army"
-    Dialog.prototype.initialize @type # how to call super in js
+    GenericDialog.prototype.initialize @type # how to call super in js
   
   activateButtons: ->
     model = this.model

@@ -1,7 +1,7 @@
-CityDialog  = Dialog.extend(
+CityDialog  = GenericDialog.extend(
   initialize: ->
     @type = "city"
-    Dialog.prototype.initialize @type# how to call super in js
+    GenericDialog.prototype.initialize @type# how to call super in js
     
   label: ->
     city.name
@@ -19,12 +19,17 @@ CityDialog  = Dialog.extend(
   # tabs
   
   initializeTabs: ->
-    this.initTabs()
+    $("#bubbleEvents").bind("dialog_content_changed", =>
+      this.initTabs()
+    )
+    
     
   initTabs: ->
     self = this
+    
     $(".bubble .nav li").bind("click", ->
       # console.log $(this).getClass()
+      console.log "bound"
       type = $(this).attr("class")
       # console.log "clicked on tab: ", type
       self.initTab type

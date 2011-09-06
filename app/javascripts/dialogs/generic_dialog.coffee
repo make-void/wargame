@@ -1,4 +1,8 @@
-Dialog  = Backbone.View.extend(  
+# GenericDialog - use this dialog by extending it
+#
+# @type required
+
+GenericDialog  = Backbone.View.extend(  
   
   initialize: (@type) ->
     @selector = "##{@type}Dialog-tmpl"
@@ -14,4 +18,5 @@ Dialog  = Backbone.View.extend(
     content = haml this.model.attributes
     $(this.el).html content
     this # returning render method scope lets you chain events (methods)
+    
 )

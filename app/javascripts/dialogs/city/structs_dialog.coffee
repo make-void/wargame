@@ -1,5 +1,5 @@
-StructsDialog  = Dialog.extend(
+StructsDialog  = GenericDialog.extend(
   initialize: ->
     @type = "city_structs"
-    Dialog.prototype.initialize @type# how to call super in js
+    GenericDialog.prototype.initialize @type# how to call super in js
 )

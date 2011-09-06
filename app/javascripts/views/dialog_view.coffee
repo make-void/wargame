@@ -1,6 +1,6 @@
 class DialogView
   constructor: (@map, @marker) ->
-    @dialog = null
+    @dialog = @marker.dialog
     @marker.dialog_view = this
     
   open: ->
@@ -31,13 +31,12 @@ class DialogView
 
     
   render: ->    
-    content = @marker.dialog.render().el 
+    content = @dialog.render().el 
     this.build(content)
+    console.log @dialog
     this.open()
-    $("#bubbleEvents").bind("dialog_content_changed", =>
-      @marker.dialog.afterRender()
-    )
-
+    
+    
     this
 
   # actions

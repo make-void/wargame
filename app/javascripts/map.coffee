@@ -17,6 +17,20 @@ class Map
     mapView.draw()
     @map = mapView.map
     
+  loadMarkers: ->
+    return if localStorage.zoom < @markerZoomMin
+    this.markersCleanMax()
+
+    center = @map.getCenter()    
+    $.getJSON("/locations/#{center.lat()}/#{center.lng()}", (data) =>
+      markers = []
+      for marker in data.locations
+        markers.push marker
+
+      this.drawMarkers markers
+      #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
+    )    
+    
   markersUpdateStart: -> 
     markersUpdater = new MarkersUpdater(this)
     markersUpdater.start()
@@ -39,34 +53,20 @@ class Map
         marker.setMap null 
       @markers = @markers[-max_markers..-1]
 
-  loadMarkers: ->
-    # markersLoader = new MarkersLoader()
-    # markersLoader.get  ->
-    return if localStorage.zoom < @markerZoomMin
-    this.markersCleanMax()
 
-    center = @map.getCenter()    
-    $.getJSON("/locations/#{center.lat()}/#{center.lng()}", (data) =>
-      markers = []
-      for marker in data.locations
-        markers.push marker
-  
-      this.drawMarkers markers
-      #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
-    )  
           
   attachDialog: (marker) ->
     for dia in this.dialogs
       dia.dialog.close()
-    this.dialogs = [] if this.dialogs.length > 2
+    this.dialogs = [] if this.dialogs.length > 1
     
     # if this.dialogs.length != 0
     #   console.log(_.last(this.dialogs).marker.location_id)
-    lastMark = _.last(this.dialogs).marker if this.dialogs.length != 0  
     
-    mark = if this.dialogs.length == 0 || lastMark.location_id != marker.location_id
+    mark = if this.dialogs.length == 0 
       marker
     else  
+      lastMark = _.last(this.dialogs).marker
       nextMarker = marker
       is_army = (m) -> !m.model.attributes.city
       marker_id = (m) -> if is_army(m) then "#{m.type}_#{m.model.attributes.army.id}" else "#{m.type}_#{m.model.attributes.city.id}"
@@ -80,21 +80,24 @@ class Map
     
     return this.openDialog(mark)
       
-  openDialog: (marker) ->    
-    # $("#bubbleEvents").bind("dialog_content_changed", ->
-    # setTimeout( => # FIXME: a set timeout is not the best detector of this but still... check if it works on mobile
-
+  openDialog: (marker) ->        
     dialog = new DialogView(@map, marker)    
-    # console.log "rendering: ", dialog
-    dialog.render()
+    # if marker.dialog
+    
+    dialog.render() # calls .open() internally
+    
+    # $("#bubbleEvents").bind("dialog_content_changed", =>
+    
+    marker.dialog.afterRender() 
+
+    
+    # )
+    # renders 
     
     this.dialogs.push dialog
       # dialog.open @map, marker
     
     dialog
-      # dialog.open() # needed?
-    # )
-    # , 40)
 
   drawMarkers: (markers) ->
     @timer = new Date()
@@ -114,6 +117,11 @@ class Map
   doMarkerDrawing: (data) ->
     markerView = new MarkerView(this, data)
     marker = markerView.draw().marker # you can access the view with marker.view
+    google.maps.event.addListener(marker, 'click', =>
+      markerView.doAttachDialog()
+      console.log "attach:", marker.dialog
+      this.attachDialog(marker)
+    )
     @markers.push marker
     marker.setMap @map
   
