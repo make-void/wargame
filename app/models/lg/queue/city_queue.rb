@@ -2,9 +2,8 @@ module LG
   module Queue
     class CityQueue
         
-      attr_reader :errors, :unit_queue, :building_queue, :research_queue
+      attr_reader :errors, :unit_queue, :building_queue, :research_queue, :city
       QUEUE_TYPES = [:all, :unit, :building, :research]
-      
       
       private_class_method :new
       
@@ -12,21 +11,18 @@ module LG
       
       
       def self.get( city_id, player_id )
-        return @@queue_cache["#{city_id}_#{player_id}"] if !@@queue_cache["#{city_id}_#{player_id}"].nil? && Rails.env != "testing"
-        instance = new(city_id, player_id)
-        @@queue_cache["#{city_id}_#{player_id}"] = instance
-        instance.get #Initialize Items
+        cached_instance = @@queue_cache["#{city_id}_#{player_id}"] if !@@queue_cache["#{city_id}_#{player_id}"].nil? && Rails.env != "testing"
+        if cached_instance.nil? #Adjust Cache if needed
+          instance = new(city_id, player_id)
+          instance.get 
+          @@queue_cache["#{city_id}_#{player_id}"] = instance
+        else
+          cached_instance.get
+          @@queue_cache["#{city_id}_#{player_id}"] = cached_instance
+          instance = cached_instance
+        end
+        #Initialize Items
         return instance
-      end
-      
-      def get
-        return { units: [], structs: [], techs: [], errors: @errors } if has_errors?
-        # { city: @city, player: @player } 
-        get_queue :all
-        structs = building_queue.items.map{ |bq| bq.attributes }
-        techs   = research_queue.items.map{ |bq| bq.attributes }
-        units   = unit_queue.items.map{ |bq| bq.attributes }
-        { units: units, structs: structs, techs: techs, errors: @errors }
       end
       
       def initialize( city_id, player_id )
@@ -43,10 +39,38 @@ module LG
         @research_queue = LG::Queue::ResearchQueue.new
       end
       
+      def get
+        return { units: [], structs: [], techs: [], errors: @errors } if has_errors?
+        # { city: @city, player: @player } 
+        get_queue :all
+        structs = building_queue.items.map{ |bq| bq.attributes }
+        techs   = research_queue.items.map{ |bq| bq.attributes }
+        units   = unit_queue.items.map{ |bq| bq.attributes }
+        { units: units, structs: structs, techs: techs, errors: @errors }
+      end
+      
       def has_errors? ; errors.size != 0 ; end
       
+      def add_to_queue( type, object_id, level_or_number )
+        return @errors if has_errors? #To Be Sure all is Fine!
+        raise ArgumentError, "Need Type in #{(QUEUE_TYPES - [:all]).inspect}, got #{type}" unless (QUEUE_TYPES - [:all]).include?(type)
+        raise ArgumentError, "Need level to be a Number. got #{level_or_number.inspect}" unless level_or_number.is_a?(Numeric)
+        case type
+          when :unit
+            object = DB::Unit::Definition.find(object_id)
+            return @unit_queue.add_item(@city, object, level_or_number)
+          when :building
+            object = DB::Structure::Definition.find(object_id)
+            return @building_queue.add_item(@city, object, level_or_number)
+          when :research 
+            object = DB::Research::Definition.find(object_id)
+            return @research_queue.add_item(@city, object, level_or_number) 
+        end
+      end
+      
+      private
+      
       def get_queue( type )
-        return @errors if has_errors?
         raise ArgumentError, "Need Type in #{QUEUE_TYPES.inspect}, got #{type}" unless QUEUE_TYPES.include?(type)
         case type
           when :all
@@ -62,27 +86,6 @@ module LG
         end
       end
       
-      def add_to_queue( type, object, level_or_number )
-        return @errors if has_errors? #To Be Sure all is Fine!
-        raise ArgumentError, "Need Type in #{(QUEUE_TYPES - [:all]).inspect}, got #{type}" unless (QUEUE_TYPES - [:all]).include?(type)
-        raise ArgumentError, "Need level to be a Number. got #{level_or_number.inspect}" unless level.is_a?(Numeric)
-        case type
-          when :unit
-            #GET BUILDING LEVEL FOR THIS PLAYER
-            cost = LG::Unit.cost(object, level_or_number)
-            return @unit_queue.add_item(city_object, object, level_or_number)
-          when :building
-            #GET RESEARCH LEVEL FOR THIS PLAYER
-            cost = LG::Structures.cost(object, level_or_number)
-            return @building_queue.add_item(object, level_or_number)
-          when :research 
-            #GET BUILDING LEVEL FOR THIS PLAYER
-            return @research_queue.add_item(city_object, object, level_or_number) 
-        end
-      end
-      
-      private
-      
       def get_unit_queue
         @unit_queue.items = DB::Queue::Unit.find(:all, :conditions => { player_id: @player.player_id, city_id: @city.city_id}, :order => "started_at")
       end
@@ -92,7 +95,6 @@ module LG
       def get_research_queue
         @research_queue.items = DB::Queue::Tech.find(:all, :conditions => { player_id: @player.player_id, city_id: @city.city_id}, :order => "started_at")
       end
-      
       
     end
   end

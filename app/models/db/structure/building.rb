@@ -16,7 +16,7 @@ module DB
         4 => :gold,
         5 => [:steel, :oil]
       }
-      
+            
       
       before_save :update_database_cache #PARTENDO DAL PRESUPPOSTO CHE GLI OGGETTI VENGANO 'salvati' IN QUESTA TABELLA SOLO QUANDO COMPLETI
         

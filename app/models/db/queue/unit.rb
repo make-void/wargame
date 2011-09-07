@@ -42,7 +42,7 @@ module DB
         return self.finish! if self.finished? #If Finished, return all DATA.
         
         update_time = Time.now #Save this in case we loose a second for problems in the meantime
-        passed_time_in_seconds = ( Time.now - self.started_at ).floor
+        passed_time_in_seconds = ( Time.now - self.started_at.time ).floor
         time_per_unit = ( self.time_needed / self.number ) 
         
         if passed_time_in_seconds >= time_per_unit
@@ -76,7 +76,7 @@ module DB
       #returns true if finished
       def finished?
         return false unless self.started?
-        return ( self.finished_at >= Time.now )
+        return ( self.finished_at.time <= Time.now )
       end
       
       #calculates time the item is done

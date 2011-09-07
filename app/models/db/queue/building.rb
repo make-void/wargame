@@ -17,14 +17,15 @@ module DB
       def start( research_level, start_time = nil )
         self.update_attributes( 
           :started_at => start_time || Time.now, 
-          :time_needed => LG::Structures.time( self.definition, self.level, research_level ) 
+          :time_needed => LG::Structures.time( self.definition, self.level, research_level ) ,
+          :running => true
         )
       end
       
       #Destroys the queue object and returns the units created
       def finish!
         return false unless self.finished?
-        v = { number: self.number, unit: self.definition }
+        v = { number: self.number, building: self.definition }
         self.destroy
         return v
       end
@@ -32,7 +33,7 @@ module DB
       #returns true if finished
       def finished?
         return false unless self.started?
-        return ( self.finished_at >= Time.now )
+        return ( self.finished_at.time <= Time.now )
       end
       
       #calculates time the item is done

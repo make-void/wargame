@@ -25,6 +25,10 @@ module DB
         return 7
       end
       
+      def self.research_production_building_level(player_id, city_id)
+        return DB::Structure::Building.find(:first, :conditions => {:structure_id => 8, :player_id => player_id, :city_id => city_id})
+      end
+      
       def cost_advancement_to_string
         COST_ADVANCEMENT[self.cost_advancement_type]
       end
