@@ -2,7 +2,10 @@ require 'spec_helper'
 
 load "#{Rails.root}/app/controllers/queues_controller.rb"
 load "#{Rails.root}/app/models/db/queue/building.rb"
+load "#{Rails.root}/app/models/db/queue/unit.rb"
+load "#{Rails.root}/app/models/db/queue/tech.rb"
 load "#{Rails.root}/app/models/lg/queue/city_queue.rb"
+
 load "#{Rails.root}/config/routes.rb"
 
 describe "Queues" do

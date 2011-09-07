@@ -26,7 +26,7 @@ module LG
         structs = building_queue.items.map{ |bq| bq.attributes }
         techs   = research_queue.items.map{ |bq| bq.attributes }
         units   = unit_queue.items.map{ |bq| bq.attributes }
-        { units: units, structs: structs, techs: techs  }
+        { units: units, structs: structs, techs: techs, errors: @errors }
       end
       
       def initialize( city_id, player_id )

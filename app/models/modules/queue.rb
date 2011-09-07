@@ -1,7 +1,7 @@
 module Modules
   module Queue
   
-    def Queue.included(classe_di_arrivo)
+    def self.included(classe_di_arrivo)
       classe_di_arrivo.class_eval do
         extend ClassMethods
         include InstanceMethods
@@ -15,7 +15,7 @@ module Modules
     
     module InstanceMethods
       def items=( db_entries_array )
-        raise ArgumentError, "Need an array of DB::Queue::Unit. Got #{db_entries_array.map{|x| x.class}.uniq.inspect}" if db_entries_array != [] && db_entries_array.map{|x| x.class}.uniq != [DB_CLASS]
+        raise ArgumentError, "Need an array of DB::Queue::Unit. Got #{db_entries_array.map{|x| x.class}.uniq.inspect}" if db_entries_array != [] && db_entries_array.map{|x| x.class}.uniq != [const_get("DB_CLASS")]
         @items = db_entries_array
       end
       
