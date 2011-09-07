@@ -19,7 +19,25 @@ module DB # Database
     after_initialize :update_city_if_needed #TODO -> Check if it's enought to handle like this
     before_create { self.last_update_at = Time.now }
     
-    
+    # hash = {:gold => x, :steel => y, :oil => z}
+    def has_resources?( hash )
+      gold = self.gold_stored >= hash[:gold]
+      steel = self.steel_stored >= hash[:steel]
+      oil = self.oil_stored >= hash[:oil]
+      
+      return true if gold && steel && oil
+      return false
+    end
+
+    # hash = {:gold => x, :steel => y, :oil => z}
+    def remove_resources( hash )
+      return false unless has_resources?(hash)
+      return self.update_attributes(
+        :gold_stored => (self.gold_stored - hash[:gold]),
+        :steel_stored => (self.steel_stored - hash[:steel]),
+        :oil_stored => (self.oil_stored - hash[:oil])
+      )
+    end
     
     private
     

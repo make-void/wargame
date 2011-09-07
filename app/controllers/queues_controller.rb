@@ -8,8 +8,8 @@ class QueuesController < ApplicationController
   
   def index
     city_id = params[:city_id]    
-    queues = LG::Queue.get city_id, @player.id    
-    render json: queues
+    queues = LG::Queue::CityQueue.get city_id, @player.id    
+    render json: queues.get
   end
 
   # TODO: show only a particular queue
