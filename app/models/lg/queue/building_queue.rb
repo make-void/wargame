@@ -16,8 +16,8 @@ module LG
         cost = LG::Structures.cost(object, level_or_number)
         
         return_values = { cost: cost, errors: [], action: nil }
-        if self.city_hash_money?(city_object, cost) #defined in Queue module
-          reqs = check_requisites( city_object, object )
+        if self.city_hash_money?(city_object, cost) #defined in Queue Module
+          reqs = check_requisites( city_object, object ) #defined in Queue Module
           
           if reqs.is_a?(Array)          #Requirements Are Met?
              return_values[:errors] = return_values[:errors] + reqs
@@ -29,11 +29,22 @@ module LG
                                                       })
              
              if build_obj.nil?  #Create StructureObject if Needed for DB Integrity
-               DB::Structure::Building.create( 
+               build_obj = DB::Structure::Building.create( 
                                                 :structure_id => object.structure_id, 
                                                 :city_id => city_object.city_id, 
                                                 :player_id => city_object.player_id
                                               )
+             end
+             
+             
+             if ( build_obj.level + 1 ) != level_or_number #You told me to create lev 5, but i don't have lev 4!
+               return_values[:errors].push(
+                  {
+                    message: "Cannot Build '#{object.name}' to level #{level_or_number}. Need it at level #{level_or_number - 1}, got it at level #{build_obj.level}",
+                    city_id: city_object.city_id
+                  }
+               )
+               return return_values #Stop it here
              end
              
              #Create Queue Object

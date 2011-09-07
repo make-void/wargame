@@ -6,6 +6,9 @@ module LG
       
       attr_reader :items
 
+      def active_element
+        return @items.select{|x| x.active? }.first
+      end
       
       def add_item(city_object, object, level_or_number)    
           raise ArgumentError, "Need City to be a DB::City, Got #{city_object.inspect}" unless city_object.is_a?( DB::City )
@@ -13,9 +16,9 @@ module LG
           cost = LG::Research.cost(object, level_or_number)
 
           return_values = { cost: cost, errors: [], action: nil }
-          if self.city_hash_money?(city_object, cost) #defined in Queue module
+          if self.city_hash_money?(city_object, cost) #defined in Queue Module
 
-            reqs = check_requisites( city_object, object )
+            reqs = check_requisites( city_object, object ) #defined in Queue Module
 
             if reqs.is_a?(Array) #Requirements Are Met?
                return_values[:errors] = return_values[:errors] + reqs
@@ -27,11 +30,21 @@ module LG
                                                         })
 
                if res_obj.nil? #Create Research Object if Needed for DB Integrity
-                 DB::Research::Upgrade.create( 
+                 res_obj = DB::Research::Upgrade.create( 
                                                   :tech_id => object.tech_id, 
                                                   :player_id => city_object.player_id,
                                                   :level => 0
                                                 )
+               end
+               
+               if ( res_obj.level + 1 ) != level_or_number #You told me to create lev 5, but i don't have lev 4!
+                 return_values[:errors].push(
+                    {
+                      message: "Cannot Research '#{object.name}' to level #{level_or_number}. Need it at level #{level_or_number - 1}, got it at level #{res_obj.level}",
+                      city_id: city_object.city_id
+                    }
+                 )
+                 return return_values #Stop it here
                end
                
                #Get Research Centre Level

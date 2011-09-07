@@ -6,15 +6,19 @@ module LG
       
       attr_reader :items
       
+      def active_element
+        return @items.select{|x| x.active? }.first
+      end
+      
       def add_item(city_object, object, level_or_number)    
         raise ArgumentError, "Need City to be a DB::City, Got #{city_object.inspect}" unless city_object.is_a?( DB::City )
         raise ArgumentError, "Need a #{DB::Unit::Definition}" unless object.is_a?( DB::Unit::Definition ) 
         cost = LG::Unit.cost(object, level_or_number)
         
         return_values = { cost: cost, errors: [], action: nil }
-        if self.city_hash_money?(city_object, cost) #defined in Queue module
+        if self.city_hash_money?(city_object, cost) #defined in Queue Module
           
-          reqs = check_requisites( city_object, object )
+          reqs = check_requisites( city_object, object ) #defined in Queue Module
           
           if reqs.is_a?(Array) #Requirements Are Met?
              return_values[:errors] = return_values[:errors] + reqs

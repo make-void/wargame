@@ -42,24 +42,16 @@ module Modules
                                                       :player_id => city_object.player_id,
                                                       :structure_id => b_req.req_structure_id
                                                     })
-          if building.nil?
+          
+          got_level = building.nil? ? 0 : building.level
+          
+          if got_level < b_req.level
             errors.push(
               { 
-                message: "Building '#{b_req.required_object.name}' is level 0. Need: #{b_req.level}", 
+                message: "Building '#{b_req.required_object.name}' is level #{got_level}. Need: #{b_req.level}", 
                 city_id: city_object.city_id,
                 structure_id: b_req.req_structure_id,
-                level: 0,
-                required_level: b_req.level
-              }
-            )
-          end
-          if !building.nil? && building.level < b_req.level
-            errors.push(
-              { 
-                message: "Building '#{b_req.required_object.name}' is level #{building.level}. Need: #{b_req.level}", 
-                city_id: city_object.city_id,
-                structure_id: b_req.req_structure_id,
-                level: building.level,
+                level: got_level,
                 required_level: b_req.level
               }
             )
@@ -75,28 +67,20 @@ module Modules
                                                       :player_id => city_object.player_id,
                                                     })
           
-          if research.nil?
+          got_level = research.nil? ? 0 : research.level
+          
+          if research.level < b_req.level
             errors.push(
               { 
-                message: "Research '#{t_req.required_object.name}' is level 0. Need: #{t_req.level}", 
+                message: "Research '#{t_req.required_object.name}' is level #{got_level}. Need: #{t_req.level}", 
                 city_id: city_object.city_id,
                 structure_id: t_req.req_tech_id,
-                level: 0,
+                level: got_level,
                 required_level: t_req.level
               }
             )
           end
-          if !research.nil? && research.level < b_req.level
-            errors.push(
-              { 
-                message: "Research '#{t_req.required_object.name}' is level #{research.level}. Need: #{t_req.level}", 
-                city_id: city_object.city_id,
-                structure_id: t_req.req_tech_id,
-                level: t_req.level,
-                required_level: t_req.level
-              }
-            )
-          end
+          
         end
         return errors
       end
