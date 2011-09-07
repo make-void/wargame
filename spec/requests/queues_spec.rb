@@ -3,6 +3,8 @@ require 'spec_helper'
 load "#{Rails.root}/app/controllers/queues_controller.rb"
 load "#{Rails.root}/app/models/db/queue/building.rb"
 load "#{Rails.root}/app/models/lg/queue/city_queue.rb"
+load "#{Rails.root}/app/models/lg/queue/building_queue.rb"
+load "#{Rails.root}/app/models/modules/queue.rb"
 load "#{Rails.root}/config/routes.rb"
 
 describe "Queues" do
@@ -30,7 +32,7 @@ describe "Queues" do
   end
   
   it "index" do
-    # GET /players/me/cities/:id/queues
+    # GET /players/me/cities/:id/queues    
     data = get_json "/players/me/cities/#{@city.id}/queues"
     data.keys.should == [:units, :structs, :techs]
     struct = data[:structs].first.symbolize_keys

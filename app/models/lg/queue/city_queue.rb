@@ -75,7 +75,6 @@ module LG
             #GET RESEARCH LEVEL FOR THIS PLAYER
             cost = LG::Structures.cost(object, level_or_number)
             return @building_queue.add_item(object, level_or_number)
-
           when :research 
             #GET BUILDING LEVEL FOR THIS PLAYER
             return @research_queue.add_item(city_object, object, level_or_number) 
