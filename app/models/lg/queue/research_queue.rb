@@ -23,20 +23,11 @@ module LG
             if reqs.is_a?(Array) #Requirements Are Met?
                return_values[:errors] = return_values[:errors] + reqs
             else
-              
-               res_obj = DB::Research::Upgrade.find(:first, :conditions => {
-                                                            :tech_id => object.tech_id,
-                                                            :player_id => city_object.player_id
-                                                        })
-
-               if res_obj.nil? #Create Research Object if Needed for DB Integrity
-                 res_obj = DB::Research::Upgrade.create( 
-                                                  :tech_id => object.tech_id, 
-                                                  :player_id => city_object.player_id,
-                                                  :level => 0
-                                                )
-               end
-               
+               res_obj = build_or_get_base_object( 
+                                                    :tech_id => object.tech_id, 
+                                                    :player_id => city_object.player_id
+                                                  )
+                                                  
                if ( res_obj.level + 1 ) != level_or_number #You told me to create lev 5, but i don't have lev 4!
                  return_values[:errors].push(
                     {
@@ -77,6 +68,21 @@ module LG
             return_values[:errors].push( { message: "Not Enough Money", city_id: city_object.city_id } )
           end
           return return_values      
+        end
+        
+        private
+        
+        def build_or_get_base_object( hash_values )
+          obj = get_base_object( hash_values )
+          return obj if !obj.nil?
+          return build_base_object( hash_values )
+          
+        end
+        def get_base_object( tech_id, player_id )
+          return DB::Research::Upgrade.find(:first, :conditions => hash_values )
+        end
+        def build_base_object( tech_id, player_id )
+          return DB::Research::Upgrade.create( hash_values.merge({:level => 0}))
         end
       
     end
