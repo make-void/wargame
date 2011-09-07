@@ -5,10 +5,7 @@ module LG
       DB_CLASS = DB::Queue::Tech
       
       attr_reader :items
-      
-      def initialize
-        
-      end
+
       
       def add_item(city_object, object, level_or_number)    
         return false

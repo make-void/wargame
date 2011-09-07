@@ -6,10 +6,6 @@ module LG
       
       attr_reader :items
       
-      def initialize
-
-      end
-      
       def add_item(city_object, object, level_or_number)    
         raise ArgumentError, "Need City to be a DB::City, Got #{city_object.inspect}" unless city_object.class == DB::City
         raise ArgumentError, "Need a #{DB::Unit::Definition}" unless object.is_a?( DB::Unit::Definition ) 
@@ -36,7 +32,7 @@ module LG
           city_object.remove_resources( cost )
           return_values[:action] = { message: "Building #{level_or_number} #{object.name}", started: started }
         else
-          return_values[:errors].push({message: "Not Enought Money", city_id: city_object.city_id})
+          return_values[:errors].push({message: "Not Enough Money", city_id: city_object.city_id})
           return return_values
         end
       end

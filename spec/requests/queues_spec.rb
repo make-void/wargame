@@ -5,6 +5,7 @@ load "#{Rails.root}/app/models/db/queue/building.rb"
 load "#{Rails.root}/app/models/db/queue/unit.rb"
 load "#{Rails.root}/app/models/db/queue/tech.rb"
 load "#{Rails.root}/app/models/lg/queue/city_queue.rb"
+load "#{Rails.root}/app/models/modules/queue.rb"
 
 load "#{Rails.root}/config/routes.rb"
 
@@ -35,7 +36,7 @@ describe "Queues" do
   it "index" do
     # GET /players/me/cities/:id/queues    
     data = get_json "/players/me/cities/#{@city.id}/queues"
-    data.keys.should == [:units, :structs, :techs]
+    data.keys.should == [:units, :structs, :techs, :errors]
     struct = data[:structs].first.symbolize_keys
     struct[:city_id].should be(@city.id)
     struct[:structure_id].should be(@structure_type.id)
