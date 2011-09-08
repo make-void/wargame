@@ -1,14 +1,15 @@
 module LG
   module Game
     
-    def self.get_base_infos_for_player( player_id )
-      
+    def self.get_base_infos_for_player( pid )
+      return { :armies => fetch_armies_of_player(pid), :cities => fetch_cities_of_player(pid), :research => fetch_res_of_player(pid) }
     end
    
     def self.get_all_base_infos()      
       return { :units => fetch_units(), :researches => fetch_researches(), :structures => fetch_structures() }
     end
     
+    #### GENERAL FETCH METHODS
     def self.fetch_researches
       researches_data = DB::Research::Definition.all
       
@@ -127,7 +128,54 @@ module LG
       return structures
     end
     
+    #### LOCALIZED ON USER FETCH METHODS
+    def self.fetch_armies_of_player( player_id )
+      armies = {}
+      DB::Army.find(:all, :conditions => {:player_id => player_id }).map do |a|
+        loc = a.location
+        armies[a.army_id] = {
+           :location => { 
+               :latitude => loc.latitude.to_f, 
+               :longitude => loc.longitude.to_f, 
+               :location_id => loc.location_id 
+             },
+            :is_moving => a.is_moving
+        }
+      end
+      
+      return armies
+    end
 
+    def self.fetch_cities_of_player( player_id )
+      cities = {}
+      DB::City.find(:all, :conditions => {:player_id => player_id}).map do |c|
+        loc = c.location
+        cities[c.city_id] = {
+          :name => c.name,
+          :ccode => c.ccode,
+          :location => { 
+            :latitude => loc.latitude.to_f, 
+            :longitude => loc.longitude.to_f, 
+            :location_id => loc.location_id 
+          }
+        }
+      end
+    end
+    
+    def self.fetch_res_of_player( player_id )
+      research = {}
+      DB::Research::Upgrade.find(:all, :conditions => {:player_id => player_id}).map do |r|
+        research[r.tech_id] = {
+          :level => r.level,
+          :upgade_cost => {
+            :gold => r.next_lev_gold_cost,
+            :steel => r.next_lev_steel_cost,
+            :oil => r.next_lev_oil_cost
+          }
+        }
+      end
+    end
+    
 ###################################
 #     BUILDING COMPLETE PUTS      #
 ###################################
