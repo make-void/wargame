@@ -78,9 +78,7 @@ module LG
           :queues => city_queue.get,
           :errors => errors
         }
-        
-        #TODO -> Add infos about Buildings & Soldiers
-        
+                
       else #It's not My City! HIDE Data
         enemy_player = city_entry.player
         ally = enemy_player.alliance
@@ -96,7 +94,7 @@ module LG
             :name => ally.name,
             :alliance_id => ally.alliance_id
           },
-          :battle_data => {
+          :units => {
             :overall_power => city_entry.overall_power,
             :overall_defence => city_entry.overall_defense
           },
