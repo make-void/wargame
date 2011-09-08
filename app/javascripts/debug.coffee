@@ -15,7 +15,7 @@ class Debug
       for marker in @map.markers
         console.log marker.type
         if marker.type == "city"
-          @map.attachDialog marker
+          @map.openDialog marker
           $("#bubbleEvents").bind("dialog_content_changed", ->
             marker.dialog_view.switchTab("city_structs")
           )

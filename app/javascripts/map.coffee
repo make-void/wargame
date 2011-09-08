@@ -6,6 +6,7 @@ class Map
     # @max_simultaneous_markers = 200 # if iPad || iPhone v => 4 || Android v >= 3
     # @max_simultaneous_markers = 100 # if iPhone v <= 3 || Android v <= 2
     @dialogs = []
+    @current_dialog = null
     @markers = []
     @map = null
     
@@ -28,11 +29,13 @@ class Map
         markers.push marker
 
       this.drawMarkers markers
+      console.log("dopo")
+      $("#mapEvents").trigger("markers_loaded")
       #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
     )    
     
   markersUpdateStart: -> 
-    markersUpdater = new MarkersUpdater(this)
+    markersUpdater = new MarkersUpdater(this) # calls drawMarkers
     markersUpdater.start()
     
   center: (lat, lng) ->
@@ -42,10 +45,86 @@ class Map
     # panBy xy
     # panToBounds latLngBounds
     # infos: http://code.google.com/apis/maps/documentation/javascript/reference.html#LatLngBounds
+
+  restoreState: ->
+    @last_marker_id = parseInt localStorage.last_marker_id
+    if @last_marker_id
+      $("#mapEvents").bind("markers_loaded", =>
+        for marker in @markers
+          if marker.attributes.id == @last_marker_id
+            this.initDialog(marker)
+            console.log marker
+      )
+      
+    # others
     
+  saveDialogState: (marker) ->
+    localStorage.last_marker_id = marker.attributes.id
   
   # "private"
   
+  drawMarkers: (markers) ->
+    @timer = new Date()
+    for marker in markers
+      this.drawMarker marker
+
+  drawMarker: (data) ->
+    draw = true
+    for mark in @markers
+      draw = false if this.same_city(mark, data) || this.same_army(mark, data)
+
+    @markers.push this.initMarker(data) if draw
+
+  same_city: (mark, data) ->  
+    is_a_city = data.city && mark.city
+    is_a_city && mark.city.id == data.city.id
+    
+  same_army: (mark, data) ->  
+    is_an_army = data.army && mark.army
+    is_an_army && mark.army.id == data.army.id
+    
+
+  initMarker: (data) ->
+    markerView = new MarkerView(this, data)
+    marker = markerView.draw().marker # you can access the view with marker.view
+    marker.setMap @map
+    marker.marker_view = markerView
+    this.initDialog(marker)
+    marker
+
+  initDialog: (marker) ->
+    google.maps.event.addListener(marker, 'click', =>
+      is_same_dialog = (dialog) -> dialog.marker.unique_id != marker.unique_id
+      if !@current_dialog || is_same_dialog(@current_dialog)
+        @current_dialog = this.openDialogView(marker)
+        this.saveDialogState(marker)
+    )
+      
+  openDialogView: (marker) ->        
+    @current_dialog.close() if @current_dialog
+
+    dialogView = new DialogView(@map, marker)        
+    marker.dialog_view = dialogView
+    dialogView.doRender() # calls .open() internally    
+    
+    # ...
+    # showSwitchButton()
+    
+    # console.log(@markers)
+    for mark in @markers    
+      same_location = (m1, m2) -> 
+        m1.location_id == m2.location_id
+      if !_.isEqual(marker, mark) && same_location(mark, marker)
+        dialogView.showSwitchButton(mark, this.openDialog) # executes openDialog internally
+    
+    # ...
+    
+    marker.dialog.afterRender() 
+    this.dialogs.push dialogView
+        
+    dialogView
+
+
   markersCleanMax: ->
     max_markers = @max_simultaneous_markers
     if @markers.length > max_markers
@@ -54,77 +133,6 @@ class Map
       @markers = @markers[-max_markers..-1]
 
 
-          
-  attachDialog: (marker) ->
-    for dia in this.dialogs
-      dia.dialog.close()
-    this.dialogs = [] if this.dialogs.length > 1
-    
-    # if this.dialogs.length != 0
-    #   console.log(_.last(this.dialogs).marker.location_id)
-    
-    mark = if this.dialogs.length == 0 
-      marker
-    else  
-      lastMark = _.last(this.dialogs).marker
-      nextMarker = marker
-      is_army = (m) -> !m.model.attributes.city
-      marker_id = (m) -> if is_army(m) then "#{m.type}_#{m.model.attributes.army.id}" else "#{m.type}_#{m.model.attributes.city.id}"
-      
-      for mark in @markers
-        if lastMark.location_id == mark.location_id && marker_id(mark) != marker_id(lastMark) 
-          # console.log(mark, marker)
-          nextMarker = mark
-          
-      nextMarker
-    
-    return this.openDialog(mark)
-      
-  openDialog: (marker) ->        
-    dialog = new DialogView(@map, marker)    
-    # if marker.dialog
-    
-    dialog.render() # calls .open() internally
-    
-    # $("#bubbleEvents").bind("dialog_content_changed", =>
-    
-    marker.dialog.afterRender() 
-
-    
-    # )
-    # renders 
-    
-    this.dialogs.push dialog
-      # dialog.open @map, marker
-    
-    dialog
-
-  drawMarkers: (markers) ->
-    @timer = new Date()
-    
-    for marker in markers
-      this.drawMarker marker
-
-  drawMarker: (data) ->
-    draw = true
-    for mark in @markers
-      is_a_city =  data.city && mark.city
-      draw = false if is_a_city && mark.city.id == data.city.id # is the same city
-        
-    this.doMarkerDrawing(data) if draw
-    # console.log("drawing") if draw
-    
-  doMarkerDrawing: (data) ->
-    markerView = new MarkerView(this, data)
-    marker = markerView.draw().marker # you can access the view with marker.view
-    google.maps.event.addListener(marker, 'click', =>
-      markerView.doAttachDialog()
-      console.log "attach:", marker.dialog
-      this.attachDialog(marker)
-    )
-    @markers.push marker
-    marker.setMap @map
-  
   clearMarkers: ->
     for marker in @markers
       marker.setMap null 

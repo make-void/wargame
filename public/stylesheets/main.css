@@ -214,12 +214,67 @@ body.game h1 {
     background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
 
+.bubble .closeButton, .bubble .switchButton {
+  font-size: 1.6em;
+  display: inline-block;
+  padding: 0.1em 1em 0.12em;
+  outline: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  font-size: 1.3em;
+  -webkit-border-radius: ".5em";
+  -moz-border-radius: ".5em";
+  border-radius: ".5em";
+  border: solid 1px #cccccc;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  background: #fff6c7;
+  background-image: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
+  font-size: 0.85em;
+  padding: 5px 12px;
+  margin: 5px 0;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  background: #ccffff;
+  background-image: -moz-linear-gradient(top, #ccffff 0%, #77bbff 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ccffff), color-stop(100%, #77bbff));
+  border: 1px solid #2266aa;
+  padding: 3px 9px 6px;
+  color: #2266aa;
+  font-weight: bold;
+  float: right;
+  margin: 0 0 10px; }
+  .bubble .closeButton:hover, .bubble .switchButton:hover {
+    text-decoration: none; }
+  .bubble .closeButton:active, .bubble .switchButton:active {
+    position: relative;
+    top: 1px; }
+  .bubble .closeButton:hover, .bubble .switchButton:hover {
+    background: #ca6931;
+    background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
+  .bubble .closeButton:hover, .bubble .switchButton:hover {
+    background: #2266aa;
+    background-image: -moz-linear-gradient(top, #2266aa 0%, #000044 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2266aa), color-stop(100%, #000044));
+    color: white; }
+.bubble .switchButton {
+  font-size: 0.72em;
+  margin: 1px 4px 0;
+  display: none; }
+.bubble .dialog {
+  min-width: 420px; }
 .bubble .city .name {
   font-size: 1.1em;
   font-weight: bold; }
 .bubble .city ul.nav {
-  min-width: 400px;
-  font-size: 0.85em; }
+  font-size: 0.85em;
+  margin: 10px 0 0; }
   .bubble .city ul.nav li {
     display: inline-block;
     padding: 0.1em 1em 0.12em;

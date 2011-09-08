@@ -49,28 +49,22 @@ class MarkerView
       army_icon = new google.maps.MarkerImage(army_image, null, null, anchor, null)
       marker.icon = army_icon
     
-
-    marker.view = self
-    marker.model  = null
-    marker.dialog = null
+    marker.attributes = @data
+    marker.view = this
     
+    @marker.unique_id = marker.__gm_id # TODO: generate a real id, using google map non public api is unsafe, check!
     
     
     # TODO: pass more datas
     
     if @data.type == "army"
       @marker.model = new Army @data
+      @marker.dialog = new ArmyDialog { model: @marker.model }
     else  
       @marker.model = new City @data
-    
+      @marker.dialog = new CityDialog { model: @marker.model }
     
     #console.log(latLng)
     this
-  
-  doAttachDialog: ->
-    if @data.type == "army"
-      @marker.dialog = new ArmyDialog { model: @marker.model }
-    else  
-      @marker.dialog = new CityDialog { model: @marker.model }
       
     

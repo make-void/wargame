@@ -13,6 +13,13 @@
 
 %script{ type: "text/template", id: "armyDialog-tmpl" }
   :plain
+    .title.army
+      .closeButton x
+      .switchButton
+      %p.name 
+        = player.name
+        's Army
+      
     .dialog.army
       %p.player.name= player.name
       .commands
@@ -20,7 +27,10 @@
       
 %script{ type: "text/template", id: "cityDialog-tmpl" }
   :plain
-    .city
+    .title.city
+      .closeButton x
+      .switchButton
+      
       %p.name= city.name
     %ul.nav
       %li.city_overview

@@ -35,6 +35,7 @@ class Game
     @map.loadMarkers()
     # @map.clickInfo()
     @map.markersUpdateStart()
+    @map.restoreState()
     # @map.debug("move")
     # @map.debug("attack")
 

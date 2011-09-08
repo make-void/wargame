@@ -50,6 +50,7 @@ class MapView
       @zoom = @map.defaultZoom
       localStorage.zoom = @zoom
       
+  
       
   set_default_coords: ->
     @center_lat = @default_center_lat = 47.2

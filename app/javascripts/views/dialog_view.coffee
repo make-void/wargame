@@ -1,6 +1,6 @@
 class DialogView
   constructor: (@map, @marker) ->
-    @dialog = @marker.dialog
+    @diag = @marker.dialog
     @marker.dialog_view = this
     
   open: ->
@@ -19,27 +19,48 @@ class DialogView
       borderWidth: 3,
       borderColor: '#666',
       disableAutoPan: false,
-      hideCloseButton: false,
+      hideCloseButton: true,
       arrowPosition: 30,
       backgroundClassName: 'bubbleBg',
       arrowStyle: 2,
-      minWidth: 360,
+      minWidth: 420,
       maxWidth: 700,
       minHeight: 400,
       maxHeight: 700
     })
 
     
-  render: ->    
-    content = @dialog.render().el 
+  doRender: ->      
+    content = @diag.getContent()
     this.build(content)
-    console.log @dialog
     this.open()
-    
+    this.bindEvents()
     
     this
 
+  bindEvents: ->
+    $(@dialog.content).find(".closeButton").bind("click", =>
+      this.close()
+      this.rebind()
+    )
+  
+  rebind: ->
+    google.maps.event.addListener(@marker, 'click', =>
+      this.open()
+    )
+      
   # actions
+  
+  showSwitchButton: (marker, fun) ->
+    $(@dialog.content).find(".switchButton").css({display: "block"})
+      .html("Switch to Army")
+      .bind("click", ->
+        fun(marker)
+      )
+    
+  
+  close: ->
+    @dialog.close()
   
   switchTab: (tab) ->
     $(".bubble .tabs .#{tab}").trigger "click"

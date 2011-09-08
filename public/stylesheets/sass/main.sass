@@ -190,14 +190,37 @@ body.game
   div
     +button_rdy
 
+// reds (#F99, #FFF)
+// reds hover (#D00, #500)
+
 .bubble     
+  .closeButton, .switchButton
+    font-size: 1.6em
+    +button_rdy
+    +simple_gradient(#26A+#AAA, #26A+#555)
+    border: 1px solid #26A
+    padding: 3px 9px 6px
+    color: #26A
+    font-weight: bold
+    float: right
+    margin: 0 0 10px
+    &:hover
+      +simple_gradient(#26A, #26A-#666)
+      color: #FFF
+  .switchButton
+    font-size: 0.72em
+    margin: 1px 4px 0
+    display: none
+    
+  .dialog
+    min-width: 420px
   .city
     .name
       font-size: 1.1em
       font-weight: bold
     ul.nav
-      min-width: 400px
       font-size: 0.85em
+      margin: 10px 0 0 
       li
         +button_rdy
         margin: 10px 4px 0 0
