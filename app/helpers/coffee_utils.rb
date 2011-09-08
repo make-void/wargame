@@ -18,9 +18,9 @@ module CoffeeUtils
       "views/map_action",           
       "views/map_attack",           
       "views/map_move",             
-      "models/definitions",         
       "map/markers_updater",             
-      "utils",                      
+      "utils",  
+      "events",                       
       "definitions",                
       "models",                     
       "map",                        
@@ -63,7 +63,19 @@ module CoffeeUtils
 
   def do_compilation
     out = `#{cd_js} coffee -j #{output_dir}/main.js -b  -c #{coffee_files_string} 2>&1`
-    raise "ERROR compiling coffeescript:\n#{out}" if out =~ /Parse error on line/i
+    if out =~ /Parse error on line|Error:/i
+      begin
+        shown = 5
+        line = out.match(/on line (\d+)/)[1].to_i
+        pad = 2
+        file = File.read("#{output_dir}/main.js").split("\n")[line-shown+pad..line+shown+pad].map.with_index do |line_str, idx|
+          "#{"%0#{(line+shown).to_s.size}d" % (idx+line-shown)}| #{line_str}"
+        end
+      rescue Exception => e
+        raise "Error on parsing coffee CLI output, take a look in coffee_utils.rb\n\n#{e}\n\n#{e.backtrace.join("\n")}"
+      end
+      raise "Error compiling coffeescript:\n#{out}\n\n\n\nFILE: (showing #{shown} lines around line #{line})\n\n#{file.join("\n")}" 
+    end
     puts out
   end
 

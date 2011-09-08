@@ -1,4 +1,6 @@
-class MapView
+class MapView extends Backbone.View
+
+  element: 'map_canvas'
 
   constructor: (@map) ->
     @controller = null
@@ -13,7 +15,7 @@ class MapView
     this.autoSize()
     
   doDrawing: ->
-    mapDiv = document.getElementById 'map_canvas'
+    mapDiv = document.getElementById this.element
     # console.log "lat: ", @center_lat, "lng: ", @center_lng, "zoom: ", @zoom 
     @center_lat = @default_center_lat unless @center_lat
     @center_lng = @default_center_lng unless @center_lng

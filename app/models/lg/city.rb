@@ -1,6 +1,11 @@
 module LG
   module City
     
+    def self.get(name)
+      city = DB::City.find(:first, conditions: { name: name }, include: :location)
+      city.attributes.merge( location: city.location.attributes ) unless city.nil?
+    end
+    
     #Example Call: 
     #     LG::City.get_city_infos( DB::City.last.city_id, 2 ) #Not My City
     #     LG::City.get_city_infos( DB::City.last.city_id, 1 ) #My City

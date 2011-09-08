@@ -103,7 +103,7 @@ csvs:
 
 locations:
 
-firenze
+florence - firenze
 43.7687324, 11.2569013
 
 

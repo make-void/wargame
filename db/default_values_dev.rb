@@ -18,7 +18,7 @@ module DefaultValuesDev
 
 
     latLng = { latitude: 43.7687324, longitude: 11.2569013 }
-    florence = DB::Location.where(latLng).first # firenze
+    florence = DB::Location.where(latLng).first # florence
     florence = DB::Location.create! latLng unless florence
 
     f_city = DB::City.find(:first, :conditions => {:name => "Florence"})

@@ -48,6 +48,13 @@ module Wargame
   end
 end
 
+
+# for backbone
+ActiveRecord::Base.include_root_in_json = false
+
+
+# customized settings
+
 if `whoami`.strip == "makevoid" && Rails.env == "development"
   puts "Turning off ActiveRecord logger, remember to re-enable it"
   ActiveRecord::Base.logger = Logger.new "/dev/null"

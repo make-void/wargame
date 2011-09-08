@@ -16,7 +16,7 @@ class Debug
         console.log marker.type
         if marker.type == "city"
           @map.openDialog marker
-          $("#bubbleEvents").bind("dialog_content_changed", ->
+          BubbleEvents.bind("dialog_content_changed", ->
             marker.dialog_view.switchTab("city_structs")
           )
           
@@ -28,10 +28,17 @@ class Debug
 $("#latLng").bind("submit", ->
   coords = $(this).find("input").val()
   coords = Utils.parseCoords(coords)
-  map.center(coords[0], coords[1])
+  game.map.center coords[0], coords[1]
   return false
 )
 
+$("#findCity").bind("submit", ->
+  city = $(this).find("input").val()
+  Utils.geocode(city, (lat, lng) ->
+    game.map.center lat, lng
+  )
+  return false
+)
 
 # debug .move or .attack
 

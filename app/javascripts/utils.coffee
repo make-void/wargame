@@ -37,6 +37,13 @@ String::capitalize = ->
 
 # coords
 
+Utils.geocode = (city, fn) ->
+  $.get("/cities/#{city}", (data) ->
+    lat = data.location.latitude
+    lng = data.location.longitude
+    fn(lat, lng)
+  )
+
 Utils.parseCoords = (string) ->
   split = string.replace(/\s/, '').split(",")
   return [split[0], split[1]]

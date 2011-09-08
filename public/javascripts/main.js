@@ -1,12 +1,12 @@
-var Alliance, Army, ArmyDialog, AttackState, AttackType, City, CityDialog, CityMarkerIcon, CityOverview, Debug, Definition, Definitions, DialogView, Game, GameState, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Queue, QueueView, Struct, StructDef, Structs, StructsDialog, StructsQueue, Tech, TechDef, Techs, TechsDialog, TechsQueue, Unit, UnitDef, Units, UnitsDialog, UnitsQueue, Upgrade, Utils, console;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+var Alliance, Army, ArmyDialog, AttackState, AttackType, BubbleEvents, City, CityDialog, CityMarkerIcon, CityOverview, Debug, Definition, Definitions, DialogView, Game, GameState, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Queue, QueueView, Struct, StructDef, Structs, StructsDialog, StructsQueue, Tech, TechDef, Techs, TechsDialog, TechsQueue, Unit, UnitDef, Units, UnitsDialog, UnitsQueue, Upgrade, Utils, console;
+var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
   ctor.prototype = parent.prototype;
   child.prototype = new ctor;
   child.__super__ = parent.prototype;
   return child;
-};
+}, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 GameState = {
   "default": "browse",
   states: ["browse", "move", "attack"]
@@ -30,6 +30,8 @@ PlayerView = Backbone.View.extend({
   }
 });
 MapView = (function() {
+  __extends(MapView, Backbone.View);
+  MapView.prototype.element = 'map_canvas';
   function MapView(map) {
     this.map = map;
     this.controller = null;
@@ -43,7 +45,7 @@ MapView = (function() {
   };
   MapView.prototype.doDrawing = function() {
     var mapDiv;
-    mapDiv = document.getElementById('map_canvas');
+    mapDiv = document.getElementById(this.element);
     if (!this.center_lat) {
       this.center_lat = this.default_center_lat;
     }
@@ -293,7 +295,8 @@ CityMarkerIcon = (function() {
 GenericDialog = Backbone.View.extend({
   initialize: function(type) {
     this.type = type;
-    return this.selector = "#" + this.type + "Dialog-tmpl";
+    this.selector = "#" + this.type + "Dialog-tmpl";
+    return console.log("selector: ", this.selector);
   },
   afterRender: function() {
     if (this.initializeTabs) {
@@ -341,7 +344,7 @@ CityDialog = GenericDialog.extend({
     return $(".bubbleBg .dialog .city").append(content);
   },
   initializeTabs: function() {
-    return $("#bubbleEvents").bind("dialog_content_changed", __bind(function() {
+    return BubbleEvents.bind("dialog_content_changed", __bind(function() {
       return this.initTabs();
     }, this));
   },
@@ -561,15 +564,6 @@ MapMove = (function() {
   };
   return MapMove;
 })();
-Definitions = (function() {
-  function Definitions() {}
-  Definitions.prototype.get = function(fn) {
-    return $.getJSON("/definitions", function(data) {
-      return fn(data);
-    });
-  };
-  return Definitions;
-})();
 MarkersUpdater = (function() {
   function MarkersUpdater(map) {
     this.map = map;
@@ -640,6 +634,14 @@ String.prototype.singularize = function() {
 String.prototype.capitalize = function() {
   return "" + (this[0].toUpperCase()) + this.slice(1);
 };
+Utils.geocode = function(city, fn) {
+  return $.get("/cities/" + city, function(data) {
+    var lat, lng;
+    lat = data.location.latitude;
+    lng = data.location.longitude;
+    return fn(lat, lng);
+  });
+};
 Utils.parseCoords = function(string) {
   var split;
   split = string.replace(/\s/, '').split(",");
@@ -689,17 +691,42 @@ LLRange = (function() {
   };
   return LLRange;
 })();
+MapEvents = (function() {
+  __extends(MapEvents, Backbone.Events);
+  function MapEvents() {
+    MapEvents.__super__.constructor.apply(this, arguments);
+  }
+  return MapEvents;
+})();
+BubbleEvents = (function() {
+  __extends(BubbleEvents, Backbone.Events);
+  function BubbleEvents() {
+    BubbleEvents.__super__.constructor.apply(this, arguments);
+  }
+  return BubbleEvents;
+})();
+Definitions = (function() {
+  function Definitions() {}
+  Definitions.prototype.get = function(fn) {
+    return $.getJSON("/definitions", function(data) {
+      console.log('OHOOOOOOO');
+      console.log(data);
+      return fn(data);
+    });
+  };
+  return Definitions;
+})();
 Definition = (function() {
   function Definition(definitions) {
-    this.definitions = this.load(definitions);
+    this.definitions = this.load();
   }
-  Definition.prototype.load = function(definitions) {
+  Definition.prototype.load = function() {
     var definition, defs, _i, _len, _ref;
     defs = [];
-    _ref = definitions[this.type.pluralize()];
+    _ref = this.definitions[this.type.pluralize()];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       definition = _ref[_i];
-      defs.push(definition["definition"]);
+      defs.push(definition);
     }
     return defs;
   };
@@ -740,7 +767,7 @@ AttackType = (function() {
       case 1:
         return "anti-vehicle";
       case 2:
-        return "????";
+        return "anti-troop";
       default:
         return console.log("Error: Attack type '" + this.type + "' not found!");
     }
@@ -794,6 +821,7 @@ TechsQueue = (function() {
   return TechsQueue;
 })();
 Map = (function() {
+  __extends(Map, Backbone.View);
   function Map() {
     this.markerZoomMin = 8;
     this.max_simultaneous_markers = 600;
@@ -826,7 +854,7 @@ Map = (function() {
         markers.push(marker);
       }
       this.drawMarkers(markers);
-      return $("#mapEvents").trigger("markers_loaded");
+      return MapEvents.trigger("markers_loaded");
     }, this));
   };
   Map.prototype.markersUpdateStart = function() {
@@ -842,13 +870,13 @@ Map = (function() {
   Map.prototype.restoreState = function() {
     this.last_location_id = parseInt(localStorage.last_location_id);
     if (this.last_location_id) {
-      return $("#mapEvents").bind("markers_loaded", __bind(function() {
+      return MapEvents.bind("markers_loaded", __bind(function() {
         var marker, _i, _len, _ref, _results;
         _ref = this.markers;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           marker = _ref[_i];
-          _results.push(marker.attributes.id === this.last_location_id ? (this.current_dialog = this.openDialogView(marker), console.log(this.current_dialog), google.maps.event.clearListeners(marker, "click"), $("#mapEvents").unbind("markers_loaded")) : void 0);
+          _results.push(marker.attributes.id === this.last_location_id ? (this.current_dialog = this.openDialogView(marker), console.log(this.current_dialog), google.maps.event.clearListeners(marker, "click"), MapEvents.unbind("markers_loaded")) : void 0);
         }
         return _results;
       }, this));
@@ -1040,7 +1068,7 @@ Debug = (function() {
         console.log(marker.type);
         if (marker.type === "city") {
           this.map.openDialog(marker);
-          $("#bubbleEvents").bind("dialog_content_changed", function() {
+          BubbleEvents.bind("dialog_content_changed", function() {
             return marker.dialog_view.switchTab("city_structs");
           });
         }
@@ -1054,6 +1082,14 @@ $("#latLng").bind("submit", function() {
   var coords;
   coords = $(this).find("input").val();
   coords = Utils.parseCoords(coords);
-  map.center(coords[0], coords[1]);
+  game.map.center(coords[0], coords[1]);
+  return false;
+});
+$("#findCity").bind("submit", function() {
+  var city;
+  city = $(this).find("input").val();
+  Utils.geocode(city, function(lat, lng) {
+    return game.map.center(lat, lng);
+  });
   return false;
 });

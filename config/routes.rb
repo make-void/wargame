@@ -21,6 +21,8 @@ Wargame::Application.routes.draw do
   get "/definitions", to: "definitions#index"
   get "/definitions/:type", to: "definitions#show"
   
+  get "/cities/:city", to: "cities#show"
+  
 #  get "/game", to: "game#show", as: :game
   resource :game, controller: :game
 

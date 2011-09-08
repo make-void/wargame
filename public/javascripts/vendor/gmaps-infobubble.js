@@ -849,7 +849,7 @@ InfoBubble.prototype.onAdd = function() {
     panes.floatShadow.appendChild(this.bubbleShadow_);
   }
   // console.log("triggering from infobubble")
-  $("#bubbleEvents").trigger("dialog_content_changed")
+  BubbleEvents.trigger("dialog_content_changed")
 };
 InfoBubble.prototype['onAdd'] = InfoBubble.prototype.onAdd;
 

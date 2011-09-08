@@ -6,6 +6,7 @@ GenericDialog  = Backbone.View.extend(
   
   initialize: (@type) ->
     @selector = "##{@type}Dialog-tmpl"
+    console.log "selector: ", @selector    
     
   afterRender: ->  
     this.initializeTabs() if this.initializeTabs

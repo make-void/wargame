@@ -19,7 +19,7 @@ describe "Definitions" do
       data = get_json "/definitions/#{key}"
       # puts "DATA: #{data}"
       data.should be_a(Array)
-      data.first["definition"].should be_a(Hash)
+      data.first.should be_a(Hash)
     end
   end
   

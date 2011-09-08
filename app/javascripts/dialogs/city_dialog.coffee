@@ -19,7 +19,7 @@ CityDialog  = GenericDialog.extend(
   # tabs
   
   initializeTabs: ->
-    $("#bubbleEvents").bind("dialog_content_changed", =>
+    BubbleEvents.bind("dialog_content_changed", =>
       this.initTabs()
     )
     

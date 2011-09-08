@@ -11,6 +11,10 @@
   %p #{DB::Location.count} locations, #{DB::City.count} cities
   
   #centerMap.tool
+    %form#findCity
+      %label{ for: "find_city" } city:
+      %input{ type: "text", name: "find_city", id: "find_city" }
+      %input{ type: "submit", value: "Go" }
     %form#latLng
       %label{ for: "lat_lng" } lat, lng: 
       %input{ type: "text", name: "lat_lng", id: "lat_lng" }

@@ -1,4 +1,4 @@
-class Map
+class Map extends Backbone.View
   
   constructor: ->
     @markerZoomMin = 8
@@ -30,7 +30,7 @@ class Map
         markers.push marker
 
       this.drawMarkers markers
-      $("#mapEvents").trigger("markers_loaded")
+      MapEvents.trigger("markers_loaded")
       #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
     )    
     
@@ -40,7 +40,6 @@ class Map
     
   center: (lat, lng) ->
     latLng = new google.maps.LatLng(lat, lng)
-    # @map.setCenter latLng
     @map.panTo latLng
     # panBy xy
     # panToBounds latLngBounds
@@ -49,13 +48,13 @@ class Map
   restoreState: ->
     @last_location_id = parseInt localStorage.last_location_id
     if @last_location_id
-      $("#mapEvents").bind("markers_loaded", =>
+      MapEvents.bind("markers_loaded", =>
         for marker in @markers
           if marker.attributes.id == @last_location_id
             @current_dialog = this.openDialogView(marker)
             console.log(@current_dialog) # REMOVE ME
             google.maps.event.clearListeners(marker, "click")
-            $("#mapEvents").unbind("markers_loaded")
+            MapEvents.unbind("markers_loaded")
       )
       
     # others
