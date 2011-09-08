@@ -1,7 +1,8 @@
 module TasksUtils
   
   def mysql_pass
-    db_config = YAML.load( File.open("#{Rails.root}/config/database.yml") )["development"]
+    env = ENV["RACK_ENV"] || "development"
+    db_config = YAML.load( File.open("#{Rails.root}/config/database.yml") )[env]
     db_config["password"] || ""
   end
 

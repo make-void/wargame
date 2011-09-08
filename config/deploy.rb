@@ -66,6 +66,11 @@ namespace :db do
     run "mysql -u root --password=final33man -e 'CREATE DATABASE IF NOT EXISTS #{application}_production;'"
   end
   
+  desc "refine database"
+  task :refine do
+    run "cd #{current_path}; ruby db/refine.rb production"
+  end
+  
   desc "Seed database"
   task :seeds do
     run "cd #{current_path}; RAILS_ENV=production rake db:seeds"
