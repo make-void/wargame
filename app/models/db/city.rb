@@ -19,6 +19,18 @@ module DB # Database
     after_initialize :update_city_if_needed #TODO -> Check if it's enought to handle like this
     before_create { self.last_update_at = Time.now }
     
+    def overall_power
+      count = 0
+      units.each{|x| count += (x.power * x.number) }
+      return count
+    end
+    
+    def overall_defense
+      count = 0
+      units.each{|x| count += (x.defense * x.number) }
+      return count    
+    end
+    
     # hash = {:gold => x, :steel => y, :oil => z}
     def has_resources?( hash )
       gold = self.gold_stored >= hash[:gold]

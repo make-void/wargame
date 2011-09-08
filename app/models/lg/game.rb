@@ -1,5 +1,9 @@
 module LG
   module Game
+    
+    def self.get_base_infos_for_player( player_id )
+      
+    end
    
     def self.get_all_base_infos()      
       return { :units => fetch_units(), :researches => fetch_researches(), :structures => fetch_structures() }

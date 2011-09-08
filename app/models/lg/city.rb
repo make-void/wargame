@@ -22,6 +22,27 @@ module LG
       if city_entry.player_id == player_entry.player_id
         #It's My Damn City... Show all Data
         ally = player_entry.alliance
+        
+        city_queue = LG::Queue::CityQueue.get( city_id, logged_user_id )
+        
+        return {:errors => errors } if city_queue.errors.size != 0
+        
+        building_hash = {}
+        city_entry.buildings.map do |b|
+          building_hash[b.structure_id] = { 
+            :level => b.level,
+            :upgade_cost => {
+              :gold => b.next_lev_gold_cost,
+              :steel => b.next_lev_steel_cost,
+              :oil => b.next_lev_oil_cost
+            }
+          }
+        end
+        unit_hash = {}
+        city_entry.units.map do |u|
+          unit_hash[b.unit_id] = {:number => u.number}
+        end
+        
         v = {
           :name => city_entry.name,
           :ccode => city_entry.ccode,
@@ -48,13 +69,18 @@ module LG
             :steel => city_entry.steel_stored,
             :oil => city_entry.oil_stored
           },
-          :queues => { 
-            :unit => "To Be Implemented",
-            :research => "To Be Implemented",
-            :building => "To Be Implemented"
+          :buildings => building_hash,
+          :units => {
+            :overall_power => city_entry.overall_power,
+            :overall_defence => city_entry.overall_defense,
+            :units => unit_hash
           },
+          :queues => city_queue.get,
           :errors => errors
         }
+        
+        #TODO -> Add infos about Buildings & Soldiers
+        
       else #It's not My City! HIDE Data
         enemy_player = city_entry.player
         ally = enemy_player.alliance
@@ -69,6 +95,10 @@ module LG
           :ally => {
             :name => ally.name,
             :alliance_id => ally.alliance_id
+          },
+          :battle_data => {
+            :overall_power => city_entry.overall_power,
+            :overall_defence => city_entry.overall_defense
           },
           :errors => errors
         }

@@ -76,7 +76,8 @@ module LG
     def overall_defense
       count = 0
       @units.each{|x| count += (x.defense * x.number) }
-      return count    end
+      return count    
+    end
     
     def refresh!
       @army = DB::Army.find(@army_id)
