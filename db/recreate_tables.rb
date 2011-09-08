@@ -1,6 +1,7 @@
 qs = queries = []
 
 
+qs << "DROP TABLE IF EXISTS bdrb_job_queues;"
 qs << "DROP TABLE IF EXISTS wg_struct_queue;"         
 qs << "DROP TABLE IF EXISTS wg_tech_queue;"            
 qs << "DROP TABLE IF EXISTS wg_unit_queue;"            
@@ -507,6 +508,32 @@ CREATE TABLE `wg_struct_queue` (
     
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
+
+qs << "CREATE TABLE `bdrb_job_queues` (
+
+  /* TABLE USED BY BackgrounDRB gem */
+  
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `args` text COLLATE utf8_unicode_ci,
+  `worker_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `worker_method` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `job_key` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `taken` int(11) DEFAULT NULL,
+  `finished` int(11) DEFAULT NULL,
+  `timeout` int(11) DEFAULT NULL,
+  `priority` int(11) DEFAULT NULL,
+  `submitted_at` datetime DEFAULT NULL,
+  `started_at` datetime DEFAULT NULL,
+  `finished_at` datetime DEFAULT NULL,
+  `archived_at` datetime DEFAULT NULL,
+  `tag` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `submitter_info` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `runner_info` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `worker_key` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `scheduled_at` datetime DEFAULT NULL,
+  
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;"
 
      ####################################
      #             VIEWS                #

@@ -42,6 +42,10 @@ GEM
     activesupport (3.0.10)
     addressable (2.2.6)
     arel (2.0.10)
+    backgroundrb-rails3 (1.1.5)
+      chronic (>= 0.2.3)
+      packet (>= 0.1.15)
+      rails (>= 3.0.0)
     builder (2.1.2)
     capybara (1.0.1)
       mime-types (>= 1.16)
@@ -52,6 +56,7 @@ GEM
       xpath (~> 0.1.4)
     childprocess (0.2.1)
       ffi (~> 1.0.6)
+    chronic (0.6.3)
     composite_primary_keys (3.1.10)
       activerecord (>= 3.0.5, ~> 3.0.0)
     diff-lcs (1.1.2)
@@ -97,6 +102,7 @@ GEM
     mysql2 (0.2.13)
     newrelic_rpm (3.1.1)
     nokogiri (1.5.0)
+    packet (0.1.15)
     polyglot (0.3.2)
     rack (1.2.3)
     rack-mount (0.6.14)
@@ -153,6 +159,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  backgroundrb-rails3
   capybara
   composite_primary_keys
   exception_notification!

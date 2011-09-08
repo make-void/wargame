@@ -15,6 +15,17 @@
 - ruby db/refine.rb  (per il db con le locazioni importate da db/european_cities.txt)
 - rails server
 
+
+- TO RUN backgrounDRB server:
+ bundle exec script/backgroundrb start
+- TO STOP backgrounDRB server:
+ bundle exec script/backgroundrb stop
+ 
+- TO START Workers of backgrounDRB in the rails console type:
+  MiddleMan.all_worker_info
+  
+- Workers for now, just log informations in the log/backgroundrb_11006.log file
+
 gg!
 ### BUGFIX:
 
