@@ -47,3 +47,8 @@ module Wargame
     end
   end
 end
+
+if `whoami`.strip == "makevoid" && Rails.env == "development"
+  puts "Turning off ActiveRecord logger, remember to re-enable it"
+  ActiveRecord::Base.logger = Logger.new "/dev/null"
+end

@@ -1,6 +1,6 @@
 class DialogView
   constructor: (@map, @marker) ->
-    @diag = @marker.dialog
+    @marker_view = @marker.view
     @marker.dialog_view = this
     
   open: ->
@@ -31,7 +31,9 @@ class DialogView
 
     
   doRender: ->      
-    content = @diag.getContent()
+    content = @marker_view.dialog.getContent()
+    console.log "marker: ", @marker
+    console.log "cont: ", content
     this.build(content)
     this.open()
     this.bindEvents()
@@ -61,6 +63,7 @@ class DialogView
   
   close: ->
     @dialog.close()
+    localStorage.last_location_id = null
   
   switchTab: (tab) ->
     $(".bubble .tabs .#{tab}").trigger "click"

@@ -31,7 +31,6 @@ class MapView
       }
     })
     @map.controller = @controller
-    @map.view = this
   
   get_center_and_zoom: ->
     #console.log(localStorage.center_lat, localStorage.center_lng, localStorage.zoom)

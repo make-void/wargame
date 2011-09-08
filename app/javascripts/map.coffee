@@ -7,6 +7,7 @@ class Map
     # @max_simultaneous_markers = 100 # if iPhone v <= 3 || Android v <= 2
     @dialogs = []
     @current_dialog = null
+    @last_location_id = null
     @markers = []
     @map = null
     
@@ -29,7 +30,6 @@ class Map
         markers.push marker
 
       this.drawMarkers markers
-      console.log("dopo")
       $("#mapEvents").trigger("markers_loaded")
       #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
     )    
@@ -47,19 +47,21 @@ class Map
     # infos: http://code.google.com/apis/maps/documentation/javascript/reference.html#LatLngBounds
 
   restoreState: ->
-    @last_marker_id = parseInt localStorage.last_marker_id
-    if @last_marker_id
+    @last_location_id = parseInt localStorage.last_location_id
+    if @last_location_id
       $("#mapEvents").bind("markers_loaded", =>
         for marker in @markers
-          if marker.attributes.id == @last_marker_id
-            this.initDialog(marker)
-            console.log marker
+          if marker.attributes.id == @last_location_id
+            @current_dialog = this.openDialogView(marker)
+            console.log(@current_dialog) # REMOVE ME
+            google.maps.event.clearListeners(marker, "click")
+            $("#mapEvents").unbind("markers_loaded")
       )
       
     # others
     
   saveDialogState: (marker) ->
-    localStorage.last_marker_id = marker.attributes.id
+    localStorage.last_location_id = marker.attributes.id
   
   # "private"
   

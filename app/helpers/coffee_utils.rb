@@ -62,7 +62,9 @@ module CoffeeUtils
   end
 
   def do_compilation
-    puts `#{cd_js} coffee -j #{output_dir}/main.js -b  -c #{coffee_files_string}`
+    out = `#{cd_js} coffee -j #{output_dir}/main.js -b  -c #{coffee_files_string} 2>&1`
+    raise "ERROR compiling coffeescript:\n#{out}" if out =~ /Parse error on line/i
+    puts out
   end
 
   

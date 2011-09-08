@@ -57,12 +57,13 @@ class MarkerView
     
     # TODO: pass more datas
     
+    console.log "data: ", @data.type
     if @data.type == "army"
       @marker.model = new Army @data
-      @marker.dialog = new ArmyDialog { model: @marker.model }
+      @dialog = @marker.dialog = new ArmyDialog { model: @marker.model }
     else  
       @marker.model = new City @data
-      @marker.dialog = new CityDialog { model: @marker.model }
+      @dialog = @marker.dialog = new CityDialog { model: @marker.model }
     
     #console.log(latLng)
     this

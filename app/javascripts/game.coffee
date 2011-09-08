@@ -47,7 +47,8 @@ class Game
   initPlayerView: (player) ->
     @current_player = new Player player
     @current_playerView = new PlayerView { model: @current_player }
-    $("#player").append @current_playerView.render().el
+    @current_playerView.render()
+
 
   initNav: ->
     $("#nav li").hover( ->

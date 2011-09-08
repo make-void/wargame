@@ -20,6 +20,7 @@ AttackState = {
   states: ["wait", "choose", "selected"]
 };
 PlayerView = Backbone.View.extend({
+  el: $("#player"),
   render: function() {
     var content, haml;
     haml = Haml($("#playerView-tmpl").html());
@@ -60,8 +61,7 @@ MapView = (function() {
         position: google.maps.ControlPosition.RIGHT_TOP
       }
     });
-    this.map.controller = this.controller;
-    return this.map.view = this;
+    return this.map.controller = this.controller;
   };
   MapView.prototype.get_center_and_zoom = function() {
     if (localStorage.center_lat && localStorage.center_lng) {
@@ -134,7 +134,7 @@ DialogView = (function() {
   function DialogView(map, marker) {
     this.map = map;
     this.marker = marker;
-    this.diag = this.marker.dialog;
+    this.marker_view = this.marker.view;
     this.marker.dialog_view = this;
   }
   DialogView.prototype.open = function() {
@@ -163,7 +163,9 @@ DialogView = (function() {
   };
   DialogView.prototype.doRender = function() {
     var content;
-    content = this.diag.getContent();
+    content = this.marker_view.dialog.getContent();
+    console.log("marker: ", this.marker);
+    console.log("cont: ", content);
     this.build(content);
     this.open();
     this.bindEvents();
@@ -188,7 +190,8 @@ DialogView = (function() {
     });
   };
   DialogView.prototype.close = function() {
-    return this.dialog.close();
+    this.dialog.close();
+    return localStorage.last_location_id = null;
   };
   DialogView.prototype.switchTab = function(tab) {
     return $(".bubble .tabs ." + tab).trigger("click");
@@ -240,14 +243,15 @@ MarkerView = (function() {
     marker.attributes = this.data;
     marker.view = this;
     this.marker.unique_id = marker.__gm_id;
+    console.log("data: ", this.data.type);
     if (this.data.type === "army") {
       this.marker.model = new Army(this.data);
-      this.marker.dialog = new ArmyDialog({
+      this.dialog = this.marker.dialog = new ArmyDialog({
         model: this.marker.model
       });
     } else {
       this.marker.model = new City(this.data);
-      this.marker.dialog = new CityDialog({
+      this.dialog = this.marker.dialog = new CityDialog({
         model: this.marker.model
       });
     }
@@ -795,6 +799,7 @@ Map = (function() {
     this.max_simultaneous_markers = 600;
     this.dialogs = [];
     this.current_dialog = null;
+    this.last_location_id = null;
     this.markers = [];
     this.map = null;
   }
@@ -821,7 +826,6 @@ Map = (function() {
         markers.push(marker);
       }
       this.drawMarkers(markers);
-      console.log("dopo");
       return $("#mapEvents").trigger("markers_loaded");
     }, this));
   };
@@ -836,22 +840,22 @@ Map = (function() {
     return this.map.panTo(latLng);
   };
   Map.prototype.restoreState = function() {
-    this.last_marker_id = parseInt(localStorage.last_marker_id);
-    if (this.last_marker_id) {
+    this.last_location_id = parseInt(localStorage.last_location_id);
+    if (this.last_location_id) {
       return $("#mapEvents").bind("markers_loaded", __bind(function() {
         var marker, _i, _len, _ref, _results;
         _ref = this.markers;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           marker = _ref[_i];
-          _results.push(marker.attributes.id === this.last_marker_id ? (this.initDialog(marker), console.log(marker)) : void 0);
+          _results.push(marker.attributes.id === this.last_location_id ? (this.current_dialog = this.openDialogView(marker), console.log(this.current_dialog), google.maps.event.clearListeners(marker, "click"), $("#mapEvents").unbind("markers_loaded")) : void 0);
         }
         return _results;
       }, this));
     }
   };
   Map.prototype.saveDialogState = function(marker) {
-    return localStorage.last_marker_id = marker.attributes.id;
+    return localStorage.last_location_id = marker.attributes.id;
   };
   Map.prototype.drawMarkers = function(markers) {
     var marker, _i, _len, _results;
@@ -999,7 +1003,7 @@ Game = (function() {
     this.current_playerView = new PlayerView({
       model: this.current_player
     });
-    return $("#player").append(this.current_playerView.render().el);
+    return this.current_playerView.render();
   };
   Game.prototype.initNav = function() {
     return $("#nav li").hover(function() {
