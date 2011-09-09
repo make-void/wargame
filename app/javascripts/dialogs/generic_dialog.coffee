@@ -4,24 +4,22 @@
 
 GenericDialog  = Backbone.View.extend(  
   
-  initialize: (@type) ->
-    @selector = "##{@type}Dialog-tmpl"
-    console.log "selector: ", @selector    
-    
   afterRender: ->  
     this.initializeTabs() if this.initializeTabs
     this.initializeOverview() if this.initializeOverview
     
   getContent: ->
-    if @rendered
-      this.el
-    else
-      this.render().el
+    # if @rendered
+    #   this.el
+    # else
+    this.render().el
     
   render: ->  
-    console.log "ERROR: can't create dialog with null selector" unless @selector
+    @selector = "##{@type}Dialog-tmpl"
+    console.log "Error: can't create dialog with null selector" unless @selector
+    console.log "Error: can't create dialog with null element" if $(@selector).length == 0
     haml = Haml $(@selector).html()
-    # console.log("model: ", @selector, " - ", @model)
+    # console.log("model: ", @selector, " - ", @model, "-", @type)
     content = haml this.model.attributes
     @rendered = true
     $(this.el).html content

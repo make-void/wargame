@@ -3,15 +3,14 @@ class Definitions # collection
     
   get: (fn) ->
     $.getJSON("/definitions", (data) ->
-      console.log 'OHOOOOOOO'
-      console.log data
       fn(data)
     )
 
 
 class Definition
-  constructor: (definitions) ->
+  constructor: (@definitions) ->
     @definitions = this.load()
+    @type = null
     
   load: ->
     defs = []

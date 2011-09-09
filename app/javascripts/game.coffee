@@ -14,11 +14,9 @@ class Game
   initModels: ->  
     definitions = new Definitions()
     definitions.get( (defs) =>
-      @struct_def  = new StructDef (defs)
+      @struct_def  = new StructDef(defs)   
       @tech_def    = new TechDef   (defs)
-      @unit_def    = new UnitDef   (defs)    
-      # console.log @unit_def
-      
+      @unit_def    = new UnitDef   (defs)       
       # TODO: insert event trigger here to listen somewhere afterwards 
     )
     # types = ["struct", "tech", "unit"]
@@ -31,7 +29,6 @@ class Game
   
   initMap: ->  
     @map.draw()
-    # @map.dialogs()
     @map.loadMarkers()
     # @map.clickInfo()
     @map.markersUpdateStart()

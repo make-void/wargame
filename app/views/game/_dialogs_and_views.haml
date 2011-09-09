@@ -5,6 +5,12 @@
     %p 
       Queuing the queue....
       
+%script{ type: "text/template", id: "debugDialog-tmpl" }
+  :plain
+    .dialog .debug
+      %p 
+        debug the debuggable
+      
 %script{ type: "text/template", id: "playerView-tmpl" }
   :plain
     %p 
@@ -22,6 +28,7 @@
       
     .dialog.army
       %p.player.name= player.name
+      commands
       .commands
         
       

@@ -1,7 +1,11 @@
 CityDialog  = GenericDialog.extend(
+
+  
+  element: '#cityDialog-tmpl'
+  
   initialize: ->
     @type = "city"
-    GenericDialog.prototype.initialize @type# how to call super in js
+    # GenericDialog.prototype.initialize @type# how to call super in js
     
   label: ->
     city.name
@@ -27,11 +31,8 @@ CityDialog  = GenericDialog.extend(
   initTabs: ->
     self = this
     
-    $(".bubble .nav li").bind("click", ->
-      # console.log $(this).getClass()
-      console.log "bound"
+    $(this.el).find(".nav li").bind("click", ->
       type = $(this).attr("class")
-      # console.log "clicked on tab: ", type
       self.initTab type
     )  
   
@@ -49,10 +50,11 @@ CityDialog  = GenericDialog.extend(
       when "city_overview"
         new CityOverview model: @model
       when "debug"
-        console.log "no debug atm"
+        new DebugDialog model: @model # { attributes: {} } # @model
         
     if dialog
       content = dialog.render().el
+      console.log "content: ", content
       $(".dialog").replaceWith content
       
 )

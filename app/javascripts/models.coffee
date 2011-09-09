@@ -21,3 +21,4 @@ class UnitsQueue extends Queue
 class TechsQueue extends Queue
 
 
+class Marker extends Backbone.Model

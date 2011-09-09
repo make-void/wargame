@@ -17,7 +17,7 @@ class Debug
         if marker.type == "city"
           @map.openDialog marker
           BubbleEvents.bind("dialog_content_changed", ->
-            marker.dialog_view.switchTab("city_structs")
+            marker.bubble_view.switchTab("city_structs")
           )
           
         return 

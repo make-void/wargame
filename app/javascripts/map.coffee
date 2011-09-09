@@ -5,7 +5,6 @@ class Map extends Backbone.View
     @max_simultaneous_markers = 600
     # @max_simultaneous_markers = 200 # if iPad || iPhone v => 4 || Android v >= 3
     # @max_simultaneous_markers = 100 # if iPhone v <= 3 || Android v <= 2
-    @dialogs = []
     @current_dialog = null
     @last_location_id = null
     @markers = []
@@ -24,12 +23,15 @@ class Map extends Backbone.View
     this.markersCleanMax()
 
     center = @map.getCenter()    
+    
+    # TODO: use class Markers extends Backbone.Collection
+    
     $.getJSON("/locations/#{center.lat()}/#{center.lng()}", (data) =>
-      markers = []
-      for marker in data.locations
-        markers.push marker
+      locations = []
+      for location in data.locations
+        locations.push location
 
-      this.drawMarkers markers
+      this.drawMarkers locations
       MapEvents.trigger("markers_loaded")
       #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
     )    
@@ -51,15 +53,14 @@ class Map extends Backbone.View
       MapEvents.bind("markers_loaded", =>
         for marker in @markers
           if marker.attributes.id == @last_location_id
-            @current_dialog = this.openDialogView(marker)
-            console.log(@current_dialog) # REMOVE ME
-            google.maps.event.clearListeners(marker, "click")
+            @current_dialog = this.openBubbleView(marker) # TODO: fix the bug: try to not reopen the bubble but only render the dialog content
+            google.maps.event.clearListeners(marker.view.markerIcon, "click")
             MapEvents.unbind("markers_loaded")
       )
       
     # others
     
-  saveDialogState: (marker) ->
+  saveDialogState: (marker) ->  
     localStorage.last_location_id = marker.attributes.id
   
   # "private"
@@ -76,54 +77,49 @@ class Map extends Backbone.View
 
     @markers.push this.initMarker(data) if draw
 
-  same_city: (mark, data) ->  
-    is_a_city = data.city && mark.city
-    is_a_city && mark.city.id == data.city.id
-    
-  same_army: (mark, data) ->  
-    is_an_army = data.army && mark.army
-    is_an_army && mark.army.id == data.army.id
+
+  initMarker: (data) -> ###############
+    markerView = new MarkerView(this, data)
+    markerIcon = markerView.draw().markerIcon # you can access the view with marker.view
+    markerIcon.setMap @map
+    this.initDialog(markerView.marker)
+    markerView.marker
+
     
 
-  initMarker: (data) ->
-    markerView = new MarkerView(this, data)
-    marker = markerView.draw().marker # you can access the view with marker.view
-    marker.setMap @map
-    marker.marker_view = markerView
-    this.initDialog(marker)
-    marker
 
   initDialog: (marker) ->
-    google.maps.event.addListener(marker, 'click', =>
+    google.maps.event.addListener(marker.view.markerIcon, 'click', =>
       is_same_dialog = (dialog) -> dialog.marker.unique_id != marker.unique_id
+      # console.log(marker, @current_dialog.marker)
+      # console.log("uid: ", @current_dialog.marker.unique_id, " - ",  marker.unique_id)
       if !@current_dialog || is_same_dialog(@current_dialog)
-        @current_dialog = this.openDialogView(marker)
+        @current_dialog = this.openBubbleView(marker)
         this.saveDialogState(marker)
     )
       
-  openDialogView: (marker) ->        
+  openBubbleView: (marker) ->        
     @current_dialog.close() if @current_dialog
 
-    dialogView = new DialogView(@map, marker)        
-    marker.dialog_view = dialogView
-    dialogView.doRender() # calls .open() internally    
+    bubbleView = new BubbleView(@map, marker)      
+    bubbleView.doRender() # calls .open() internally    
+    
     
     # ...
     # showSwitchButton()
-    
-    # console.log(@markers)
     for mark in @markers    
       same_location = (m1, m2) -> 
         m1.location_id == m2.location_id
       if !_.isEqual(marker, mark) && same_location(mark, marker)
-        dialogView.showSwitchButton(mark, this.openDialog) # executes openDialog internally
+        mark.markers = @markers
+        bubbleView.showSwitchButton(mark, this.openBubbleView) # executes openDialog internally
     
     # ...
     
     marker.dialog.afterRender() 
-    this.dialogs.push dialogView
-        
-    dialogView
+    
+    
+    bubbleView
 
 
   markersCleanMax: ->
@@ -143,7 +139,17 @@ class Map extends Backbone.View
     google.maps.event.addListener(@map, 'click', (evt) ->
       # console.log evt.latLng.lat(), evt.latLng.lng()
     )    
-    
+
+
+
+
+  same_city: (mark, data) ->  
+    is_a_city = data.city && mark.city
+    is_a_city && mark.city.id == data.city.id
+
+  same_army: (mark, data) ->  
+    is_an_army = data.army && mark.army
+    is_an_army && mark.army.id == data.army.id    
 
   # exceptions
 

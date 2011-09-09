@@ -1,13 +1,13 @@
-class DialogView
+class BubbleView# extends Backbone.View # TODO: make it a backbone model
   constructor: (@map, @marker) ->
-    @marker_view = @marker.view
-    @marker.dialog_view = this
+    @marker.bubble_view = this
     
   open: ->
-    @dialog.open @map, @marker
+    console.log @marker
+    @bubble.open @map, @marker.view.markerIcon
     
   build: (content) ->
-    @dialog = new InfoBubble({
+    @bubble = new InfoBubble({
       # map: map,
       # position: new google.maps.LatLng(-35, 151),
       content: content,
@@ -30,10 +30,9 @@ class DialogView
     })
 
     
-  doRender: ->      
-    content = @marker_view.dialog.getContent()
-    console.log "marker: ", @marker
-    console.log "cont: ", content
+  doRender: ->   
+    # content = @marker.dialog.getContent()
+    content = @marker.dialog.render().el
     this.build(content)
     this.open()
     this.bindEvents()
@@ -41,20 +40,19 @@ class DialogView
     this
 
   bindEvents: ->
-    $(@dialog.content).find(".closeButton").bind("click", =>
+    $(@bubble.content).find(".closeButton").bind("click", =>
       this.close()
-      this.rebind()
     )
   
   rebind: ->
-    google.maps.event.addListener(@marker, 'click', =>
+    google.maps.event.addListener(@marker.view.markerIcon, 'click', =>
       this.open()
     )
       
   # actions
   
   showSwitchButton: (marker, fun) ->
-    $(@dialog.content).find(".switchButton").css({display: "block"})
+    $(@bubble.content).find(".switchButton").css({display: "block"})
       .html("Switch to Army")
       .bind("click", ->
         fun(marker)
@@ -62,8 +60,9 @@ class DialogView
     
   
   close: ->
-    @dialog.close()
+    @bubble.close()
     localStorage.last_location_id = null
+    this.rebind()
   
   switchTab: (tab) ->
     $(".bubble .tabs .#{tab}").trigger "click"

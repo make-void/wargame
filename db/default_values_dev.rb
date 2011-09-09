@@ -51,8 +51,9 @@ module DefaultValuesDev
                       is_moving: 0
     end
 
-    latLng = { latitude: 43.683333, longitude: 11.25 }
+    latLng = { latitude: 43.783333, longitude: 11.35 } # a giro su pei colli
     impruneta = DB::Location.where(latLng).first
+    impruneta = DB::Location.create! latLng unless impruneta
     if impruneta
       army_3 = DB::Army.create! location_id: impruneta.id,
                       player_id: cor3y.id,
