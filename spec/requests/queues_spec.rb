@@ -36,16 +36,16 @@ describe "Queues" do
   it "index" do
     # GET /players/me/cities/:id/queues    
     data = get_json "/players/me/cities/#{@city.id}/queues"
-    data.keys.should == [:units, :structs, :techs, :errors]
-    struct = data[:structs].first.symbolize_keys
+    struct = data.first.symbolize_keys
     struct[:city_id].should be(@city.id)
     struct[:structure_id].should be(@structure_type.id)
     struct[:level].should be(@level)
+    struct[:type].should == "struct"
     # structs[:time_needed].should be(?)        
   end
   
   it "create" do
-    # POST /players/me/queues/:type
+    # POST players/me/cities/:city_id/queues/:type/:id
     type = "struct"
     type_id = DB::Structure::Definition.last.id
     data = post_json "/players/me/cities/#{@city.id}/queues/#{type}/#{type_id}"

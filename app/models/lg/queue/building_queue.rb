@@ -49,7 +49,7 @@ module LG
                                                                      level_or_number, 
                                                                      DB::Research::Upgrade.find_building_speed_research(city_object.player_id) 
                                                                    )
-            if @items.empty? #first item in queue!
+            if @items.nil? || @items.empty? #first item in queue!
               a.start( DB::Research::Upgrade.find_building_speed_research(city_object.player_id) )
               started = true
             else
@@ -74,10 +74,10 @@ module LG
         return obj if !obj.nil?
         return build_base_object( hash_values )
       end
-      def get_base_object( structure_id, city_id, player_id )
+      def get_base_object( hash_values )
         return DB::Structure::Building.find(:first, :conditions => hash_values )
       end
-      def build_base_object( structure_id, city_id, player_id )
+      def build_base_object( hash_values )
         return DB::Structure::Building.create(  hash_values.merge({:level => 0}) )
       end
       

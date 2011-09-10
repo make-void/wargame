@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, AttackState, AttackType, BubbleEvents, BubbleView, City, CityDialog, CityMarkerIcon, CityOverview, Debug, DebugDialog, Definition, Definitions, Game, GameState, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, Marker, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, Queue, QueueView, Struct, StructDef, Structs, StructsDialog, StructsQueue, Tech, TechDef, Techs, TechsDialog, TechsQueue, Unit, UnitDef, Units, UnitsDialog, UnitsQueue, Upgrade, Utils, console;
+var Alliance, Army, ArmyDialog, AttackState, AttackType, BubbleEvents, BubbleView, City, CityDialog, CityMarkerIcon, CityOverview, Debug, DebugDialog, Definition, Definitions, Game, GameState, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, Marker, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, QueueItem, QueueItemView, QueueList, QueueView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
 var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -269,14 +269,44 @@ QueueView = (function() {
   function QueueView() {
     QueueView.__super__.constructor.apply(this, arguments);
   }
+  QueueView.prototype.initialize = function() {
+    Queue.bind('add', this.addOne, this);
+    return Queue.bind('reset', this.addAll, this);
+  };
   QueueView.prototype.render = function() {
     var content, haml;
     haml = Haml($("#queueView-tmpl").html());
-    content = haml(this.model.attributes);
+    content = haml({
+      errors: []
+    });
     $(this.el).html(content);
     return this;
   };
+  QueueView.prototype.addOne = function(queueItem) {
+    var content, view;
+    view = new QueueItemView({
+      model: queueItem
+    });
+    content = view.render();
+    console.log("item: ", queueItem);
+    console.log("content: ", content);
+    return this.$(".queueItems").append(content);
+  };
+  QueueView.prototype.addAll = function() {
+    return Queue.each(this.addOne);
+  };
   return QueueView;
+})();
+QueueItemView = (function() {
+  __extends(QueueItemView, Backbone.View);
+  function QueueItemView() {
+    QueueItemView.__super__.constructor.apply(this, arguments);
+  }
+  QueueItemView.prototype.tagName = "li";
+  QueueItemView.prototype.render = function() {
+    return Utils.haml("#queueItemView-tmpl", this.model);
+  };
+  return QueueItemView;
 })();
 CityMarkerIcon = (function() {
   function CityMarkerIcon(pts, type) {
@@ -332,14 +362,13 @@ CityDialog = GenericDialog.extend({
     return city.name;
   },
   initializeOverview: function() {
-    var content, queue, queueData, queueView;
-    queueData = {};
-    queue = new Queue(queueData);
-    queueView = new QueueView({
-      model: queue
-    });
+    var city_id, content, queue, queueView;
+    city_id = this.model.attributes.city.id;
+    queueView = new QueueView();
     content = queueView.render().el;
-    return $(".bubbleBg .dialog .city").append(content);
+    queue = $(this.el).find(".queue");
+    queue.html(content);
+    return Queue.fetch();
   },
   initializeTabs: function() {
     return BubbleEvents.bind("dialog_content_changed", __bind(function() {
@@ -438,6 +467,19 @@ StructsDialog = GenericDialog.extend({
   initialize: function() {
     this.type = "city_structs";
     return GenericDialog.prototype.initialize(this.type);
+  },
+  events: {
+    "click .btn.upgrade": "upgrade"
+  },
+  upgrade: function() {
+    var city_id, type, type_id;
+    console.log("upgrading");
+    city_id = 42768;
+    type = "struct";
+    type_id = 1;
+    return $.post("/players/me/cities/" + city_id + "/queues/" + type + "/" + type_id, function(data) {
+      return console.log(data);
+    });
   }
 });
 UnitsDialog = GenericDialog.extend({
@@ -658,6 +700,11 @@ Utils.nthroot = function(x, n) {
 Utils.city_scale = function(pop, kind) {
   return Utils.nthroot(pop / 40000, 5);
 };
+Utils.haml = function(selector, object) {
+  var haml;
+  haml = Haml($(selector).html());
+  return haml(object.attributes);
+};
 Utils.clone_object = function(object) {
   console.log("cloning: ", object);
   return eval("" + (JSON.stringify(object)));
@@ -710,6 +757,24 @@ BubbleEvents = (function() {
   }
   return BubbleEvents;
 })();
+QueueItem = (function() {
+  __extends(QueueItem, Backbone.Model);
+  function QueueItem() {
+    QueueItem.__super__.constructor.apply(this, arguments);
+  }
+  return QueueItem;
+})();
+QueueList = (function() {
+  __extends(QueueList, Backbone.Collection);
+  function QueueList() {
+    QueueList.__super__.constructor.apply(this, arguments);
+  }
+  QueueList.prototype.city_id = 42768;
+  QueueList.prototype.model = QueueItem;
+  QueueList.prototype.url = "/players/me/cities/" + 42768 + "/queues";
+  return QueueList;
+})();
+window.Queue = new QueueList();
 Definitions = (function() {
   function Definitions() {}
   Definitions.prototype.get = function(fn) {
@@ -797,34 +862,6 @@ Techs = Backbone.Model.extend({});
 Struct = Backbone.Model.extend({});
 Unit = Backbone.Model.extend({});
 Tech = Backbone.Model.extend({});
-Queue = (function() {
-  __extends(Queue, Backbone.Model);
-  function Queue() {
-    Queue.__super__.constructor.apply(this, arguments);
-  }
-  return Queue;
-})();
-StructsQueue = (function() {
-  __extends(StructsQueue, Queue);
-  function StructsQueue() {
-    StructsQueue.__super__.constructor.apply(this, arguments);
-  }
-  return StructsQueue;
-})();
-UnitsQueue = (function() {
-  __extends(UnitsQueue, Queue);
-  function UnitsQueue() {
-    UnitsQueue.__super__.constructor.apply(this, arguments);
-  }
-  return UnitsQueue;
-})();
-TechsQueue = (function() {
-  __extends(TechsQueue, Queue);
-  function TechsQueue() {
-    TechsQueue.__super__.constructor.apply(this, arguments);
-  }
-  return TechsQueue;
-})();
 Marker = (function() {
   __extends(Marker, Backbone.Model);
   function Marker() {

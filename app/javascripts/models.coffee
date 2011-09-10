@@ -15,10 +15,10 @@ Struct = Backbone.Model.extend {}
 Unit = Backbone.Model.extend {}
 Tech = Backbone.Model.extend {}
 
-class Queue extends Backbone.Model
-class StructsQueue extends Queue
-class UnitsQueue extends Queue
-class TechsQueue extends Queue
+  
+# class StructsQueue extends Queue
+# class UnitsQueue extends Queue
+# class TechsQueue extends Queue
 
 
 class Marker extends Backbone.Model

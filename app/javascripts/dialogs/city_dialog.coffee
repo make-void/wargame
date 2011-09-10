@@ -10,15 +10,19 @@ CityDialog  = GenericDialog.extend(
   label: ->
     city.name
   
+  
   # overview
   
   initializeOverview: ->
     # initQueue
-    queueData = {}
-    queue = new Queue queueData
-    queueView = new QueueView model: queue
+    city_id = this.model.attributes.city.id
+    # $.get("/players/me/cities/#{city_id}/queues", (data) =>
+    queueView = new QueueView()# model: Queue
     content = queueView.render().el
-    $(".bubbleBg .dialog .city").append content
+    queue = $(this.el).find(".queue")
+    queue.html content
+    Queue.fetch()
+  
   
   # tabs
   

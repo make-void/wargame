@@ -75,6 +75,13 @@ Utils.city_scale = (pop, kind) ->
 #   
 #   "http://#{window.http_host}/images/map_icons/city_#{kind}#{final_size}.png"
 
+Utils.haml = (selector, object) ->
+  haml = Haml $(selector).html()
+  # console.log "haml: ", haml
+  # console.log "selector: ", selector
+  # console.log "rendering: ", object.attributes
+  haml object.attributes
+  
 
 Utils.clone_object = (object) ->
   console.log("cloning: ", object)

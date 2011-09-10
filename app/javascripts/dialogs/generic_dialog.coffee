@@ -2,7 +2,7 @@
 #
 # @type required
 
-GenericDialog  = Backbone.View.extend(  
+GenericDialog  = Backbone.View.extend(    
   
   afterRender: ->  
     this.initializeTabs() if this.initializeTabs

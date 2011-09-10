@@ -85,9 +85,6 @@ class Map extends Backbone.View
     this.initDialog(markerView.marker)
     markerView.marker
 
-    
-
-
   initDialog: (marker) ->
     google.maps.event.addListener(marker.view.markerIcon, 'click', =>
       is_same_dialog = (dialog) -> dialog.marker.unique_id != marker.unique_id

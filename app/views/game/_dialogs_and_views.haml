@@ -1,9 +1,30 @@
 // templates    
 
+%script{ type: "text/template", id: "structView-tmpl" }
+  :plain
+    this is a struct
+  
+%script{ type: "text/template", id: "queueItemView-tmpl" }
+  :plain
+    %li
+      .level 
+        lv:
+        = level
+      .running
+        running:
+        = running
+      .structure_id
+        struct:
+        = structure_id
+      .time
+        time needed:
+        = time_needed
+
 %script{ type: "text/template", id: "queueView-tmpl" }
   :plain
-    %p 
-      Queuing the queue....
+    %p.errors= errors
+    %ul.queueItems
+      
       
 %script{ type: "text/template", id: "debugDialog-tmpl" }
   :plain
@@ -59,7 +80,7 @@
           
       %p Queue
       .queue
-        current queue
+        ...
         
         
 

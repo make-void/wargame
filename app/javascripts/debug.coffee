@@ -23,7 +23,12 @@ class Debug
         return 
     , 1500)
     
-    
+
+# Backbone.sync = (method, model) ->
+#   console.log "backbone sync:", method, model
+
+
+
 
 $("#latLng").bind("submit", ->
   coords = $(this).find("input").val()

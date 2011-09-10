@@ -15,7 +15,9 @@ module DefaultValuesDev
                   email: "test2@test.test", 
                   alliance_id: ally.id
     
-
+    rufina = DB::City.find(42768)
+    rufina.update_attributes player_id: cor3y.id
+      
 
     latLng = { latitude: 43.7687324, longitude: 11.2569013 }
     florence = DB::Location.where(latLng).first # florence

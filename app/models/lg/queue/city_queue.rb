@@ -30,9 +30,9 @@ module LG
         @player = DB::Player.find(:first, :conditions => {:player_id => player_id})
         
         @errors = []
-        @errors.push("City #{city_id} Does Not Exist") if @city.nil?
-        @errors.push("Player #{city_id} Does Not Exists") if @player.nil?
-        @errors.push("City #{city_id} Is Not Of Player #{player_id}") unless ( ( !@city.nil? ) && ( @city.player_id == @player.player_id ) )
+        @errors.push("City #{city_id} does not exist") if @city.nil?
+        @errors.push("Player #{city_id} does not exists") if @player.nil?
+        @errors.push("City #{city_id} is not of player #{player_id}") unless ( ( !@city.nil? ) && ( @city.player_id == @player.player_id ) )
         
         @unit_queue = LG::Queue::UnitQueue.new
         @building_queue = LG::Queue::BuildingQueue.new
@@ -40,13 +40,13 @@ module LG
       end
       
       def get
-        return { units: [], structs: [], techs: [], errors: @errors } if has_errors?
+        return { errors: @errors } if has_errors?
         # { city: @city, player: @player } 
         get_queue :all
-        structs = building_queue.items.map{ |bq| bq.attributes }
-        techs   = research_queue.items.map{ |bq| bq.attributes }
-        units   = unit_queue.items.map{ |bq| bq.attributes }
-        { units: units, structs: structs, techs: techs, errors: @errors }
+        structs = building_queue.items.map{ |bq| bq.attributes.merge(type: "struct") }
+        techs   = research_queue.items.map{ |bq| bq.attributes.merge(type: "tech") }
+        units   = unit_queue.items.map{ |bq| bq.attributes.merge(type: "unit") }
+        structs + techs + units
       end
       
       def has_errors? ; errors.size != 0 ; end

@@ -1,3 +1,6 @@
+
+# MiddleMan.worker(:queue_updater).async_create
+
 class QueueUpdater < BackgrounDRb::MetaWorker
   set_worker_name :queue_updater
   

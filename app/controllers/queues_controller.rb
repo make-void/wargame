@@ -24,9 +24,12 @@ class QueuesController < ApplicationController
     type = params[:type_id]
     structure = { city_id: city.id, structure_id: params[:id], player_id: @player.id}
     # queue = DB::Queue::Building.create! structure.merge( level: 0, time_needed: 0 )
-    queue = DB::Queue::Building.first
-    queue.start 1
-    response = queue.attributes
+    # queue = DB::Queue::Building.first
+    # queue.start 1
+    queue = LG::Queue::BuildingQueue.new
+    definition = DB::Structure::Definition.first
+    level = 1
+    response = queue.add_item city, definition, level
     response = { error: { errorName: "Error: message" }} if response.nil?
     render json: response
   end

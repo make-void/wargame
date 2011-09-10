@@ -16,13 +16,29 @@
 - rails server
 
 
-- TO RUN backgrounDRB server:
- bundle exec script/backgroundrb start
-- TO STOP backgrounDRB server:
- bundle exec script/backgroundrb stop
+### workers (BackgrounDRb):
+
+start BgDRb server:
+    
+    bundle exec script/backgroundrb start
  
-- TO START Workers of backgrounDRB in the rails console type:
-  MiddleMan.all_worker_info
+ 
+*console:*
+
+start workers:
+    
+    MiddleMan.worker(:queue_updater).async_create
+
+
+infos:
+
+    MiddleMan.all_worker_info
+
+stop  BgDRb server:
+
+    bundle exec script/backgroundrb stop
+  
+  
   
 - Workers for now, just log informations in the log/backgroundrb_11006.log file
 
