@@ -10,7 +10,8 @@ module LG
         return @items.select{|x| x.active? }.first
       end
       
-      def add_item(city_object, object, level_or_number)    
+      def add_item(city_object, object, level_or_number)   
+        # TODO: se faila deleta lo worker
         raise ArgumentError, "Need City to be a DB::City, Got #{city_object.inspect}" unless city_object.is_a?( DB::City )
         raise ArgumentError, "Need a #{DB::Structure::Definition}" unless object.is_a?( DB::Structure::Definition ) 
         cost = LG::Structures.cost(object, level_or_number)
@@ -39,24 +40,29 @@ module LG
               return return_values #Stop it here
             end
             
+            queue_datas = { :structure_id => object.structure_id, :city_id => city_object.city_id, :player_id => city_object.player_id }
+            
             #Create Queue Object
-            a = DB_CLASS.create :structure_id => object.structure_id,
-                                :city_id => city_object.city_id,
-                                :player_id => city_object.player_id,
-                                :level => level_or_number,
-                                :time_needed => LG::Structures.time( 
-                                                                     object, 
-                                                                     level_or_number, 
-                                                                     DB::Research::Upgrade.find_building_speed_research(city_object.player_id) 
-                                                                   )
-            if @items.nil? || @items.empty? #first item in queue!
-              a.start( DB::Research::Upgrade.find_building_speed_research(city_object.player_id) )
+            building_speed = DB::Research::Upgrade.find_building_speed_research(city_object.player_id)
+            time_needed = LG::Structures.time( object, level_or_number, building_speed )
+            queue_object = DB_CLASS.create queue_datas.merge(
+                            :level => level_or_number,
+                            :time_needed => time_needed
+                           )                                        
+            # FIXME: aggiunto questa linea per fixare temporaneamente, fixare definitivamente is better!
+            
+            
+            # if @items.empty? #first item in queue!
+            # first_item = (DB_CLASS.where(queue_datas).count <= 1)
+            if DB_CLASS.where(queue_datas).count <= 1
+              upgrade = DB::Research::Upgrade.find_building_speed_research city_object.player_id 
+              queue_object.start upgrade
               started = true
             else
               started = false
             end
             
-            @items.push(a)
+            @items.push queue_object if @items
             
             city_object.remove_resources( cost ) #Pay the Price!
             return_values[:action] = { message: "Building #{level_or_number} #{object.name}", started: started }
