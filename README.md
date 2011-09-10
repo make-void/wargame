@@ -22,13 +22,14 @@ start BgDRb server:
     
     bundle exec script/backgroundrb start
  
- 
+(this should also automatically start the workers)
+
+
 *console:*
 
 start workers:
     
     MiddleMan.worker(:queue_updater).async_create
-
 
 infos:
 
