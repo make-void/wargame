@@ -269,9 +269,13 @@ QueueView = (function() {
   function QueueView() {
     QueueView.__super__.constructor.apply(this, arguments);
   }
-  QueueView.prototype.initialize = function() {
+  QueueView.prototype.initialize = function(opts) {
+    this.dialog = opts.dialog;
+    window.queueViewDialog = this.dialog;
+    console.log("diadia: ", this.dialog);
     Queue.bind('add', this.addOne, this);
-    return Queue.bind('reset', this.addAll, this);
+    Queue.bind('reset', this.addAll, this);
+    return window.laurafica = this;
   };
   QueueView.prototype.render = function() {
     var content, haml;
@@ -283,14 +287,20 @@ QueueView = (function() {
     return this;
   };
   QueueView.prototype.addOne = function(queueItem) {
-    var content, view;
+    var content, self, view;
+    window.laurafica.$(".queueItems").html("");
+    this.dialog = window.queueViewDialog;
     view = new QueueItemView({
       model: queueItem
     });
-    content = view.render();
-    console.log("item: ", queueItem);
-    console.log("content: ", content);
-    return this.$(".queueItems").append(content);
+    content = view.render().el;
+    window.laurafica = this;
+    self = this;
+    $(this).find(".queueItems").load(function() {});
+    setTimeout(function() {
+      return self.$(".queueItems").append(content);
+    }, 1);
+    return this.dialog.renderOverview();
   };
   QueueView.prototype.addAll = function() {
     return Queue.each(this.addOne);
@@ -303,8 +313,15 @@ QueueItemView = (function() {
     QueueItemView.__super__.constructor.apply(this, arguments);
   }
   QueueItemView.prototype.tagName = "li";
+  QueueItemView.prototype.events = {
+    "click .removeButton": "removeItem"
+  };
   QueueItemView.prototype.render = function() {
-    return Utils.haml("#queueItemView-tmpl", this.model);
+    $(this.el).html(Utils.haml("#queueItemView-tmpl", this.model));
+    return this;
+  };
+  QueueItemView.prototype.removeItem = function() {
+    return console.log("removing item from queue");
   };
   return QueueItemView;
 })();
@@ -328,10 +345,7 @@ CityMarkerIcon = (function() {
 GenericDialog = Backbone.View.extend({
   afterRender: function() {
     if (this.initializeTabs) {
-      this.initializeTabs();
-    }
-    if (this.initializeOverview) {
-      return this.initializeOverview();
+      return this.initializeTabs();
     }
   },
   getContent: function() {
@@ -356,18 +370,23 @@ GenericDialog = Backbone.View.extend({
 CityDialog = GenericDialog.extend({
   element: '#cityDialog-tmpl',
   initialize: function() {
-    return this.type = "city";
+    this.type = "city";
+    this.current_tab = null;
+    return this.queueView = null;
   },
   label: function() {
     return city.name;
   },
-  initializeOverview: function() {
-    var city_id, content, queue, queueView;
-    city_id = this.model.attributes.city.id;
-    queueView = new QueueView();
-    content = queueView.render().el;
+  renderOverview: function() {
+    var content, queue;
+    content = this.queueView.render().el;
     queue = $(this.el).find(".queue");
-    queue.html(content);
+    return queue.html(content);
+  },
+  initializeOverview: function() {
+    this.queueView = new QueueView({
+      dialog: this
+    });
     return Queue.fetch();
   },
   initializeTabs: function() {
@@ -385,36 +404,38 @@ CityDialog = GenericDialog.extend({
     });
   },
   initTab: function(type) {
-    var content, dialog, model;
+    var content, dialog, model, over;
     dialog = (function() {
       switch (type) {
         case "city_structs":
           model = new Structs({
             definitions: game.struct_def.definitions
           });
-          return new StructsDialog({
+          return this.current_tab = new StructsDialog({
             model: model
           });
         case "city_units":
           model = new Units({
             definitions: game.unit_def.definitions
           });
-          return new UnitsDialog({
+          return this.current_tab = new UnitsDialog({
             model: model
           });
         case "city_techs":
           model = new Techs({
             definitions: game.tech_def.definitions
           });
-          return new TechsDialog({
+          return this.current_tab = new TechsDialog({
             model: model
           });
         case "city_overview":
-          return new CityOverview({
+          this.current_tab = over = new CityOverview({
             model: this.model
           });
+          this.initializeOverview();
+          return over;
         case "debug":
-          return new DebugDialog({
+          return this.current_tab = new DebugDialog({
             model: this.model
           });
       }
@@ -422,7 +443,8 @@ CityDialog = GenericDialog.extend({
     if (dialog) {
       content = dialog.render().el;
       console.log("content: ", content);
-      return $(".dialog").replaceWith(content);
+      this.$(".dialog").html(content);
+      return this.$(".dialog").addClass("dialog2");
     }
   }
 });
@@ -996,6 +1018,7 @@ Map = (function() {
       }
     }
     marker.dialog.afterRender();
+    marker.dialog.initTab("city_overview");
     return bubbleView;
   };
   Map.prototype.markersCleanMax = function() {

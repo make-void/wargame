@@ -1,6 +1,15 @@
 class QueueItemView extends Backbone.View  
   tagName:  "li"
+
+  events: {
+    "click .removeButton": "removeItem"
+  }  
+  
   
   render: ->
-    Utils.haml("#queueItemView-tmpl", this.model) 
+    $(this.el).html Utils.haml("#queueItemView-tmpl", this.model) 
+    this
     
+    
+  removeItem: ->
+    console.log "removing item from queue"

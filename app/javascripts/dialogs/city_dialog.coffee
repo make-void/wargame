@@ -6,6 +6,10 @@ CityDialog  = GenericDialog.extend(
   initialize: ->
     @type = "city"
     # GenericDialog.prototype.initialize @type# how to call super in js
+    # @tabs = ["overview", "structs", "units", "techs", "debug"]
+    @current_tab = null
+    
+    @queueView = null
     
   label: ->
     city.name
@@ -13,14 +17,14 @@ CityDialog  = GenericDialog.extend(
   
   # overview
   
-  initializeOverview: ->
-    # initQueue
-    city_id = this.model.attributes.city.id
-    # $.get("/players/me/cities/#{city_id}/queues", (data) =>
-    queueView = new QueueView()# model: Queue
-    content = queueView.render().el
-    queue = $(this.el).find(".queue")
+  renderOverview: ->
+    content = @queueView.render().el
+    queue =  $(this.el).find(".queue")
     queue.html content
+      
+  initializeOverview: ->
+    @queueView = new QueueView( dialog: this )# model: Queue
+   
     Queue.fetch()
   
   
@@ -44,21 +48,25 @@ CityDialog  = GenericDialog.extend(
     dialog = switch type
       when "city_structs"
         model = new Structs { definitions: game.struct_def.definitions }
-        new StructsDialog model: model
+        @current_tab = new StructsDialog model: model
       when "city_units"
         model = new Units { definitions: game.unit_def.definitions }
-        new UnitsDialog model: model
+        @current_tab = new UnitsDialog model: model
       when "city_techs"
         model = new Techs { definitions: game.tech_def.definitions }
-        new TechsDialog model: model
+        @current_tab = new TechsDialog model: model
       when "city_overview"
-        new CityOverview model: @model
+        @current_tab = over = new CityOverview model: @model
+        this.initializeOverview()
+        over
       when "debug"
-        new DebugDialog model: @model # { attributes: {} } # @model
+        @current_tab = new DebugDialog model: @model # { attributes: {} } # @model
         
     if dialog
       content = dialog.render().el
       console.log "content: ", content
-      $(".dialog").replaceWith content
+      this.$(".dialog").html content
+      # this.$(".dialog").removeClass( (idx, cla) -> cla )
+      this.$(".dialog").addClass "dialog2"
       
 )

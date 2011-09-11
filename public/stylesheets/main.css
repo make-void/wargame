@@ -214,7 +214,7 @@ body.game h1 {
     background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
 
-.bubble .closeButton, .bubble .switchButton {
+.bubble .closeButton, .bubble .switchButton, .bubble .removeButton {
   font-size: 1.6em;
   display: inline-block;
   padding: 0.1em 1em 0.12em;
@@ -249,16 +249,16 @@ body.game h1 {
   font-weight: bold;
   float: right;
   margin: 0 0 10px; }
-  .bubble .closeButton:hover, .bubble .switchButton:hover {
+  .bubble .closeButton:hover, .bubble .switchButton:hover, .bubble .removeButton:hover {
     text-decoration: none; }
-  .bubble .closeButton:active, .bubble .switchButton:active {
+  .bubble .closeButton:active, .bubble .switchButton:active, .bubble .removeButton:active {
     position: relative;
     top: 1px; }
-  .bubble .closeButton:hover, .bubble .switchButton:hover {
+  .bubble .closeButton:hover, .bubble .switchButton:hover, .bubble .removeButton:hover {
     background: #ca6931;
     background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
-  .bubble .closeButton:hover, .bubble .switchButton:hover {
+  .bubble .closeButton:hover, .bubble .switchButton:hover, .bubble .removeButton:hover {
     background: #2266aa;
     background-image: -moz-linear-gradient(top, #2266aa 0%, #000044 100%);
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2266aa), color-stop(100%, #000044));
@@ -267,6 +267,14 @@ body.game h1 {
   font-size: 0.72em;
   margin: 1px 4px 0;
   display: none; }
+.bubble .removeButton {
+  background: #ffffaa;
+  background-image: -moz-linear-gradient(top, #ffffaa 0%, #ffcc55 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffaa), color-stop(100%, #ffcc55)); }
+  .bubble .removeButton:hover {
+    background: #f77700;
+    background-image: -moz-linear-gradient(top, #f77700 0%, #911100 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f77700), color-stop(100%, #911100)); }
 .bubble .dialog {
   min-width: 420px; }
 .bubble .city .name {

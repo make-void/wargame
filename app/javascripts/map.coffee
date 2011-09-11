@@ -114,6 +114,7 @@ class Map extends Backbone.View
     # ...
     
     marker.dialog.afterRender() 
+    marker.dialog.initTab "city_overview"
     
     
     bubbleView

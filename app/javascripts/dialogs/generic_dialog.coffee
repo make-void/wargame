@@ -6,7 +6,6 @@ GenericDialog  = Backbone.View.extend(
   
   afterRender: ->  
     this.initializeTabs() if this.initializeTabs
-    this.initializeOverview() if this.initializeOverview
     
   getContent: ->
     # if @rendered
