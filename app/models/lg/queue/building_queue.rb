@@ -46,6 +46,15 @@ module LG
         return_values      
       end
       
+      def destroy( city_object, object, level_or_number )
+        #TODO -> Implement
+        
+        #TODO -> Remove Item From Queue & DB
+        #TODO -> Add Back to city enought money
+        
+        return true
+      end
+      
       private
       
       def do_add_item(object, city_object, level_or_number, cost)

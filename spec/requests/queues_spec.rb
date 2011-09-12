@@ -62,7 +62,7 @@ describe "Queues" do
     create_queue
     type = "struct"
     type_id = DB::Structure::Definition.last.id
-    args = { structure_id: @structure.id, player_id: @player.id }
+    args = { object_id: @structure.id, player_id: @player.id, level_or_number: @level }
     data = json_delete "/players/me/cities/#{@city.id}/queues/#{type}", args
     data[:success].should == true
   end

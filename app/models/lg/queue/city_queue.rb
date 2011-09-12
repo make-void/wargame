@@ -33,11 +33,24 @@ module LG
         return instance
       end
       
-      def self.destroy(params)
+      # :unit, 1
+      def destroy_queue_item( type, object_id, level_or_number )
        # city_id: attrs.city_id, player_id: attrs.player_id, structure_id: attrs.structure_id, unit_id: attrs.unit_id
-        @type = params[:type].to_sym
-        model = eval("DB::Queue::#{klass(@type)}")
-        model.where( player_id: params[:player_id], city_id: params[:city_id] ).first.destroy
+       return @errors if has_errors? #To Be Sure all is Fine!
+       raise ArgumentError, "Need Type in #{(QUEUE_TYPES - [:all]).inspect}, got #{type}" unless (QUEUE_TYPES - [:all]).include?(type)
+       raise ArgumentError, "Need level to be a Number. got #{level_or_number.inspect}" unless level_or_number.is_a?(Numeric)
+       
+       case type
+         when :unit
+           object = DB::Unit::Definition.find(object_id)
+           return @unit_queue.destroy(@city, object, level_or_number )
+         when :building
+           object = DB::Structure::Definition.find(object_id)
+           return @building_queue.destroy(@city, object, level_or_number )
+         when :research 
+           object = DB::Research::Definition.find(object_id)
+           return @research_queue.destroy(@city, object, level_or_number ) 
+       end
       end
       
       

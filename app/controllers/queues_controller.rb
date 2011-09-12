@@ -35,13 +35,34 @@ class QueuesController < ApplicationController
   end
   
   def destroy
-    success = LG::Queue::CityQueue.destroy params
+    queue_item = LG::Queue::CityQueue.get params[:city_id], params[:player_id]
+    
+    success = queue_item.destroy_queue_item sanitize_queue_type( params[:type].to_sym ), params[:object_id], params[:level_or_number].to_i
     response = if success
       { success: true }
     else
       { error: { message: "error destroying queue" }} 
     end
     render json: response
+  end
+  
+  private
+  
+  def sanitize_queue_type_for_models(type)
+    case type
+    when :building
+      return :building
+    when :struct
+      return :building
+    when :tech
+      return :research
+    when :research
+      return :research
+    when :unit
+      return :unit
+    else
+      raise ArgumentError, "Need type to be in [:building, :struct, :tech, :research, :unit]".inspect
+    end
   end
   
 end

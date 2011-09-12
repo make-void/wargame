@@ -70,6 +70,15 @@ module LG
           return return_values      
         end
         
+        def destroy( city_object, object, level_or_number )
+          #TODO -> Implement
+
+          #TODO -> Remove Item From Queue & DB
+          #TODO -> Add Back to city enought money
+
+          return true
+        end
+        
         private
         
         def build_or_get_base_object( hash_values )
