@@ -5,13 +5,14 @@ load "#{Rails.root}/app/models/db/queue/building.rb"
 load "#{Rails.root}/app/models/db/queue/unit.rb"
 load "#{Rails.root}/app/models/db/queue/tech.rb"
 load "#{Rails.root}/app/models/lg/queue/city_queue.rb"
+load "#{Rails.root}/app/models/lg/queue/building_queue.rb"
 load "#{Rails.root}/app/models/modules/queue.rb"
 
 load "#{Rails.root}/config/routes.rb"
 
 describe "Queues" do
   
-  before :all do
+  before :each do
     @fi = { latitude: 43.7687324, longitude: 11.2569013 } 
     @the_masterers = { name: "TheMasterers" }
     @cor3y = { name: "Cor3y", 
@@ -27,15 +28,19 @@ describe "Queues" do
     @city = DB::City.create! @florence.merge(location_id: @location.id, player_id: @player.id)
     # ----
     @structure_type = DB::Structure::Definition.first
-    structure = { city_id: @city.id, structure_id: @structure_type.id, player_id: @player.id}
-    @structure = DB::Structure::Building.create! structure
-    @queue = DB::Queue::Building.create! structure.merge( level: @level, time_needed: 0 )
+    @structure_args = { city_id: @city.id, structure_id: @structure_type.id, player_id: @player.id}
+    @structure = DB::Structure::Building.create! @structure_args
     # DB::Queue::Building.new.start @level # TODO: test the queue but elsewhere (model spec?)
   end
   
+  def create_queue
+    @queue = DB::Queue::Building.create! @structure_args.merge( level: @level, time_needed: 0 )
+  end
+  
   it "index" do
+    create_queue
     # GET /players/me/cities/:id/queues    
-    data = get_json "/players/me/cities/#{@city.id}/queues"
+    data = json_get "/players/me/cities/#{@city.id}/queues"
     struct = data.first.symbolize_keys
     struct[:city_id].should be(@city.id)
     struct[:structure_id].should be(@structure_type.id)
@@ -48,17 +53,22 @@ describe "Queues" do
     # POST players/me/cities/:city_id/queues/:type/:id
     type = "struct"
     type_id = DB::Structure::Definition.last.id
-    data = post_json "/players/me/cities/#{@city.id}/queues/#{type}/#{type_id}"
+    data = json_post "/players/me/cities/#{@city.id}/queues/#{type}/#{type_id}"
     data[:time_needed].should > 0
-    data[:started_at].should be_a(String) # TODO: write matcher be_a_timestring
+    data[:started_at].should be_a(Boolean) # TODO: write matcher be_a_timestring
   end
   
   it "destroy" do
-    
+    create_queue
+    type = "struct"
+    type_id = DB::Structure::Definition.last.id
+    args = { structure_id: @structure.id, player_id: @player.id }
+    data = json_delete "/players/me/cities/#{@city.id}/queues/#{type}", args
+    data[:success].should == true
   end
   
-  after :all do
-    @queue.destroy
+  after :each do
+    DB::Queue::Building.destroy_all
     @structure.destroy
     @city.destroy
     @player.destroy

@@ -9,7 +9,7 @@ describe "Locations" do
     it "locations/:lat/:lng" do
       url = "/locations/#{@fi.join("/")}"
       #request.headers["Content-Type"] = :json
-      data = get_json url
+      data = json_get url
       
       data[:locations].should be_a(Array)
       data[:locations].each do |loc|

@@ -30,12 +30,18 @@ class QueuesController < ApplicationController
     definition = DB::Structure::Definition.first
     level = 1
     response = queue.add_item city, definition, level
-    response = { error: { errorName: "Error: message" }} if response.nil?
+    response = { error: { message: "error creating a queue" }} if response.nil?
     render json: response
   end
   
   def destroy
-    # LG::Queue.destroy
+    success = LG::Queue::CityQueue.destroy params
+    response = if success
+      { success: true }
+    else
+      { error: { message: "error destroying queue" }} 
+    end
+    render json: response
   end
   
 end

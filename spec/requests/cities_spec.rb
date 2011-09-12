@@ -21,7 +21,7 @@ describe "Cities" do
   
   it "should find a city by name" do
     city = "Florence"
-    data = get_json "/cities/#{city}"
+    data = json_get "/cities/#{city}"
     data[:location]["latitude"].should == @fi[:latitude].to_s
     data[:location]["longitude"].should == @fi[:longitude].to_s
   end

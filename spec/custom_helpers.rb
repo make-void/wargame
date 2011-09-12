@@ -1,13 +1,18 @@
 module CustomHelpers
   
-  def get_json(url)
+  def json_get(url)
     get url
     parse_json response
   end
   
-  def post_json(url, params={})
+  def json_post(url, params={})
     post url, params
     parse_json response
+  end
+  
+  def json_delete(url, params={})
+    delete url, params
+    parse_json response    
   end
   
   # private

@@ -134,10 +134,6 @@ input[type='submit']:hover, input.submit:hover, a.button:hover, nav a:hover {
 
 #wrap {
   height: 100%;
-  background-color: #aaaaaa;
-  background: -webkit-gradient(linear, left top, left bottom, from(#dddddd), to(#aaaaaa));
-  background: -moz-linear-gradient(top, #dddddd, #aaaaaa);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dddddd', endColorstr='#aaaaaa');
   padding-top: 40px; }
 
 #container {
@@ -179,6 +175,12 @@ body.game h1 {
   padding: 10px 0 0 20px;
   font-size: 1em; }
 
+#spinner {
+  position: absolute;
+  display: none;
+  left: 50%;
+  margin-left: -110px; }
+
 .dialog .commands div {
   display: inline-block;
   padding: 0.1em 1em 0.12em;
@@ -196,8 +198,8 @@ body.game h1 {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
   background: #fff6c7;
-  background-image: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
+  background: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
   font-size: 0.85em;
   padding: 5px 12px;
   margin: 5px 0;
@@ -211,8 +213,8 @@ body.game h1 {
     top: 1px; }
   .dialog .commands div:hover {
     background: #ca6931;
-    background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
+    background: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
 
 .bubble .closeButton, .bubble .switchButton, .bubble .removeButton {
   font-size: 1.6em;
@@ -232,8 +234,8 @@ body.game h1 {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
   background: #fff6c7;
-  background-image: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
+  background: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
   font-size: 0.85em;
   padding: 5px 12px;
   margin: 5px 0;
@@ -241,8 +243,8 @@ body.game h1 {
   -moz-border-radius: 10px;
   border-radius: 10px;
   background: #ccffff;
-  background-image: -moz-linear-gradient(top, #ccffff 0%, #77bbff 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ccffff), color-stop(100%, #77bbff));
+  background: -moz-linear-gradient(top, #ccffff 0%, #77bbff 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ccffff), color-stop(100%, #77bbff));
   border: 1px solid #2266aa;
   padding: 3px 9px 6px;
   color: #2266aa;
@@ -256,12 +258,12 @@ body.game h1 {
     top: 1px; }
   .bubble .closeButton:hover, .bubble .switchButton:hover, .bubble .removeButton:hover {
     background: #ca6931;
-    background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
+    background: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
   .bubble .closeButton:hover, .bubble .switchButton:hover, .bubble .removeButton:hover {
     background: #2266aa;
-    background-image: -moz-linear-gradient(top, #2266aa 0%, #000044 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2266aa), color-stop(100%, #000044));
+    background: -moz-linear-gradient(top, #2266aa 0%, #000044 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2266aa), color-stop(100%, #000044));
     color: white; }
 .bubble .switchButton {
   font-size: 0.72em;
@@ -269,19 +271,19 @@ body.game h1 {
   display: none; }
 .bubble .removeButton {
   background: #ffffaa;
-  background-image: -moz-linear-gradient(top, #ffffaa 0%, #ffcc55 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffaa), color-stop(100%, #ffcc55)); }
+  background: -moz-linear-gradient(top, #ffffaa 0%, #ffcc55 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffaa), color-stop(100%, #ffcc55)); }
   .bubble .removeButton:hover {
     background: #f77700;
-    background-image: -moz-linear-gradient(top, #f77700 0%, #911100 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f77700), color-stop(100%, #911100)); }
+    background: -moz-linear-gradient(top, #f77700 0%, #911100 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f77700), color-stop(100%, #911100)); }
 .bubble .dialog {
   min-width: 420px; }
 .bubble .city .name {
   font-size: 1.1em;
   font-weight: bold; }
 .bubble .city ul.nav {
-  font-size: 0.85em;
+  font-size: 0.9em;
   margin: 10px 0 0; }
   .bubble .city ul.nav li {
     display: inline-block;
@@ -300,14 +302,21 @@ body.game h1 {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
     background: #fff6c7;
-    background-image: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
+    background: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
     font-size: 0.85em;
     padding: 5px 12px;
     margin: 5px 0;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
+    border: 1px solid #5470c9;
+    border-left: 1px solid #7692eb;
+    border-right: 1px solid #7692eb;
+    border-top: 1px solid #98b4ff;
+    background: #feffff;
+    background: -moz-linear-gradient(top, #feffff 0%, #87a3fc 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #feffff), color-stop(100%, #87a3fc));
     margin: 10px 4px 0 0;
     padding: 4px 8px; }
     .bubble .city ul.nav li:hover {
@@ -317,8 +326,14 @@ body.game h1 {
       top: 1px; }
     .bubble .city ul.nav li:hover {
       background: #ca6931;
-      background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
-      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
+      background: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
+    .bubble .city ul.nav li:hover {
+      background: #5470c9;
+      background: -moz-linear-gradient(top, #5470c9 0%, #000a63 100%);
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #5470c9), color-stop(100%, #000a63)); }
+      .bubble .city ul.nav li:hover a {
+        color: white; }
 .bubble .info {
   padding: 3px 5px 5px;
   margin: 0 0 10px;
@@ -353,8 +368,8 @@ body.game h1 {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
     background: #fff6c7;
-    background-image: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
+    background: -moz-linear-gradient(top, #fff6c7 0%, #81ccbb 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff6c7), color-stop(100%, #81ccbb));
     font-size: 0.85em;
     padding: 5px 12px;
     margin: 5px 0;
@@ -370,8 +385,8 @@ body.game h1 {
       top: 1px; }
     .dialog a.btn:hover {
       background: #ca6931;
-      background-image: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
-      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
+      background: -moz-linear-gradient(top, #ca6931 0%, #fff6c7 100%);
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ca6931), color-stop(100%, #fff6c7)); }
   .dialog ul li {
     background: white;
     -webkit-border-radius: 4px;

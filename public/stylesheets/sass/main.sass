@@ -142,7 +142,7 @@ input[type='submit']:hover, input.submit:hover, a.button:hover, nav a:hover
   
 #wrap   
   height: 100%
-  +gradient($bg, $bg_alt)
+  // +gradient($bg, $bg_alt)
   padding-top: 40px
 
 #container
@@ -185,7 +185,13 @@ body.game
     padding: 10px 0 0 20px
     font-size: 1em
 
-    
+
+#spinner
+  position: absolute
+  display: none
+  left: 50%
+  margin-left: -110px
+  
 .dialog .commands
   div
     +button_rdy
@@ -225,12 +231,22 @@ body.game
       font-size: 1.1em
       font-weight: bold
     ul.nav
-      font-size: 0.85em
+      font-size: 0.9em
       margin: 10px 0 0 
       li
         +button_rdy
+        $btn_color: #5470C9
+        border: 1px solid $btn_color
+        border-left: 1px solid $btn_color+#222
+        border-right: 1px solid $btn_color+#222
+        border-top: 1px solid $btn_color+#444
+        +simple_gradient($btn_color+#AAA, $btn_color+#333)
         margin: 10px 4px 0 0
         padding: 4px 8px
+        &:hover
+          +simple_gradient($btn_color, $btn_color - #666)
+          a
+            color: #FFF
   .info
     padding: 3px 5px 5px 
     margin: 0 0 10px

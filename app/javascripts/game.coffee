@@ -11,6 +11,12 @@ class Game
     debug = new Debug this
     debug.debug()
     
+  initGameView: ->
+    @game_view = new GameView()
+    # TODO: render the gameview
+    window.Spinner = new SpinnerView()
+  
+  
   initModels: ->  
     definitions = new Definitions()
     definitions.get( (defs) =>

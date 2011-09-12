@@ -16,7 +16,7 @@ module LG
         cost = LG::Unit.cost(object, level_or_number)
         
         return_values = { cost: cost, errors: [], action: nil }
-        if self.city_hash_money?(city_object, cost) #defined in Queue Module
+        if self.city_has_money?(city_object, cost) #defined in Queue Module
           
           reqs = check_requisites( city_object, object ) #defined in Queue Module
           

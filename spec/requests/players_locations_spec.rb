@@ -24,7 +24,7 @@ describe "Players" do
       
       it "should return current_player's locations" do
         url = "/players/me/locations/#{@fi[:latitude]}/#{@fi[:longitude]}" 
-        data = get_json url
+        data = json_get url
         # puts "DATA: "
         # puts data
         data[:locations].first["latitude"].should == @fi[:latitude]

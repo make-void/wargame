@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, AttackState, AttackType, BubbleEvents, BubbleView, City, CityDialog, CityMarkerIcon, CityOverview, Debug, DebugDialog, Definition, Definitions, Game, GameState, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, Marker, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, QueueItem, QueueItemView, QueueList, QueueView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
+var Alliance, Army, ArmyDialog, AttackState, AttackType, BubbleEvents, BubbleView, City, CityDialog, CityMarkerIcon, CityOverview, Debug, DebugDialog, Definition, Definitions, Game, GameState, GameView, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, Marker, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, QueueItem, QueueItemView, QueueList, QueueView, SpinnerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
 var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -321,9 +321,160 @@ QueueItemView = (function() {
     return this;
   };
   QueueItemView.prototype.removeItem = function() {
-    return console.log("removing item from queue");
+    var attrs, post;
+    console.log("removing item from queue");
+    Spinner.spin();
+    attrs = this.model.attributes;
+    console.log(attrs);
+    post = {
+      _method: 'delete',
+      player_id: attrs.player_id,
+      structure_id: attrs.structure_id,
+      unit_id: attrs.unit_id
+    };
+    return $.post("/players/me/cities/" + attrs.city_id + "/queues/" + attrs.type, post, __bind(function(data) {
+      $(this.el).parent().html("");
+      return Spinner.hide();
+    }, this));
   };
   return QueueItemView;
+})();
+MapAction = (function() {
+  function MapAction() {
+    this.map = window.game.map.map;
+  }
+  return MapAction;
+})();
+MapAttack = (function() {
+  __extends(MapAttack, MapAction);
+  function MapAttack(location) {
+    this.location = location;
+    MapAttack.__super__.constructor.apply(this, arguments);
+    this.circle = null;
+    this.drawCircle();
+    this.hoverCities();
+  }
+  MapAttack.prototype.drawCircle = function() {
+    var center;
+    center = new google.maps.LatLng(this.location.attributes.latitude, this.location.attributes.longitude);
+    this.circle = new google.maps.Circle({
+      map: this.map,
+      center: center,
+      radius: 5500,
+      fillColor: "#FF0000",
+      fillOpacity: 0.3,
+      strokeColor: "#CC0000",
+      strokeOpacity: 0.7,
+      strokeWeight: 3
+    });
+    this.circle.setMap(this.map);
+    return this;
+  };
+  MapAttack.prototype.hoverCities = function() {
+    var marker, _i, _len, _ref, _results;
+    _ref = this.map.controller.markers;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      marker = _ref[_i];
+      _results.push(marker.type === "city" ? this.hoverCity(marker) : void 0);
+    }
+    return _results;
+  };
+  MapAttack.prototype.hoverCity = function(marker) {
+    var addListener;
+    addListener = google.maps.event.addListener;
+    addListener(marker, "mouseover", __bind(function(evt) {
+      var icon;
+      icon = new CityMarkerIcon(marker.city.pts, "selected").draw();
+      console.log(marker.icon);
+      if (marker.icon.url.match(/_enemy\.png/)) {
+        marker.icon = icon;
+        return marker.setMap(this.map);
+      }
+    }, this));
+    return addListener(marker, "mouseout", __bind(function(evt) {
+      var icon;
+      icon = new CityMarkerIcon(marker.city.pts, "enemy").draw();
+      if (marker.icon.url.match(/_selected\.png/)) {
+        marker.icon = icon;
+        return marker.setMap(this.map);
+      }
+    }, this));
+  };
+  return MapAttack;
+})();
+MapMove = (function() {
+  __extends(MapMove, MapAction);
+  function MapMove(location) {
+    var loc;
+    this.line = null;
+    this.active = true;
+    this.destination = null;
+    this.endMarker = null;
+    MapMove.__super__.constructor.apply(this, arguments);
+    loc = location.attributes;
+    google.maps.event.addListener(this.map, "mousemove", __bind(function(evt) {
+      return this.draw(loc, evt);
+    }, this));
+    this.deactivationHook();
+  }
+  MapMove.prototype.draw = function(loc, evt) {
+    var points;
+    if (this.active) {
+      this.destination = evt.latLng;
+      points = [new google.maps.LatLng(loc.latitude, loc.longitude), this.destination];
+      if (this.line) {
+        this.line.setMap(null);
+      }
+      this.line = new google.maps.Polyline({
+        path: points,
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+      });
+      return this.line.setMap(this.map);
+    }
+  };
+  MapMove.prototype.deactivationHook = function() {
+    return $("#map_canvas").bind("click", __bind(function() {
+      return this.deactivate();
+    }, this));
+  };
+  MapMove.prototype.deactivate = function() {
+    this.active = false;
+    return this.endMarker = new google.maps.Marker({
+      position: this.destination,
+      map: this.map,
+      icon: "http://" + window.http_host + "/images/map_icons/point_red.png"
+    });
+  };
+  return MapMove;
+})();
+SpinnerView = (function() {
+  function SpinnerView() {}
+  SpinnerView.prototype.spinner = $("#spinner");
+  SpinnerView.prototype.bg = $("#wrap, body");
+  SpinnerView.prototype.spin = function() {
+    this.spinner.fadeIn();
+    return this.bg.animate({
+      backgroundColor: "#999999"
+    }, 300);
+  };
+  SpinnerView.prototype.hide = function() {
+    this.spinner.fadeOut();
+    return this.bg.animate({
+      backgroundColor: "#DDDDDD"
+    }, 300);
+  };
+  return SpinnerView;
+})();
+GameView = (function() {
+  __extends(GameView, Backbone.View);
+  function GameView() {
+    GameView.__super__.constructor.apply(this, arguments);
+  }
+  GameView.prototype.initialize = function() {};
+  return GameView;
 })();
 CityMarkerIcon = (function() {
   function CityMarkerIcon(pts, type) {
@@ -522,117 +673,6 @@ DebugDialog = GenericDialog.extend({
     return GenericDialog.prototype.initialize(this.type);
   }
 });
-MapAction = (function() {
-  function MapAction() {
-    this.map = window.game.map.map;
-  }
-  return MapAction;
-})();
-MapAttack = (function() {
-  __extends(MapAttack, MapAction);
-  function MapAttack(location) {
-    this.location = location;
-    MapAttack.__super__.constructor.apply(this, arguments);
-    this.circle = null;
-    this.drawCircle();
-    this.hoverCities();
-  }
-  MapAttack.prototype.drawCircle = function() {
-    var center;
-    center = new google.maps.LatLng(this.location.attributes.latitude, this.location.attributes.longitude);
-    this.circle = new google.maps.Circle({
-      map: this.map,
-      center: center,
-      radius: 5500,
-      fillColor: "#FF0000",
-      fillOpacity: 0.3,
-      strokeColor: "#CC0000",
-      strokeOpacity: 0.7,
-      strokeWeight: 3
-    });
-    this.circle.setMap(this.map);
-    return this;
-  };
-  MapAttack.prototype.hoverCities = function() {
-    var marker, _i, _len, _ref, _results;
-    _ref = this.map.controller.markers;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      marker = _ref[_i];
-      _results.push(marker.type === "city" ? this.hoverCity(marker) : void 0);
-    }
-    return _results;
-  };
-  MapAttack.prototype.hoverCity = function(marker) {
-    var addListener;
-    addListener = google.maps.event.addListener;
-    addListener(marker, "mouseover", __bind(function(evt) {
-      var icon;
-      icon = new CityMarkerIcon(marker.city.pts, "selected").draw();
-      console.log(marker.icon);
-      if (marker.icon.url.match(/_enemy\.png/)) {
-        marker.icon = icon;
-        return marker.setMap(this.map);
-      }
-    }, this));
-    return addListener(marker, "mouseout", __bind(function(evt) {
-      var icon;
-      icon = new CityMarkerIcon(marker.city.pts, "enemy").draw();
-      if (marker.icon.url.match(/_selected\.png/)) {
-        marker.icon = icon;
-        return marker.setMap(this.map);
-      }
-    }, this));
-  };
-  return MapAttack;
-})();
-MapMove = (function() {
-  __extends(MapMove, MapAction);
-  function MapMove(location) {
-    var loc;
-    this.line = null;
-    this.active = true;
-    this.destination = null;
-    this.endMarker = null;
-    MapMove.__super__.constructor.apply(this, arguments);
-    loc = location.attributes;
-    google.maps.event.addListener(this.map, "mousemove", __bind(function(evt) {
-      return this.draw(loc, evt);
-    }, this));
-    this.deactivationHook();
-  }
-  MapMove.prototype.draw = function(loc, evt) {
-    var points;
-    if (this.active) {
-      this.destination = evt.latLng;
-      points = [new google.maps.LatLng(loc.latitude, loc.longitude), this.destination];
-      if (this.line) {
-        this.line.setMap(null);
-      }
-      this.line = new google.maps.Polyline({
-        path: points,
-        strokeColor: "#FF0000",
-        strokeOpacity: 1.0,
-        strokeWeight: 2
-      });
-      return this.line.setMap(this.map);
-    }
-  };
-  MapMove.prototype.deactivationHook = function() {
-    return $("#map_canvas").bind("click", __bind(function() {
-      return this.deactivate();
-    }, this));
-  };
-  MapMove.prototype.deactivate = function() {
-    this.active = false;
-    return this.endMarker = new google.maps.Marker({
-      position: this.destination,
-      map: this.map,
-      icon: "http://" + window.http_host + "/images/map_icons/point_red.png"
-    });
-  };
-  return MapMove;
-})();
 MarkersUpdater = (function() {
   function MarkersUpdater(map) {
     this.map = map;
@@ -1074,6 +1114,10 @@ Game = (function() {
     debug = new Debug(this);
     return debug.debug();
   };
+  Game.prototype.initGameView = function() {
+    this.game_view = new GameView();
+    return window.Spinner = new SpinnerView();
+  };
   Game.prototype.initModels = function() {
     var definitions;
     definitions = new Definitions();
@@ -1116,6 +1160,7 @@ $(function() {
   g = window;
   g.game = new Game;
   game.initModels();
+  game.initGameView();
   game.initMap();
   game.getPlayerView();
   game.initNav();

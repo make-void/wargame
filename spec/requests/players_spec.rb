@@ -16,7 +16,7 @@ describe "Players" do
     end
      
     it "should return current_player" do
-      data = get_json "/players/me"
+      data = json_get "/players/me"
       data[:name].should == "Cor3y"
     end
     

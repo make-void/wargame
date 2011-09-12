@@ -3,6 +3,7 @@ $( ->
   
   g.game = new Game
   game.initModels()
+  game.initGameView() # TODO: FIXME:  gameview should contain map, playerview and nav
   game.initMap()
   game.getPlayerView()
   game.initNav()

@@ -19,7 +19,7 @@ module Modules
         @items = db_entries_array
       end
       
-      def city_hash_money?(city_object, cost_hash)
+      def city_has_money?(city_object, cost_hash)
         raise ArgumentError, "Need cost_hash to have a :gold key. Got #{cost_hash.inspect}" if cost_hash[:gold].nil?
         raise ArgumentError, "Need cost_hash to have a :steel key. Got #{cost_hash.inspect}" if cost_hash[:steel].nil?
         raise ArgumentError, "Need cost_hash to have a :oil key. Got #{cost_hash.inspect}" if cost_hash[:oil].nil?

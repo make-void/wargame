@@ -2,8 +2,16 @@ module LG
   module Queue
     class CityQueue
         
-      attr_reader :errors, :unit_queue, :building_queue, :research_queue, :city
+      attr_reader :errors, :unit_queue, :building_queue, :research_queue, :city      
+      
       QUEUE_TYPES = [:all, :unit, :building, :research]
+      
+      NAMES = {
+        # table => column
+        structs: { klass: :structure, queue: :building }, 
+        techs: { klass: :research, queue: :tech, id_name: :tech }, #  FIXME: id_name is pathetic, rename all "structure_id" in "struct_id" pleaaaase! (also think about naming difference between tech,research and upgrades, with version control should be easy to rename)
+        units: { klass: :unit, queue: :unit },
+      }      
       
       private_class_method :new
       
@@ -23,6 +31,19 @@ module LG
         end
         #Initialize Items
         return instance
+      end
+      
+      def self.destroy(params)
+       # city_id: attrs.city_id, player_id: attrs.player_id, structure_id: attrs.structure_id, unit_id: attrs.unit_id
+        @type = params[:type].to_sym
+        model = eval("DB::Queue::#{klass(@type)}")
+        model.where( player_id: params[:player_id], city_id: params[:city_id] ).first.destroy
+      end
+      
+      
+      def self.klass(type)
+        key = type.to_s.pluralize.to_sym
+        NAMES.fetch(key).fetch(:queue).to_s.camelcase
       end
       
       def initialize( city_id, player_id )
