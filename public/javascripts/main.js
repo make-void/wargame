@@ -272,10 +272,12 @@ QueueView = (function() {
   QueueView.prototype.initialize = function(opts) {
     this.dialog = opts.dialog;
     window.queueViewDialog = this.dialog;
-    console.log("diadia: ", this.dialog);
+    Queue.unbind('all');
+    Queue.unbind('add');
+    Queue.unbind('reset');
+    Queue.bind('all', this.render, this);
     Queue.bind('add', this.addOne, this);
-    Queue.bind('reset', this.addAll, this);
-    return window.laurafica = this;
+    return Queue.bind('reset', this.addAll, this);
   };
   QueueView.prototype.render = function() {
     var content, haml;
@@ -288,13 +290,11 @@ QueueView = (function() {
   };
   QueueView.prototype.addOne = function(queueItem) {
     var content, self, view;
-    window.laurafica.$(".queueItems").html("");
     this.dialog = window.queueViewDialog;
     view = new QueueItemView({
       model: queueItem
     });
     content = view.render().el;
-    window.laurafica = this;
     self = this;
     $(this).find(".queueItems").load(function() {});
     setTimeout(function() {
@@ -303,6 +303,8 @@ QueueView = (function() {
     return this.dialog.renderOverview();
   };
   QueueView.prototype.addAll = function() {
+    console.log("reeeset");
+    this.$(".queueItems").html("");
     return Queue.each(this.addOne);
   };
   return QueueView;
@@ -314,13 +316,19 @@ QueueItemView = (function() {
   }
   QueueItemView.prototype.tagName = "li";
   QueueItemView.prototype.events = {
-    "click .removeButton": "removeItem"
+    "click .removeButton": "clear"
+  };
+  QueueItemView.prototype.initialize = function() {
+    return this.model.bind('destroy', this.remove, this);
   };
   QueueItemView.prototype.render = function() {
     $(this.el).html(Utils.haml("#queueItemView-tmpl", this.model));
     return this;
   };
-  QueueItemView.prototype.removeItem = function() {
+  QueueItemView.prototype.clear = function() {
+    return this.model.destroy();
+  };
+  QueueItemView.prototype.remove = function() {
     var attrs, post;
     console.log("removing item from queue");
     Spinner.spin();
@@ -593,7 +601,6 @@ CityDialog = GenericDialog.extend({
     }).call(this);
     if (dialog) {
       content = dialog.render().el;
-      console.log("content: ", content);
       this.$(".dialog").html(content);
       return this.$(".dialog").addClass("dialog2");
     }
@@ -650,8 +657,10 @@ StructsDialog = GenericDialog.extend({
     city_id = 42768;
     type = "struct";
     type_id = 1;
+    Spinner.spin();
     return $.post("/players/me/cities/" + city_id + "/queues/" + type + "/" + type_id, function(data) {
-      return console.log(data);
+      console.log(data);
+      return Spinner.hide();
     });
   }
 });

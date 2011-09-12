@@ -15,7 +15,10 @@ StructsDialog  = GenericDialog.extend(
     city_id = 42768
     type = "struct"
     type_id = 1
+    Spinner.spin()
     $.post("/players/me/cities/#{city_id}/queues/#{type}/#{type_id}", (data) ->
       console.log data
+      
+      Spinner.hide()
     )
 )

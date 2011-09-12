@@ -3,12 +3,15 @@ class QueueView extends Backbone.View
   initialize: (opts) -> # remember to not call this method constructor for Backbone.Views
     @dialog = opts.dialog
     window.queueViewDialog = @dialog
-    console.log "diadia: ", @dialog
+    Queue.unbind('all')
+    Queue.unbind('add')
+    Queue.unbind('reset')
+    Queue.bind('all',   this.render, this)
     Queue.bind('add',   this.addOne, this)
     Queue.bind('reset', this.addAll, this)
-    window.laurafica = this
 
   render: ->
+    # console.log Queue
     haml = Haml $("#queueView-tmpl").html()
     content = haml({ errors: [] })
     $(this.el).html content
@@ -16,11 +19,9 @@ class QueueView extends Backbone.View
     this
     
   addOne: (queueItem) ->    
-    window.laurafica.$(".queueItems").html("")
     @dialog = window.queueViewDialog # FIXME: BAD HACK
     view = new QueueItemView model: queueItem
     content = view.render().el
-    window.laurafica = this
     self = this
     $(this).find(".queueItems").load( -> # wtf?
       # console.log "elem: ", this
@@ -31,4 +32,6 @@ class QueueView extends Backbone.View
     @dialog.renderOverview()
 
   addAll: ->
+    console.log "reeeset"
+    this.$(".queueItems").html("")
     Queue.each this.addOne

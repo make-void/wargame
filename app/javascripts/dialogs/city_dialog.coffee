@@ -64,7 +64,6 @@ CityDialog  = GenericDialog.extend(
         
     if dialog
       content = dialog.render().el
-      console.log "content: ", content
       this.$(".dialog").html content
       # this.$(".dialog").removeClass( (idx, cla) -> cla )
       this.$(".dialog").addClass "dialog2"

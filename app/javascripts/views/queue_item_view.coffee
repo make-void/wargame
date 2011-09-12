@@ -2,16 +2,20 @@ class QueueItemView extends Backbone.View
   tagName:  "li"
 
   events: {
-    "click .removeButton": "removeItem"
+    "click .removeButton": "clear"
   }  
   
+  initialize: ->
+    this.model.bind 'destroy', this.remove, this
   
   render: ->
     $(this.el).html Utils.haml("#queueItemView-tmpl", this.model) 
     this
     
+  clear: ->
+    this.model.destroy()
     
-  removeItem: ->
+  remove: ->
     console.log "removing item from queue"
     Spinner.spin()
     attrs = this.model.attributes
@@ -22,4 +26,4 @@ class QueueItemView extends Backbone.View
       Spinner.hide()
     )
     
-    
+        
