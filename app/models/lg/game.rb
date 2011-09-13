@@ -2,11 +2,11 @@ module LG
   module Game
     
     def self.get_base_infos_for_player( pid )
-      return { :armies => fetch_armies_of_player(pid), :cities => fetch_cities_of_player(pid), :research => fetch_res_of_player(pid) }
+      return { armies: fetch_armies_of_player(pid), cities: fetch_cities_of_player(pid), research: fetch_res_of_player(pid) }
     end
    
     def self.get_all_base_infos()      
-      return { :units => fetch_units(), :researches => fetch_researches(), :structures => fetch_structures() }
+      return { units: fetch_units(), researches: fetch_researches(), structures: fetch_structures() }
     end
     
     #### GENERAL FETCH METHODS
@@ -20,26 +20,26 @@ module LG
         building_requirements = []
         
         res.tech_reqs.map do |t_req|
-          research_requirements.push({ :tech_id => t_req.req_tech_id, :level => t_req.level })
+          research_requirements.push({ tech_id: t_req.req_tech_id, level: t_req.level })
         end
         res.building_reqs.map do |b_req|
-          building_requirements.push({ :structure_id => b_req.req_structure_id, :level => b_req.level })
+          building_requirements.push({ structure_id: b_req.req_structure_id, level: b_req.level })
         end
         
         researches[res.tech_id] = {
-          :name => res.name,
-          :description => res.description,
-          :cost => {
-            :gold => res.gold_cost,
-            :steel => res.steel_cost,
-            :oil => res.oil_cost,
-            :base_time => LG::Research.time( res, 1, 1 ).ceil
+          name: res.name,
+          description: res.description,
+          cost: {
+            gold: res.gold_cost,
+            steel: res.steel_cost,
+            oil: res.oil_cost,
+            base_time: LG::Research.time( res, 1, 1 ).ceil
           },
-          :requirements => {
-            :researches => research_requirements,
-            :buildings => building_requirements
+          requirements: {
+            researches: research_requirements,
+            buildings: building_requirements
           },
-          :max_level => res.max_level
+          max_level: res.max_level
         }
         
       end
@@ -57,33 +57,33 @@ module LG
         building_requirements = []
         
         unit.tech_reqs.map do |t_req|
-          research_requirements.push({ :tech_id => t_req.req_tech_id, :level => t_req.level })
+          research_requirements.push({ tech_id: t_req.req_tech_id, level: t_req.level })
         end
         unit.building_reqs.map do |b_req|
-          building_requirements.push({ :structure_id => b_req.req_structure_id, :level => b_req.level })
+          building_requirements.push({ structure_id: b_req.req_structure_id, level: b_req.level })
         end
         
         units[unit.unit_id] = {
-          :name => unit.name,
-          :unit_type => unit.unit_type,
-          :attack_type => DB::Unit::Definition::ATTACK_TYPES[unit.attack_type],
-          :cost => {
-            :gold => unit.gold_cost,
-            :steel => unit.steel_cost,
-            :oil => unit.oil_cost,
-            :base_time => LG::Unit.production_time( unit, 1 )
+          name: unit.name,
+          unit_type: unit.unit_type,
+          attack_type: DB::Unit::Definition::ATTACK_TYPES[unit.attack_type],
+          cost: {
+            gold: unit.gold_cost,
+            steel: unit.steel_cost,
+            oil: unit.oil_cost,
+            base_time: LG::Unit.production_time( unit, 1 )
           },
-          :stats => {
-            :power => unit.power,
-            :defense => unit.defense,
-            :movement_speed => unit.movement_speed,
-            :movement_cost => unit.movement_cost,
-            :cargo_capacity => unit.cargo_capacity,
-            :transport_capacity => unit.transport_capacity
+          stats: {
+            power: unit.power,
+            defense: unit.defense,
+            movement_speed: unit.movement_speed,
+            movement_cost: unit.movement_cost,
+            cargo_capacity: unit.cargo_capacity,
+            transport_capacity: unit.transport_capacity
           },
-          :requirements => {
-            :researches => research_requirements,
-            :buildings => building_requirements
+          requirements: {
+            researches: research_requirements,
+            buildings: building_requirements
           }
         }
         
@@ -101,26 +101,26 @@ module LG
         building_requirements = []
         
         struct.tech_reqs.map do |t_req|
-          research_requirements.push({ :tech_id => t_req.req_tech_id, :level => t_req.level })
+          research_requirements.push({ tech_id: t_req.req_tech_id, level: t_req.level })
         end
         struct.building_reqs.map do |b_req|
-          building_requirements.push({ :structure_id => b_req.req_structure_id, :level => b_req.level })
+          building_requirements.push({ structure_id: b_req.req_structure_id, level: b_req.level })
         end
         
         structures[struct.structure_id] = {
-          :name => struct.name,
-          :description => struct.description,
-          :cost => {
-            :gold => struct.gold_cost,
-            :steel => struct.steel_cost,
-            :oil => struct.oil_cost,
-            :base_time => LG::Structures.time( struct, 1, 1 ).ceil
+          name: struct.name,
+          description: struct.description,
+          cost: {
+            gold: struct.gold_cost,
+            steel: struct.steel_cost,
+            oil: struct.oil_cost,
+            base_time: LG::Structures.time( struct, 1, 1 ).ceil
           },
-          :requirements => {
-            :researches => research_requirements,
-            :buildings => building_requirements
+          requirements: {
+            researches: research_requirements,
+            buildings: building_requirements
           },
-          :max_level => struct.max_level
+          max_level: struct.max_level
         }
         structures[struct.structure_id][:base_production] = struct.base_production unless struct.base_production.nil?
       end
@@ -131,15 +131,15 @@ module LG
     #### LOCALIZED ON USER FETCH METHODS
     def self.fetch_armies_of_player( player_id )
       armies = {}
-      DB::Army.find(:all, :conditions => {:player_id => player_id }).map do |a|
+      DB::Army.find(:all, conditions: {player_id: player_id }).map do |a|
         loc = a.location
         armies[a.army_id] = {
-           :location => { 
-               :latitude => loc.latitude.to_f, 
-               :longitude => loc.longitude.to_f, 
-               :location_id => loc.location_id 
+           location: { 
+               latitude: loc.latitude.to_f, 
+               longitude: loc.longitude.to_f, 
+               location_id: loc.location_id 
              },
-            :is_moving => a.is_moving
+            is_moving: a.is_moving
         }
       end
       
@@ -148,15 +148,15 @@ module LG
 
     def self.fetch_cities_of_player( player_id )
       cities = {}
-      DB::City.find(:all, :conditions => {:player_id => player_id}).map do |c|
+      DB::City.find(:all, conditions: {player_id: player_id}).map do |c|
         loc = c.location
         cities[c.city_id] = {
-          :name => c.name,
-          :ccode => c.ccode,
-          :location => { 
-            :latitude => loc.latitude.to_f, 
-            :longitude => loc.longitude.to_f, 
-            :location_id => loc.location_id 
+          name: c.name,
+          ccode: c.ccode,
+          location: { 
+            latitude: loc.latitude.to_f, 
+            longitude: loc.longitude.to_f, 
+            location_id: loc.location_id 
           }
         }
       end
@@ -164,13 +164,13 @@ module LG
     
     def self.fetch_res_of_player( player_id )
       research = {}
-      DB::Research::Upgrade.find(:all, :conditions => {:player_id => player_id}).map do |r|
+      DB::Research::Upgrade.find(:all, conditions: {player_id: player_id}).map do |r|
         research[r.tech_id] = {
-          :level => r.level,
-          :upgade_cost => {
-            :gold => r.next_lev_gold_cost,
-            :steel => r.next_lev_steel_cost,
-            :oil => r.next_lev_oil_cost
+          level: r.level,
+          upgade_cost: {
+            gold: r.next_lev_gold_cost,
+            steel: r.next_lev_steel_cost,
+            oil: r.next_lev_oil_cost
           }
         }
       end
