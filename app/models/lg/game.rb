@@ -1,8 +1,23 @@
 module LG
   module Game
     
-    def self.get_base_infos_for_player( pid )
-      return { armies: fetch_armies_of_player(pid), cities: fetch_cities_of_player(pid), research: fetch_res_of_player(pid) }
+    def self.failcheck(player_id)
+      raise "You are joking right? (u tried to fetch all npc infos, tsk!)" if player_id == 1
+    end
+    
+    def self.get_base_infos_for_player( player_id )
+      failcheck player_id 
+      return { armies: fetch_armies_of_player(player_id), cities: fetch_cities_of_player(player_id), research: fetch_res_of_player(player_id) }
+    end
+    
+    def self.armies(player_id)
+      failcheck player_id
+      fetch_armies_of_player player_id
+    end
+   
+    def self.cities(player_id)
+      failcheck player_id
+      fetch_cities_of_player player_id
     end
    
     def self.get_all_base_infos()      
@@ -13,7 +28,7 @@ module LG
     def self.fetch_researches
       researches_data = DB::Research::Definition.all
       
-      researches = {}
+      researches = []
       researches_data.map do |res|
         
         research_requirements = []
@@ -26,7 +41,8 @@ module LG
           building_requirements.push({ structure_id: b_req.req_structure_id, level: b_req.level })
         end
         
-        researches[res.tech_id] = {
+        researches << {
+          id: res.tech_id,
           name: res.name,
           description: res.description,
           cost: {
@@ -50,7 +66,7 @@ module LG
     def self.fetch_units
       units_data = DB::Unit::Definition.all
       
-      units = {}
+      units = []
       units_data.map do |unit|
         
         research_requirements = []
@@ -63,7 +79,8 @@ module LG
           building_requirements.push({ structure_id: b_req.req_structure_id, level: b_req.level })
         end
         
-        units[unit.unit_id] = {
+        units << {
+          id: unit.unit_id,
           name: unit.name,
           unit_type: unit.unit_type,
           attack_type: DB::Unit::Definition::ATTACK_TYPES[unit.attack_type],
@@ -94,7 +111,7 @@ module LG
     def self.fetch_structures
       structures_data = DB::Structure::Definition.all
       
-      structures = {}
+      structures = []
       structures_data.map do |struct|
         
         research_requirements = []
@@ -107,7 +124,8 @@ module LG
           building_requirements.push({ structure_id: b_req.req_structure_id, level: b_req.level })
         end
         
-        structures[struct.structure_id] = {
+        structure = {
+          id: struct.structure_id,
           name: struct.name,
           description: struct.description,
           cost: {
@@ -122,7 +140,9 @@ module LG
           },
           max_level: struct.max_level
         }
-        structures[struct.structure_id][:base_production] = struct.base_production unless struct.base_production.nil?
+        structure[:base_production] = struct.base_production unless struct.base_production.nil?
+        
+        structures << structure
       end
       
       return structures
@@ -131,9 +151,11 @@ module LG
     #### LOCALIZED ON USER FETCH METHODS
     def self.fetch_armies_of_player( player_id )
       armies = {}
-      DB::Army.find(:all, conditions: {player_id: player_id }).map do |a|
+      DB::Army.where( player_id: player_id ).map do |a|
         loc = a.location
-        armies[a.army_id] = {
+        {
+           id: a.army_id,
+           type: "army",
            location: { 
                latitude: loc.latitude.to_f, 
                longitude: loc.longitude.to_f, 
@@ -150,7 +172,9 @@ module LG
       cities = {}
       DB::City.find(:all, conditions: {player_id: player_id}).map do |c|
         loc = c.location
-        cities[c.city_id] = {
+        {
+          id: c.city_id,
+          type: "city",
           name: c.name,
           ccode: c.ccode,
           location: { 
@@ -165,7 +189,8 @@ module LG
     def self.fetch_res_of_player( player_id )
       research = {}
       DB::Research::Upgrade.find(:all, conditions: {player_id: player_id}).map do |r|
-        research[r.tech_id] = {
+        research = {
+          id: r.tech_id,
           level: r.level,
           upgade_cost: {
             gold: r.next_lev_gold_cost,
@@ -225,76 +250,9 @@ module LG
       end
       return nil
     end
-
-###################################
-#      BUILDING DEBUG PUTS        #
-###################################
-
-  def self.debug_buildings
-    LG::Game.get_all_base_infos()[:structures].each do |x,y|
-      puts "#{x}: #{y[:name]}"
-      puts "    - #{y[:description]}"
-      puts "    - Cost: gold #{y[:cost][:gold]}, steel #{y[:cost][:steel]}, oil #{y[:cost][:oil]}, time(seconds) #{y[:cost][:base_time]}"
-      puts "    - Max Level: #{y[:max_level]}"
-      puts "    - Requirements: (Researches)"
-      y[:requirements][:researches].map do |res_req|
-        puts "        - #{DB::Research::Definition.find(res_req[:tech_id]).name}: #{res_req[:level]}"
-      end
-      puts "    - Requirements: (Buildings)"
-      y[:requirements][:buildings].map do |build_req|
-        puts "        - #{DB::Structure::Definition.find(build_req[:structure_id]).name}: #{build_req[:level]}"
-      end
-      puts "    - BASE PRODUCTION: #{y[:base_production]}" if y[:base_production]
-
-    end
-    return nil
-  end
-
-###################################
-#         UNITS DEBUG PUTS        #
-###################################
-
-    def self.debug_units
-      LG::Game.get_all_base_infos()[:units].each do |x,y|
-        puts "#{x}: #{y[:name]} (#{y[:stats][:power]}/#{y[:stats][:defense]})"
-        puts "    - AttackType: #{y[:attack_type]}"
-        puts "    - Movement: Speed #{y[:stats][:movement_speed]}, Cost #{y[:stats][:movement_cost]}"
-        puts "    - Transport: Units #{y[:stats][:transport_capacity]}, Resources #{y[:stats][:cargo_capacity]}"
-        puts "    - Cost: gold #{y[:cost][:gold]}, steel #{y[:cost][:steel]}, oil #{y[:cost][:oil]}, time(seconds) #{y[:cost][:base_time]}"
-        puts "    - Requirements: (Research)"
-        y[:requirements][:researches].map do |res_req|
-          puts "        - #{DB::Research::Definition.find(res_req[:tech_id]).name}: #{res_req[:level]}"
-        end
-        puts "    - Requirements: (Buildings)"
-        y[:requirements][:buildings].map do |build_req|
-          puts "        - #{DB::Structure::Definition.find(build_req[:structure_id]).name}: #{build_req[:level]}"
-        end
-      end
-      return nil
-    end
-
-###################################
-#      RESEARCHES DEBUG PUTS      #
-###################################
-
-  def self.debug_researches
-    LG::Game.get_all_base_infos()[:researches].each do |x,y|
-      puts "#{x}: #{y[:name]}"
-      puts "    - #{y[:description]}"
-      puts "    - Cost: gold #{y[:cost][:gold]}, steel #{y[:cost][:steel]}, oil #{y[:cost][:oil]}, time(seconds) #{y[:cost][:base_time]}"
-      puts "    - Max Level: #{y[:max_level]}"
-      puts "    - Requirements: (Researches)"
-      y[:requirements][:researches].map do |res_req|
-        puts "        - #{DB::Research::Definition.find(res_req[:tech_id]).name}: #{res_req[:level]}"
-      end
-      puts "    - Requirements: (Buildings)"
-      y[:requirements][:buildings].map do |build_req|
-        puts "        - #{DB::Structure::Definition.find(build_req[:structure_id]).name}: #{build_req[:level]}"
-      end
-      
-    end
-    return nil
-  end
+    
+    
+    extend GameDebug
 
  end
 end
