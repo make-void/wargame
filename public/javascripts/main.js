@@ -1303,7 +1303,6 @@ Game = (function() {
     cities_view = new CitiesView();
     armies_view = new ArmiesView();
     Cities.fetch();
-    $($("#nav li")[1]).find("div").show();
     return this;
   };
   Game.prototype.initMap = function() {
@@ -1324,7 +1323,13 @@ Game = (function() {
     });
     return this.current_playerView.render();
   };
-  Game.prototype.initNav = function() {};
+  Game.prototype.initNav = function() {
+    return $("#nav li").hover(function() {
+      return $(this).find("div").show();
+    }, function() {
+      return $(this).find("div").hide();
+    });
+  };
   return Game;
 })();
 $(function() {

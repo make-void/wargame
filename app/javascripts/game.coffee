@@ -45,7 +45,7 @@ class Game
     Cities.fetch()
     
     # debug:
-    $($("#nav li")[1]).find("div").show()
+    # $($("#nav li")[1]).find("div").show()
     
     this
 
@@ -71,8 +71,8 @@ class Game
 
 
   initNav: ->
-    # $("#nav li").hover( ->
-    #   $(this).find("div").show()
-    # , ->
-    #   $(this).find("div").hide()    
-    # )
+    $("#nav li").hover( ->
+      $(this).find("div").show()
+    , ->
+      $(this).find("div").hide()    
+    )
