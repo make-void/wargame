@@ -15,34 +15,6 @@
 - ruby db/refine.rb  (per il db con le locazioni importate da db/european_cities.txt)
 - rails server
 
-
-### workers (BackgrounDRb):
-
-start BgDRb server:
-    
-    bundle exec script/backgroundrb start
- 
-(this should also automatically start the workers)
-
-
-*console:*
-
-start workers:
-    
-    MiddleMan.worker(:queue_updater).async_create
-
-infos:
-
-    MiddleMan.all_worker_info
-
-stop  BgDRb server:
-
-    bundle exec script/backgroundrb stop
-  
-  
-  
-- Workers for now, just log informations in the log/backgroundrb_11006.log file
-
 gg!
 ### BUGFIX:
 

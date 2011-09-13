@@ -20,8 +20,6 @@ gem 'newrelic_rpm'
 
 gem "voidtools", git: "https://github.com/makevoid/voidtools"
 
-gem 'backgroundrb-rails3', :require => 'backgroundrb'
-
 gem "exception_notification", :git => "https://github.com/rails/exception_notification"
 
 group :development do
