@@ -1,4 +1,4 @@
-var Alliance, ArmiesList, ArmiesView, Army, ArmyDialog, ArmyOverview, AttackState, AttackType, BubbleEvents, BubbleView, CitiesList, CitiesView, City, CityDialog, CityInfos, CityMarkerIcon, CityOverview, Debug, DebugDialog, Definition, Definitions, Game, GameState, GameView, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, Marker, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, QueueItem, QueueItemView, QueueList, QueueView, SpinnerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console, g;
+var Alliance, ArmiesList, ArmiesView, Army, ArmyDialog, ArmyOverview, ArmyView, AttackState, AttackType, BubbleEvents, BubbleView, CitiesList, CitiesView, City, CityDialog, CityInfos, CityMarkerIcon, CityOverview, CityView, Debug, DebugDialog, Definition, Definitions, Game, GameState, GameView, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, Marker, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, QueueItem, QueueItemView, QueueList, QueueView, SpinnerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
 var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -291,7 +291,6 @@ QueueView = (function() {
     return this.dialog.renderQueue();
   };
   QueueView.prototype.addAll = function() {
-    console.log("reeeset");
     this.$(".queueItems").html("");
     return Queue.each(this.addOne);
   };
@@ -495,11 +494,56 @@ ArmyOverview = (function() {
   ArmyOverview.prototype.initialize = function() {};
   return ArmyOverview;
 })();
+CityView = (function() {
+  __extends(CityView, Backbone.View);
+  function CityView() {
+    CityView.__super__.constructor.apply(this, arguments);
+  }
+  CityView.prototype.tagName = "li";
+  CityView.prototype.render = function() {
+    $(this.el).html(Utils.haml("#cityView-tmpl", this.model));
+    return this;
+  };
+  return CityView;
+})();
+ArmyView = (function() {
+  __extends(ArmyView, Backbone.View);
+  function ArmyView() {
+    ArmyView.__super__.constructor.apply(this, arguments);
+  }
+  return ArmyView;
+})();
 CitiesView = (function() {
   __extends(CitiesView, Backbone.View);
   function CitiesView() {
     CitiesView.__super__.constructor.apply(this, arguments);
   }
+  CitiesView.prototype.initialize = function() {
+    Cities.bind('all', this.render, this);
+    Cities.bind('add', this.addOne, this);
+    return Cities.bind('reset', this.addAll, this);
+  };
+  CitiesView.prototype.render = function() {
+    var content, haml;
+    haml = Haml($("#citiesView-tmpl").html());
+    content = haml({});
+    console.log("rel: ", this.el);
+    $(this.el).html(content);
+    return this;
+  };
+  CitiesView.prototype.addOne = function(city) {
+    var content, view;
+    console.log("add city", city);
+    view = new CityView({
+      model: city
+    });
+    content = view.render().el;
+    this.$(".cities ul").append(content);
+    return console.log("cont", this.$(".cities ul"));
+  };
+  CitiesView.prototype.addAll = function() {
+    return Cities.each(this.addOne);
+  };
   return CitiesView;
 })();
 ArmiesView = (function() {
@@ -976,10 +1020,6 @@ ArmiesList = (function() {
   ArmiesList.prototype.url = "/players/me/armies";
   return ArmiesList;
 })();
-g = window;
-g.Cities = new CitiesList();
-g.Armies = new ArmiesList();
-Cities.fetch();
 Structs = (function() {
   __extends(Structs, Backbone.Model);
   function Structs() {
@@ -1184,15 +1224,20 @@ Game = (function() {
     return window.Spinner = new SpinnerView();
   };
   Game.prototype.initModels = function() {
-    var definitions, nav_armies, nav_cities;
+    var armies_view, cities_view, definitions, g;
     definitions = new Definitions();
     definitions.get(__bind(function(defs) {
       this.struct_def = new StructDef(defs);
       this.tech_def = new TechDef(defs);
       return this.unit_def = new UnitDef(defs);
     }, this));
-    nav_cities = new CitiesView();
-    nav_armies = new ArmiesView();
+    g = window;
+    g.Cities = new CitiesList();
+    g.Armies = new ArmiesList();
+    cities_view = new CitiesView();
+    armies_view = new ArmiesView();
+    Cities.fetch();
+    $($("#nav li")[1]).find("div").show();
     return this;
   };
   Game.prototype.initMap = function() {
@@ -1223,6 +1268,7 @@ Game = (function() {
   return Game;
 })();
 $(function() {
+  var g;
   g = window;
   g.game = new Game;
   game.initModels();

@@ -1,7 +1,11 @@
 require 'spec_helper'
 
-# path = File.expand_path "../../", __FILE__
-# load "#{path}/custom_helpers.rb"
+
+# load "#{Rails.root}/custom_helpers.rb"
+load "#{Rails.root}/app/controllers/cities_controller.rb"
+load "#{Rails.root}/app/models/lg/city.rb"
+# load "#{Rails.root}/config/router.rb"
+
 
 describe "Cities" do
   
@@ -19,6 +23,30 @@ describe "Cities" do
     @city = DB::City.create! @florence.merge(location_id: @location.id, player_id: @player.id)
   end
   
+  it "should get player's cities" do
+    data = json_get "/players/me/cities"
+    
+    data.should be_a(Array)
+    data.size.should == 1
+    city = data.first
+    city.symbolize_keys!
+    city[:name].should == @florence[:name]
+    
+    test_resources city[:production]
+    test_resources city[:storage_space]
+    test_resources city[:stored]
+    
+    city[:stats].should be_a(Hash)
+    city[:stats]["power"].should be_a(Numeric)
+    city[:stats]["defence"].should be_a(Numeric)
+    
+    city[:location].should be_a(Hash)
+    city[:location]["id"].should be_a(Numeric)
+    city[:location]["latitude"].should be_a(Numeric)
+    city[:location]["longitude"].should be_a(Numeric)
+    
+  end
+  
   it "should find a city by name" do
     city = "Florence"
     data = json_get "/cities/#{city}"
@@ -31,5 +59,12 @@ describe "Cities" do
     @ally.destroy
     @player.destroy
     @location.destroy
+  end
+  
+  def test_resources(resources)
+    resources.should be_a(Hash)
+    resources["gold"].should be_a(Numeric)
+    resources["steel"].should be_a(Numeric)
+    resources["oil"].should be_a(Numeric)
   end
 end

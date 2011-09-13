@@ -32,8 +32,20 @@ class Game
     #   dialog = eval "#{klass}Dialog"
     
     # init here
-    nav_cities = new CitiesView()
-    nav_armies = new ArmiesView()
+    
+    
+    g = window
+    g.Cities = new CitiesList()  
+    g.Armies = new ArmiesList()
+
+    cities_view = new CitiesView()
+    # $("nav .cities").html cities_view.render().el
+    armies_view = new ArmiesView()
+    
+    Cities.fetch()
+    
+    # debug:
+    $($("#nav li")[1]).find("div").show()
     
     this
 

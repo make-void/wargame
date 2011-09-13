@@ -32,6 +32,5 @@ class QueueView extends Backbone.View
     @dialog.renderQueue()
 
   addAll: ->
-    console.log "reeeset"
     this.$(".queueItems").html("")
     Queue.each this.addOne

@@ -18,11 +18,6 @@ class ArmiesList extends Backbone.Collection
   model: Army
   url: "/players/me/armies"
 
-g = window
-g.Cities = new CitiesList()  
-g.Armies = new ArmiesList()
-
-Cities.fetch()
 
 
 class Structs extends Backbone.Model

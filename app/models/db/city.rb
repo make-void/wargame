@@ -19,6 +19,8 @@ module DB # Database
     after_initialize :update_city_if_needed #TODO -> Check if it's enought to handle like this
     before_create { self.last_update_at = Time.now }
     
+    # FIXME: counter cache???
+    
     def overall_power
       count = 0
       units.each{|x| count += (x.power * x.number) }

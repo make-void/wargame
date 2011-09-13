@@ -455,7 +455,7 @@ body.game h1 {
       border-bottom: none; }
   #nav div {
     display: none;
-    width: 200px;
+    width: 300px;
     background: #fafafa;
     position: absolute;
     z-index: 3;
@@ -473,6 +473,17 @@ body.game h1 {
     -moz-border-radius-topright: 10px;
     -webkit-border-top-right-radius: 10px;
     border-top: none; }
+    #nav div ul {
+      display: block;
+      position: static;
+      border: 0;
+      top: 0;
+      left: 0; }
+      #nav div ul li {
+        float: none;
+        padding: 0px;
+        border: 0;
+        font-size: 1.4em; }
 
 #player {
   float: right;
