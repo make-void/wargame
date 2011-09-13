@@ -37,10 +37,12 @@ class MapView extends Backbone.View
   get_center_and_zoom: ->
     #console.log(localStorage.center_lat, localStorage.center_lng, localStorage.zoom)
 
-    if localStorage.center_lat && localStorage.center_lng
+    if localStorage.center_lat && localStorage.center_lng && localStorage.center_lat != "NaN" && localStorage.center_lng != "NaN" 
       @center_lat = parseFloat localStorage.center_lat
       @center_lng = parseFloat localStorage.center_lng
+      console.log "Fail"
     else
+
       this.set_default_coords()
       localStorage.center_lat = @center_lat
       localStorage.center_lng = @center_lng

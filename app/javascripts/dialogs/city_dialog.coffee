@@ -17,12 +17,18 @@ CityDialog  = GenericDialog.extend(
   
   # overview
   
-  renderOverview: ->
+  initializeOverview: -> 
+    @cityOverview = new CityOverview( model: this.model )
+    this.$(".overview").html @cityOverview.render().el
+  
+  # queue
+  
+  renderQueue: ->
     content = @queueView.render().el
     queue =  $(this.el).find(".queue")
     queue.html content
       
-  initializeOverview: ->
+  initializeQueue: ->
     @queueView = new QueueView( dialog: this )# model: Queue
    
     Queue.fetch()
@@ -55,9 +61,10 @@ CityDialog  = GenericDialog.extend(
       when "city_techs"
         model = new Techs { definitions: game.tech_def.definitions }
         @current_tab = new TechsDialog model: model
-      when "city_overview"
-        @current_tab = over = new CityOverview model: @model
+      when "city_infos"
+        @current_tab = over = new CityInfos model: @model
         this.initializeOverview()
+        this.initializeQueue()        
         over
       when "debug"
         @current_tab = new DebugDialog model: @model # { attributes: {} } # @model

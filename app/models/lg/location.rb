@@ -14,10 +14,9 @@ module LG # Logic
       armies = View::ArmyLocation.where( where_clause ).near([lat, lng], radius) ## We Can add in future HERE the rules for FOW
       
       locs =  cities.map{|loc| parse_location(loc) }
-      
-      locs = locs + armies.map{|loc| parse_location(loc) }
-              
-      return locs.sort_by{|x| x[:location_id]}
+      locs += armies.map{|loc| parse_location(loc) }
+                    
+      return locs.sort_by{|loc| loc[:location_id]}
       
       
       # TODO: sort by location_id. If city, first. then armies by army_id
@@ -56,8 +55,13 @@ module LG # Logic
         id: loc[:army_id].to_i
       }
       
-      location[:city] = city if key_exists?(loc[:city_id])
-      location[:army] = army if key_exists?(loc[:army_id])
+      if key_exists?(loc[:city_id])
+        location[:type] = "city"
+        location[:city] = city 
+      else # key_exists?(loc[:army_id])
+        location[:type] = "army"        
+        location[:army] = army
+      end
       
       location
     end

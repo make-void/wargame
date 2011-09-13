@@ -1,7 +1,11 @@
 
 Location  = Backbone.Model.extend {}
-Army      = Location.extend {}
-City      = Location.extend {}
+Army      = Location.extend {
+  type: "army"
+}
+City      = Location.extend {
+  type: "city"
+}
 Player    = Backbone.Model.extend {}
 Upgrade   = Backbone.Model.extend {}
 Alliance  = Backbone.Model.extend {}

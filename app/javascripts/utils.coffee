@@ -41,6 +41,7 @@ Utils.geocode = (city, fn) ->
   $.get("/cities/#{city}", (data) ->
     lat = data.location.latitude
     lng = data.location.longitude
+    console.log "daaa : ", data
     fn(lat, lng)
   )
 

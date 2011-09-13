@@ -29,7 +29,7 @@ class QueueView extends Backbone.View
     setTimeout( -> # FIXME: setTimeout is bad, intercept the real event (also ito doesnt works)
       self.$(".queueItems").append content
     , 1)
-    @dialog.renderOverview()
+    @dialog.renderQueue()
 
   addAll: ->
     console.log "reeeset"

@@ -1,5 +1,15 @@
 // templates    
 
+
+%script{ type: "text/template", id: "cityOverview-tmpl" }
+  :plain
+    city overview...
+
+
+%script{ type: "text/template", id: "armyOverview-tmpl" }
+  :plain
+    army overview...
+
 %script{ type: "text/template", id: "structView-tmpl" }
   :plain
     this is a struct
@@ -50,7 +60,8 @@
       %p.name 
         = player.name
         's Army
-      
+    .overview
+    
     .dialog.army
       %p.player.name= player.name
       commands
@@ -64,8 +75,10 @@
       .switchButton
       
       %p.name= city.name
+    .overview
+      overrrrr
     %ul.nav
-      %li.city_overview
+      %li.city_infos
         %a{ href: "javascript:void(0)" } City
       %li.city_structs 
         %a{ href: "javascript:void(0)" } Buildings
@@ -79,7 +92,7 @@
       / dialog content
         
 
-%script{ type: "text/template", id: "city_overviewDialog-tmpl" }
+%script{ type: "text/template", id: "city_infosDialog-tmpl" }
   :plain
     %div
       .info
@@ -87,6 +100,11 @@
         %p.population 
           pop: 
           = city.pts.format()
+        %p.location
+          loc: 
+          = latitude
+          ,
+          = longitude
     .queue_head Queue
     .queue
       ...

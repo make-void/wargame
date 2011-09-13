@@ -1,60 +1,37 @@
 class MarkerView 
 
-  constructor: (@map, @data) ->
+  constructor: (@map, @location) ->
     @marker = null
     @dialog = null
     
   draw: ->
-    console.log "ERROR: marker without lat,lng" unless @data.latitude
+    loc = @location.attributes
+    console.log "ERROR: marker without lat,lng" unless loc.latitude
     
-    latLng = new google.maps.LatLng @data.latitude, @data.longitude
-    
-    
-    unless @data.city == undefined
-      @data.type = "city"
-    else  
-      @data.type = "army"
-    
-    
-    
-    army_image = "http://" + window.http_host + "/images/map_icons/army_ally.png"
-    
+    latLng = new google.maps.LatLng loc.latitude, loc.longitude
+
     # TODO: reuse the same markers
-
-    
-
     marker = new Marker()
     
-    # TODO: cmon, this is not a view!!!!! move out... now!
-    
-    marker.location_id = @data.id
-    if @data.type == "city"
+    marker.location_id = loc.id
+    if @location.type == "city"
       marker.type = "city"
-      marker.name = @data.city.name
-      marker.city = @data.city
-      marker.army = undefined
-      
+      # marker.name = loc.city.name
+      # marker.city = loc.city      
     else
       marker.type = "army"
-      marker.name = "Army"
-      marker.army = @data.army
-      marker.city = undefined;
+      # marker.name = "Army"
+      # marker.army = loc.army
     
     marker.attributes = @data
     marker.view = this
     
+    marker.model = @location
     
-    
-    
-    # TODO: pass more datas
-    
-    # console.log "data: ", @data.type
-    if @data.type == "army"
-      marker.model = new Army @data
-      @dialog = marker.dialog = new ArmyDialog { model: marker.model }
+    if @location.type == "army"
+      @dialog = marker.dialog = new ArmyDialog { model: @location }
     else  
-      marker.model = new City @data
-      @dialog = marker.dialog = new CityDialog { model: marker.model }
+      @dialog = marker.dialog = new CityDialog { model: @location }
   
   
     @marker = marker
@@ -63,20 +40,21 @@ class MarkerView
     # -----
     # TODO: separate these two pieces plz, the first is logic, the second view
     
-    zIndex = if @data.type == "army" then -1 else -2
+    zIndex = if @location.type == "army" then -1 else -2
     @markerIcon = new google.maps.Marker({
       position: latLng,
       map: @map.map,
-      player: @data.player,
+      player: loc.player,
       zIndex: zIndex
     })
   
     
-    if @data.type == "city"  
-      icon = new CityMarkerIcon(@data.city.pts, "enemy")
+    if @location.type == "city"  
+      icon = new CityMarkerIcon(loc.city.pts, "enemy")
       @markerIcon .icon = icon.draw()
     else
       anchor = new google.maps.Point(25, 20)
+      army_image = "http://" + window.http_host + "/images/map_icons/army_ally.png"
       army_icon = new google.maps.MarkerImage(army_image, null, null, anchor, null)
       @markerIcon.icon = army_icon
     

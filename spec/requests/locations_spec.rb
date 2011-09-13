@@ -1,17 +1,42 @@
 require 'spec_helper'
 
+load "#{Rails.root}/app/models/lg/location.rb"
+
 describe "Locations" do
   
   describe "GET /" do
     
-    before(:each) { @fi = [43.7687324, 11.2569013] }
+    before :each do
+      @fi = { latitude: 43.7687324, longitude: 11.2569013 }
+      @im = { latitude: 43.683333, longitude: 11.25 }
+      @the_masterers = { name: "TheMasterers" }
+      @florence = { name: "Florence", ccode: "it" }
+      @impruneta = { name: "Impruneta", ccode: "it" }
+      @location = DB::Location.create! @fi
+      @location2 = DB::Location.create! @im
+      @cor3y = { name: "Cor3y", 
+                    new_password: "daniel001", 
+                    new_password_confirmation: "daniel001", 
+                    email: "test1@test.test" }
+      @ally = DB::Alliance.create! @the_masterers
+      @player = DB::Player.create! @cor3y.merge( alliance_id: @ally.id )
+      @city = DB::City.create! @florence.merge(location_id: @location.id, player_id: @player.id)
+      @city2 = DB::City.create! @impruneta.merge(location_id: @location2.id, player_id: @player.id)
+    end
     
     it "locations/:lat/:lng" do
-      url = "/locations/#{@fi.join("/")}"
+
+      url = "/locations/#{@fi[:latitude]}/#{@fi[:longitude]}"
       #request.headers["Content-Type"] = :json
       data = json_get url
       
+      res = LG::Location.get_near( {}, @im.merge( radius: 50 ) )
+      puts "loc", DB::Location.first.inspect   
+      puts "view", View::CityLocation.all.inspect   
+      puts "data", data.inspect
+      
       data[:locations].should be_a(Array)
+      data[:locations].size.should == 2 # W T F?!?
       data[:locations].each do |loc|
         #puts loc
         loc.should be_a(Hash)
@@ -20,6 +45,10 @@ describe "Locations" do
         loc[:longitude].should    be_a(Float)
         loc[:id].should  be_a(Integer)
         loc[:id].should_not  be(0) # "".to_i
+        
+        puts "------------"
+        puts loc[:type]
+        ["city", "army"].should include(loc[:type])
         
         # FIXME: move this in a request with cities to be sure we have a city 
         city = loc[:city]
@@ -57,9 +86,15 @@ describe "Locations" do
       # }
     end
     
-    it "locations/:lat/:lng raises an error with blank coordinates" do
-      
+    after :each do
+      @city.destroy
+      @city2.destroy
+      @ally.destroy
+      @player.destroy
+      @location.destroy
+      @location2.destroy
     end
+    
     
     # it "locations/:lat/:lng/cities"
     # 

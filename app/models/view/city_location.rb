@@ -4,8 +4,6 @@ module View
     
     reverse_geocoded_by :latitude, :longitude # TODO: check if it doesn't add overhead
     
-    
-    
     def readonly?
       true
     end

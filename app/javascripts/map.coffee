@@ -7,6 +7,7 @@ class Map extends Backbone.View
     # @max_simultaneous_markers = 100 # if iPhone v <= 3 || Android v <= 2
     @current_dialog = null
     @last_location_id = null
+    @locations = []
     @markers = []
     @map = null
     
@@ -24,14 +25,9 @@ class Map extends Backbone.View
 
     center = @map.getCenter()    
     
-    # TODO: use class Markers extends Backbone.Collection
-    
     $.getJSON("/locations/#{center.lat()}/#{center.lng()}", (data) =>
-      locations = []
-      for location in data.locations
-        locations.push location
-
-      this.drawMarkers locations
+      locations = data.locations
+      this.createLocations locations
       MapEvents.trigger("markers_loaded")
       #google.maps.event.addListenerOnce(@map, 'tilesloaded', callback);
     )    
@@ -52,7 +48,7 @@ class Map extends Backbone.View
     if @last_location_id
       MapEvents.bind("markers_loaded", =>
         for marker in @markers
-          if marker.attributes.id == @last_location_id
+          if marker.model.attributes.id == @last_location_id
             @current_dialog = this.openBubbleView(marker) # TODO: fix the bug: try to not reopen the bubble but only render the dialog content
             google.maps.event.clearListeners(marker.view.markerIcon, "click")
             MapEvents.unbind("markers_loaded")
@@ -60,39 +56,51 @@ class Map extends Backbone.View
       
     # others
     
-  saveDialogState: (marker) ->  
-    localStorage.last_location_id = marker.attributes.id
+  saveDialogState: (location) ->  
+    localStorage.last_location_id = location.attributes.id
+  
   
   # "private"
   
-  drawMarkers: (markers) ->
-    @timer = new Date()
-    for marker in markers
-      this.drawMarker marker
+  initLocation: (location) -> 
+    is_army = location.city == undefined
+    if is_army
+      new Army(location)
+    else
+      new City(location)
+  
+  # FIXME: orly? backbone_model.equal backbone_model2  - is better
 
-  drawMarker: (data) ->
-    draw = true
-    for mark in @markers
-      draw = false if this.same_city(mark, data) || this.same_army(mark, data)
+  createLocations: (locations) ->
+    for location in locations
+      existing = false
+      for loc in @locations
+        # console.log "same: ", this.same_city(loc, location), "loc: ", loc, "location: ", location
+        if loc.attributes.id == location.id 
+          existing = true
+          console.log "lokks: ", loc.type, location
 
-    @markers.push this.initMarker(data) if draw
+      unless existing  
+        location = this.initLocation location 
+        @locations.push location
+        @markers.push this.initMarker location
 
 
-  initMarker: (data) -> ###############
-    markerView = new MarkerView(this, data)
+  initMarker: (location) -> ###############
+    markerView = new MarkerView(this, location)
     markerIcon = markerView.draw().markerIcon # you can access the view with marker.view
     markerIcon.setMap @map
-    this.initDialog(markerView.marker)
+    this.initDialog(markerView.marker, location)
     markerView.marker
 
-  initDialog: (marker) ->
+  initDialog: (marker, location) ->
     google.maps.event.addListener(marker.view.markerIcon, 'click', =>
       is_same_dialog = (dialog) -> dialog.marker.unique_id != marker.unique_id
       # console.log(marker, @current_dialog.marker)
       # console.log("uid: ", @current_dialog.marker.unique_id, " - ",  marker.unique_id)
       if !@current_dialog || is_same_dialog(@current_dialog)
         @current_dialog = this.openBubbleView(marker)
-        this.saveDialogState(marker)
+        this.saveDialogState(location)
     )
       
   openBubbleView: (marker) ->        
@@ -114,7 +122,9 @@ class Map extends Backbone.View
     # ...
     
     marker.dialog.afterRender() 
-    marker.dialog.initTab "city_overview"
+    
+    console.log "mardia: ", marker.dialog
+    marker.dialog.initTab "city_infos"
     
     
     bubbleView
@@ -141,13 +151,6 @@ class Map extends Backbone.View
 
 
 
-  same_city: (mark, data) ->  
-    is_a_city = data.city && mark.city
-    is_a_city && mark.city.id == data.city.id
-
-  same_army: (mark, data) ->  
-    is_an_army = data.army && mark.army
-    is_an_army && mark.army.id == data.army.id    
 
   # exceptions
 
