@@ -1,20 +1,21 @@
-%ul#nav
-  %li
-    %p Menu1
-    %div 
-      %p content1
-      %img{ src: "/images/map_icons/army_own.png" }
-      %img{ src: "/images/map_icons/army_ally.png" }
-      %img{ src: "/images/map_icons/army_enemy.png" }
-      %p asdasdasdas<br>asdasdasds
-  %li 
-    %p Menu2
-    %div 
-      %p content2
-      %img{ src: "/images/map_icons/city_own.png" }
-      %img{ src: "/images/map_icons/city_ally.png" }
-      %img{ src: "/images/map_icons/city_enemy.png" }
-  %li 
-    %p Menu3
-    %div 
-      %p content3
+%nav
+  %ul#nav
+    %li
+      %p Menu1
+      %div 
+        %p Submenu
+        %img{ src: "/images/map_icons/army_own.png" }
+        %img{ src: "/images/map_icons/army_ally.png" }
+        %img{ src: "/images/map_icons/army_enemy.png" }
+        %p Submenu2
+        %img{ src: "/images/map_icons/city_own.png" }
+        %img{ src: "/images/map_icons/city_ally.png" }
+        %img{ src: "/images/map_icons/city_enemy.png" }
+    %li 
+      %p Cities
+      .cities
+        loading...
+    %li 
+      %p Armies
+      .armies
+        loading...

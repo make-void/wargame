@@ -76,9 +76,8 @@ class Map extends Backbone.View
       existing = false
       for loc in @locations
         # console.log "same: ", this.same_city(loc, location), "loc: ", loc, "location: ", location
-        if loc.attributes.id == location.id 
+        if loc.attributes.id == location.id && loc.type == location.type
           existing = true
-          console.log "lokks: ", loc.type, location
 
       unless existing  
         location = this.initLocation location 
@@ -94,37 +93,49 @@ class Map extends Backbone.View
     markerView.marker
 
   initDialog: (marker, location) ->
-    google.maps.event.addListener(marker.view.markerIcon, 'click', =>
-      is_same_dialog = (dialog) -> dialog.marker.unique_id != marker.unique_id
-      # console.log(marker, @current_dialog.marker)
-      # console.log("uid: ", @current_dialog.marker.unique_id, " - ",  marker.unique_id)
-      if !@current_dialog || is_same_dialog(@current_dialog)
-        @current_dialog = this.openBubbleView(marker)
-        this.saveDialogState(location)
+    self = this
+    google.maps.event.addListener(marker.view.markerIcon, 'click', ->
+      marker_attrs = marker.model.attributes
+      
+      # console.log "initDialog: ", @current_dialog, marker
+      is_different_from = (dialog) -> 
+        dialog_attrs = dialog.marker.model.attributes
+        dialog_attrs.id != marker_attrs.id || dialog_attrs.id == marker_attrs.id && dialog_attrs.type != marker.type
+      if !@current_dialog || is_different_from(@current_dialog)
+        @current_dialog = self.openBubbleView(marker)
+        self.saveDialogState(location)
     )
       
-  openBubbleView: (marker) ->        
-    @current_dialog.close() if @current_dialog
+  openBubbleView: (marker) ->      
+    map = @map
+    current_dialog = @current_dialog  
+    markers = @markers
+    current_dialog.close() if current_dialog
+    # FIXME: fix the bug that doesnt close the dialog
+    # console.log "mark: ", marker
+    # console.log "diag: ", current_dialog
+    # console.log "map: ", map
+    
 
-    bubbleView = new BubbleView(@map, marker)      
+    bubbleView = new BubbleView(map, marker)      
     bubbleView.doRender() # calls .open() internally    
     
     
     # ...
     # showSwitchButton()
-    for mark in @markers    
+    for mark in markers
       same_location = (m1, m2) -> 
         m1.location_id == m2.location_id
       if !_.isEqual(marker, mark) && same_location(mark, marker)
-        mark.markers = @markers
-        bubbleView.showSwitchButton(mark, this.openBubbleView) # executes openDialog internally
+        mark.markers = markers
+        bubbleView.showSwitchButton(mark, this.openBubbleView, this) # executes openDialog internally
     
     # ...
     
     marker.dialog.afterRender() 
     
-    console.log "mardia: ", marker.dialog
-    marker.dialog.initTab "city_infos"
+    if marker.type == "city"
+      marker.dialog.initTab "city_infos"
     
     
     bubbleView

@@ -10,6 +10,21 @@ Player    = Backbone.Model.extend {}
 Upgrade   = Backbone.Model.extend {}
 Alliance  = Backbone.Model.extend {}
 
+class CitiesList extends Backbone.Collection
+  model: City
+  url: "/players/me/cities"
+  
+class ArmiesList extends Backbone.Collection
+  model: Army
+  url: "/players/me/armies"
+
+g = window
+g.Cities = new CitiesList()  
+g.Armies = new ArmiesList()
+
+Cities.fetch()
+
+
 class Structs extends Backbone.Model
   
 Units = Backbone.Model.extend {}

@@ -1,4 +1,4 @@
-var Alliance, Army, ArmyDialog, ArmyOverview, AttackState, AttackType, BubbleEvents, BubbleView, City, CityDialog, CityInfos, CityMarkerIcon, CityOverview, Debug, DebugDialog, Definition, Definitions, Game, GameState, GameView, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, Marker, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, QueueItem, QueueItemView, QueueList, QueueView, SpinnerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
+var Alliance, ArmiesList, ArmiesView, Army, ArmyDialog, ArmyOverview, AttackState, AttackType, BubbleEvents, BubbleView, CitiesList, CitiesView, City, CityDialog, CityInfos, CityMarkerIcon, CityOverview, Debug, DebugDialog, Definition, Definitions, Game, GameState, GameView, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, Marker, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, QueueItem, QueueItemView, QueueList, QueueView, SpinnerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console, g;
 var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -69,7 +69,6 @@ MapView = (function() {
     if (localStorage.center_lat && localStorage.center_lng && localStorage.center_lat !== "NaN" && localStorage.center_lng !== "NaN") {
       this.center_lat = parseFloat(localStorage.center_lat);
       this.center_lng = parseFloat(localStorage.center_lng);
-      console.log("Fail");
     } else {
       this.set_default_coords();
       localStorage.center_lat = this.center_lat;
@@ -182,12 +181,12 @@ BubbleView = (function() {
       return this.open();
     }, this));
   };
-  BubbleView.prototype.showSwitchButton = function(marker, fun) {
+  BubbleView.prototype.showSwitchButton = function(marker, fun, scope) {
     return $(this.bubble.content).find(".switchButton").css({
       display: "block"
-    }).html("Switch to Army").bind("click", function() {
+    }).html("Switch to Army").bind("click", __bind(function() {
       return fun(marker);
-    });
+    }, this));
   };
   BubbleView.prototype.close = function() {
     this.bubble.close();
@@ -214,7 +213,6 @@ MarkerView = (function() {
     }
     latLng = new google.maps.LatLng(loc.latitude, loc.longitude);
     marker = new Marker();
-    marker.location_id = loc.id;
     if (this.location.type === "city") {
       marker.type = "city";
     } else {
@@ -482,6 +480,7 @@ CityOverview = (function() {
   CityOverview.prototype.selector = "#cityOverview-tmpl";
   CityOverview.prototype.render = function() {
     var content;
+    console.log("over: ", this.model);
     content = Utils.haml(this.selector, this.model);
     $(this.el).html(content);
     return this;
@@ -495,6 +494,20 @@ ArmyOverview = (function() {
   }
   ArmyOverview.prototype.initialize = function() {};
   return ArmyOverview;
+})();
+CitiesView = (function() {
+  __extends(CitiesView, Backbone.View);
+  function CitiesView() {
+    CitiesView.__super__.constructor.apply(this, arguments);
+  }
+  return CitiesView;
+})();
+ArmiesView = (function() {
+  __extends(ArmiesView, Backbone.View);
+  function ArmiesView() {
+    ArmiesView.__super__.constructor.apply(this, arguments);
+  }
+  return ArmiesView;
 })();
 CityMarkerIcon = (function() {
   function CityMarkerIcon(pts, type) {
@@ -945,6 +958,28 @@ City = Location.extend({
 Player = Backbone.Model.extend({});
 Upgrade = Backbone.Model.extend({});
 Alliance = Backbone.Model.extend({});
+CitiesList = (function() {
+  __extends(CitiesList, Backbone.Collection);
+  function CitiesList() {
+    CitiesList.__super__.constructor.apply(this, arguments);
+  }
+  CitiesList.prototype.model = City;
+  CitiesList.prototype.url = "/players/me/cities";
+  return CitiesList;
+})();
+ArmiesList = (function() {
+  __extends(ArmiesList, Backbone.Collection);
+  function ArmiesList() {
+    ArmiesList.__super__.constructor.apply(this, arguments);
+  }
+  ArmiesList.prototype.model = Army;
+  ArmiesList.prototype.url = "/players/me/armies";
+  return ArmiesList;
+})();
+g = window;
+g.Cities = new CitiesList();
+g.Armies = new ArmiesList();
+Cities.fetch();
 Structs = (function() {
   __extends(Structs, Backbone.Model);
   function Structs() {
@@ -1042,9 +1077,8 @@ Map = (function() {
       _ref = this.locations;
       for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
         loc = _ref[_j];
-        if (loc.attributes.id === location.id) {
+        if (loc.attributes.id === location.id && loc.type === location.type) {
           existing = true;
-          console.log("lokks: ", loc.type, location);
         }
       }
       _results.push(!existing ? (location = this.initLocation(location), this.locations.push(location), this.markers.push(this.initMarker(location))) : void 0);
@@ -1060,38 +1094,46 @@ Map = (function() {
     return markerView.marker;
   };
   Map.prototype.initDialog = function(marker, location) {
-    return google.maps.event.addListener(marker.view.markerIcon, 'click', __bind(function() {
-      var is_same_dialog;
-      is_same_dialog = function(dialog) {
-        return dialog.marker.unique_id !== marker.unique_id;
+    var self;
+    self = this;
+    return google.maps.event.addListener(marker.view.markerIcon, 'click', function() {
+      var is_different_from, marker_attrs;
+      marker_attrs = marker.model.attributes;
+      is_different_from = function(dialog) {
+        var dialog_attrs;
+        dialog_attrs = dialog.marker.model.attributes;
+        return dialog_attrs.id !== marker_attrs.id || dialog_attrs.id === marker_attrs.id && dialog_attrs.type !== marker.type;
       };
-      if (!this.current_dialog || is_same_dialog(this.current_dialog)) {
-        this.current_dialog = this.openBubbleView(marker);
-        return this.saveDialogState(location);
+      if (!this.current_dialog || is_different_from(this.current_dialog)) {
+        this.current_dialog = self.openBubbleView(marker);
+        return self.saveDialogState(location);
       }
-    }, this));
+    });
   };
   Map.prototype.openBubbleView = function(marker) {
-    var bubbleView, mark, same_location, _i, _len, _ref;
-    if (this.current_dialog) {
-      this.current_dialog.close();
+    var bubbleView, current_dialog, map, mark, markers, same_location, _i, _len;
+    map = this.map;
+    current_dialog = this.current_dialog;
+    markers = this.markers;
+    if (current_dialog) {
+      current_dialog.close();
     }
-    bubbleView = new BubbleView(this.map, marker);
+    bubbleView = new BubbleView(map, marker);
     bubbleView.doRender();
-    _ref = this.markers;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      mark = _ref[_i];
+    for (_i = 0, _len = markers.length; _i < _len; _i++) {
+      mark = markers[_i];
       same_location = function(m1, m2) {
         return m1.location_id === m2.location_id;
       };
       if (!_.isEqual(marker, mark) && same_location(mark, marker)) {
-        mark.markers = this.markers;
-        bubbleView.showSwitchButton(mark, this.openBubbleView);
+        mark.markers = markers;
+        bubbleView.showSwitchButton(mark, this.openBubbleView, this);
       }
     }
     marker.dialog.afterRender();
-    console.log("mardia: ", marker.dialog);
-    marker.dialog.initTab("city_infos");
+    if (marker.type === "city") {
+      marker.dialog.initTab("city_infos");
+    }
     return bubbleView;
   };
   Map.prototype.markersCleanMax = function() {
@@ -1142,13 +1184,15 @@ Game = (function() {
     return window.Spinner = new SpinnerView();
   };
   Game.prototype.initModels = function() {
-    var definitions;
+    var definitions, nav_armies, nav_cities;
     definitions = new Definitions();
     definitions.get(__bind(function(defs) {
       this.struct_def = new StructDef(defs);
       this.tech_def = new TechDef(defs);
       return this.unit_def = new UnitDef(defs);
     }, this));
+    nav_cities = new CitiesView();
+    nav_armies = new ArmiesView();
     return this;
   };
   Game.prototype.initMap = function() {
@@ -1179,7 +1223,6 @@ Game = (function() {
   return Game;
 })();
 $(function() {
-  var g;
   g = window;
   g.game = new Game;
   game.initModels();

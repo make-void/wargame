@@ -13,7 +13,7 @@ class MarkerView
     # TODO: reuse the same markers
     marker = new Marker()
     
-    marker.location_id = loc.id
+    # marker.location_id = loc.id
     if @location.type == "city"
       marker.type = "city"
       # marker.name = loc.city.name

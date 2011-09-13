@@ -20,9 +20,9 @@ class Game
   initModels: ->  
     definitions = new Definitions()
     definitions.get( (defs) =>
-      @struct_def  = new StructDef(defs)   
-      @tech_def    = new TechDef   (defs)
-      @unit_def    = new UnitDef   (defs)       
+      @struct_def  = new StructDef defs   
+      @tech_def    = new TechDef   defs
+      @unit_def    = new UnitDef   defs       
       # TODO: insert event trigger here to listen somewhere afterwards 
     )
     # types = ["struct", "tech", "unit"]
@@ -30,6 +30,11 @@ class Game
     #   klass = type.pluralize().capitalize()
     #   klass = eval klass
     #   dialog = eval "#{klass}Dialog"
+    
+    # init here
+    nav_cities = new CitiesView()
+    nav_armies = new ArmiesView()
+    
     this
 
   

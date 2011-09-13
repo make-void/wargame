@@ -51,10 +51,10 @@ class BubbleView# extends Backbone.View # TODO: make it a backbone model
       
   # actions
   
-  showSwitchButton: (marker, fun) ->
+  showSwitchButton: (marker, fun, scope) ->
     $(@bubble.content).find(".switchButton").css({display: "block"})
       .html("Switch to Army")
-      .bind("click", ->
+      .bind("click", =>
         fun(marker)
       )
     

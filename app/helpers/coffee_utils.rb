@@ -15,6 +15,9 @@ module CoffeeUtils
       "views/game_view",
       "views/city_overview",
       "views/army_overview",
+      "views/army_overview",
+      "views/player/cities_view",
+      "views/player/armies_view", 
       "markers/city_marker_icon",   
       "dialogs/generic_dialog",  
       "dialogs/city_dialog",   
@@ -23,7 +26,7 @@ module CoffeeUtils
       "dialogs/city/structs_dialog",
       "dialogs/city/units_dialog",  
       "dialogs/city/techs_dialog", 
-      "dialogs/city/debug_dialog", 
+      "dialogs/city/debug_dialog",
       "map/markers_updater",             
       "utils",  
       "events",
@@ -35,7 +38,7 @@ module CoffeeUtils
       "main",                       
     ] # you can use 'folder/*' but that way you have no control on the load order
     files << "debug" unless Rails.env == "production"
-    files
+    files.uniq
   end
         
   APP_ROOT = Rails.root
@@ -69,7 +72,12 @@ module CoffeeUtils
   end
 
   def do_compilation
-    out = `#{cd_js} coffee -j #{output_dir}/main.js -b  -c #{coffee_files_string} 2>&1`
+    main_js = "#{output_dir}/main.js"
+    `rm -rf #{main_js}`
+    cmd = "#{cd_js} coffee -j #{main_js} -b  -c #{coffee_files_string} 2>&1"
+    out = `#{cmd}`
+    puts "executing: ", cmd
+    puts "output: ", out
     if out =~ /Parse error on line|Error:/i
       begin
         shown = 5

@@ -40,9 +40,7 @@ class MapView extends Backbone.View
     if localStorage.center_lat && localStorage.center_lng && localStorage.center_lat != "NaN" && localStorage.center_lng != "NaN" 
       @center_lat = parseFloat localStorage.center_lat
       @center_lng = parseFloat localStorage.center_lng
-      console.log "Fail"
     else
-
       this.set_default_coords()
       localStorage.center_lat = @center_lat
       localStorage.center_lng = @center_lng
