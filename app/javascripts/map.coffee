@@ -95,16 +95,19 @@ class Map extends Backbone.View
   initDialog: (marker, location) ->
     self = this
     google.maps.event.addListener(marker.view.markerIcon, 'click', ->
-      marker_attrs = marker.model.attributes
-      
-      # console.log "initDialog: ", @current_dialog, marker
-      is_different_from = (dialog) -> 
-        dialog_attrs = dialog.marker.model.attributes
-        dialog_attrs.id != marker_attrs.id || dialog_attrs.id == marker_attrs.id && dialog_attrs.type != marker.type
-      if !@current_dialog || is_different_from(@current_dialog)
-        @current_dialog = self.openBubbleView(marker)
-        self.saveDialogState(location)
+      self.doInitDialog(marker)
     )
+    
+  doInitDialog: (marker) ->
+    marker_attrs = marker.model.attributes
+    
+    # console.log "initDialog: ", @current_dialog, marker
+    is_different_from = (dialog) -> 
+      dialog_attrs = dialog.marker.model.attributes
+      dialog_attrs.id != marker_attrs.id || dialog_attrs.id == marker_attrs.id && dialog_attrs.type != marker.type
+    if !@current_dialog || is_different_from(@current_dialog)
+      @current_dialog = this.openBubbleView(marker)
+      this.saveDialogState(location)
       
   openBubbleView: (marker) ->      
     map = @map

@@ -603,6 +603,14 @@ var Haml;
   };
 
   Haml = function Haml(haml, config) {
+    if (!haml || haml == "") {
+      fn = function(arg){
+        console.error("trying to process an empty haml", arg, haml)
+        return ""
+      }
+      return fn
+    }
+    
     if(typeof(config) != "object"){
       forceXML = config;
       config = {};

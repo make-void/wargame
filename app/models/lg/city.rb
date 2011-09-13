@@ -113,6 +113,7 @@ module LG
     
     def self.city_attributes(city)
       {
+        id: city.city_id,
         name: city.name,
         ccode: city.ccode,
         production: {

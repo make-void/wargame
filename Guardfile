@@ -7,7 +7,7 @@ end
 guard 'livereload' do
   watch(%r{.+\.(rb|ru)})
   watch(%r{app/(models|controllers|mailers)/.+\.(rb|yml|haml)})
-  watch(%r{app/views/\w+/.+\.(html|erb|haml)})  
+  watch(%r{app/views/\w+/.+\.(html|erb|haml|html)})  
   watch(%r{(app|public|spec)/javascripts/(^spec)/.+\.(coffee)})
   watch(%r{(app|public|spec)/javascripts/.+\.(coffee)})
   watch(%r{public/stylesheets/.+\.(css)})

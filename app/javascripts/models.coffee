@@ -18,6 +18,7 @@ class ArmiesList extends Backbone.Collection
   model: Army
   url: "/players/me/armies"
 
+Resources  = Backbone.Model.extend {}
 
 
 class Structs extends Backbone.Model

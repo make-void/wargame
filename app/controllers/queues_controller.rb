@@ -37,7 +37,8 @@ class QueuesController < ApplicationController
   def destroy
     queue_item = LG::Queue::CityQueue.get params[:city_id], params[:player_id]
     
-    success = queue_item.destroy_queue_item sanitize_queue_type( params[:type].to_sym ), params[:object_id], params[:level_or_number].to_i
+    type = sanitize_queue_type params[:type].to_sym
+    success = queue_item.destroy_queue_item type, params[:object_id], params[:level_or_number].to_i
     response = if success
       { success: true }
     else
@@ -46,9 +47,9 @@ class QueuesController < ApplicationController
     render json: response
   end
   
-  private
+  protected
   
-  def sanitize_queue_type_for_models(type)
+  def sanitize_queue_type(type)
     case type
     when :building
       return :building

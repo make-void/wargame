@@ -18,6 +18,7 @@ module CoffeeUtils
       "views/army_overview",
       "views/city_view",
       "views/army_view",
+      "views/resources_view",
       "views/player/cities_view",
       "views/player/armies_view", 
       "markers/city_marker_icon",   

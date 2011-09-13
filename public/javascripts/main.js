@@ -1,4 +1,4 @@
-var Alliance, ArmiesList, ArmiesView, Army, ArmyDialog, ArmyOverview, ArmyView, AttackState, AttackType, BubbleEvents, BubbleView, CitiesList, CitiesView, City, CityDialog, CityInfos, CityMarkerIcon, CityOverview, CityView, Debug, DebugDialog, Definition, Definitions, Game, GameState, GameView, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, Marker, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, QueueItem, QueueItemView, QueueList, QueueView, SpinnerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
+var Alliance, ArmiesList, ArmiesView, Army, ArmyDialog, ArmyOverview, ArmyView, AttackState, AttackType, BubbleEvents, BubbleView, CitiesList, CitiesView, City, CityDialog, CityInfos, CityMarkerIcon, CityOverview, CityView, Debug, DebugDialog, Definition, Definitions, Game, GameState, GameView, GenericDialog, LLRange, Location, Map, MapAction, MapAttack, MapEvents, MapMove, MapView, Marker, MarkerView, MarkersUpdater, MoveState, Player, PlayerView, QueueItem, QueueItemView, QueueList, QueueView, Resources, ResourcesView, SpinnerView, Struct, StructDef, Structs, StructsDialog, Tech, TechDef, Techs, TechsDialog, Unit, UnitDef, Units, UnitsDialog, Upgrade, Utils, console;
 var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -316,15 +316,16 @@ QueueItemView = (function() {
     return this.model.destroy();
   };
   QueueItemView.prototype.remove = function() {
-    var attrs, post;
+    var attrs, object_id, post;
     console.log("removing item from queue");
     Spinner.spin();
     attrs = this.model.attributes;
     console.log(attrs);
+    object_id = attrs.structure_id;
     post = {
       _method: 'delete',
       player_id: attrs.player_id,
-      structure_id: attrs.structure_id,
+      object_id: object_id,
       unit_id: attrs.unit_id
     };
     return $.post("/players/me/cities/" + attrs.city_id + "/queues/" + attrs.type, post, __bind(function(data) {
@@ -500,9 +501,56 @@ CityView = (function() {
     CityView.__super__.constructor.apply(this, arguments);
   }
   CityView.prototype.tagName = "li";
+  CityView.prototype.events = {
+    "click div": "panMap"
+  };
+  CityView.prototype.initialize = function() {
+    console.log("modmod: ", this.model);
+    this.stored = new Resources(this.model.attributes.storage_space);
+    this.storedView = new ResourcesView({
+      model: this.stored
+    });
+    this.production = new Resources(this.model.attributes.production);
+    return this.productionView = new ResourcesView({
+      model: this.production
+    });
+  };
+  CityView.prototype.panMap = function() {
+    var loc;
+    console.log("panning");
+    window.last_panned_loc = loc = this.model.attributes.location;
+    window.game.map.center(loc.latitude, loc.longitude);
+    console.log(loc.id);
+    return MapEvents.bind("markers_loaded", this.openDialog);
+  };
+  CityView.prototype.openDialog = function() {
+    var loc, marker, _i, _len, _ref;
+    console.log("loaded");
+    loc = window.last_panned_loc;
+    _ref = window.game.map.markers;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      marker = _ref[_i];
+      if (marker.model.id === loc.id) {
+        window.game.map.doInitDialog(marker);
+      }
+    }
+    return MapEvents.unbind("markers_loaded", this.openDialog);
+  };
   CityView.prototype.render = function() {
     $(this.el).html(Utils.haml("#cityView-tmpl", this.model));
+    this.renderStoredResources();
+    this.renderProductionResources();
     return this;
+  };
+  CityView.prototype.renderStoredResources = function() {
+    var content;
+    content = this.storedView.render().el;
+    return this.$(".resources").html(content);
+  };
+  CityView.prototype.renderProductionResources = function() {
+    var content;
+    content = this.productionView.render().el;
+    return this.$(".production").html(content);
   };
   return CityView;
 })();
@@ -513,22 +561,29 @@ ArmyView = (function() {
   }
   return ArmyView;
 })();
+ResourcesView = (function() {
+  __extends(ResourcesView, Backbone.View);
+  function ResourcesView() {
+    ResourcesView.__super__.constructor.apply(this, arguments);
+  }
+  ResourcesView.prototype.render = function() {
+    var content;
+    content = Utils.haml("#resourcesView-tmpl", this.model);
+    $(this.el).html(content);
+    return this;
+  };
+  return ResourcesView;
+})();
 CitiesView = (function() {
   __extends(CitiesView, Backbone.View);
   function CitiesView() {
     CitiesView.__super__.constructor.apply(this, arguments);
   }
   CitiesView.prototype.initialize = function() {
-    Cities.bind('all', this.render, this);
     Cities.bind('add', this.addOne, this);
     return Cities.bind('reset', this.addAll, this);
   };
   CitiesView.prototype.render = function() {
-    var content, haml;
-    haml = Haml($("#citiesView-tmpl").html());
-    content = haml({});
-    console.log("rel: ", this.el);
-    $(this.el).html(content);
     return this;
   };
   CitiesView.prototype.addOne = function(city) {
@@ -538,8 +593,8 @@ CitiesView = (function() {
       model: city
     });
     content = view.render().el;
-    this.$(".cities ul").append(content);
-    return console.log("cont", this.$(".cities ul"));
+    console.log("cont", content);
+    return this.$(".cities ul").append(content);
   };
   CitiesView.prototype.addAll = function() {
     return Cities.each(this.addOne);
@@ -638,16 +693,18 @@ CityDialog = GenericDialog.extend({
     });
   },
   initTab: function(type) {
-    var content, dialog, model, over;
+    var content, dialog, model;
     dialog = (function() {
       switch (type) {
         case "city_structs":
           model = new Structs({
             definitions: game.struct_def.definitions
           });
-          return this.current_tab = new StructsDialog({
+          this.current_tab = new StructsDialog({
             model: model
           });
+          this.current_tab.renderCosts();
+          return this.current_tab;
         case "city_units":
           model = new Units({
             definitions: game.unit_def.definitions
@@ -663,12 +720,12 @@ CityDialog = GenericDialog.extend({
             model: model
           });
         case "city_infos":
-          this.current_tab = over = new CityInfos({
+          this.current_tab = new CityInfos({
             model: this.model
           });
           this.initializeOverview();
           this.initializeQueue();
-          return over;
+          return this.current_tab;
         case "debug":
           return this.current_tab = new DebugDialog({
             model: this.model
@@ -738,6 +795,9 @@ StructsDialog = GenericDialog.extend({
       console.log(data);
       return Spinner.hide();
     });
+  },
+  renderCosts: function() {
+    return console.log("costs: ", $(this.el).find(".cost"));
   }
 });
 UnitsDialog = GenericDialog.extend({
@@ -796,6 +856,8 @@ MarkersUpdater = (function() {
 if (!console) {
   console = {};
   console.log = {};
+  console.debug = {};
+  console.error = {};
 }
 Utils = {};
 Number.prototype.format = function() {
@@ -1020,6 +1082,7 @@ ArmiesList = (function() {
   ArmiesList.prototype.url = "/players/me/armies";
   return ArmiesList;
 })();
+Resources = Backbone.Model.extend({});
 Structs = (function() {
   __extends(Structs, Backbone.Model);
   function Structs() {
@@ -1137,18 +1200,21 @@ Map = (function() {
     var self;
     self = this;
     return google.maps.event.addListener(marker.view.markerIcon, 'click', function() {
-      var is_different_from, marker_attrs;
-      marker_attrs = marker.model.attributes;
-      is_different_from = function(dialog) {
-        var dialog_attrs;
-        dialog_attrs = dialog.marker.model.attributes;
-        return dialog_attrs.id !== marker_attrs.id || dialog_attrs.id === marker_attrs.id && dialog_attrs.type !== marker.type;
-      };
-      if (!this.current_dialog || is_different_from(this.current_dialog)) {
-        this.current_dialog = self.openBubbleView(marker);
-        return self.saveDialogState(location);
-      }
+      return self.doInitDialog(marker);
     });
+  };
+  Map.prototype.doInitDialog = function(marker) {
+    var is_different_from, marker_attrs;
+    marker_attrs = marker.model.attributes;
+    is_different_from = function(dialog) {
+      var dialog_attrs;
+      dialog_attrs = dialog.marker.model.attributes;
+      return dialog_attrs.id !== marker_attrs.id || dialog_attrs.id === marker_attrs.id && dialog_attrs.type !== marker.type;
+    };
+    if (!this.current_dialog || is_different_from(this.current_dialog)) {
+      this.current_dialog = this.openBubbleView(marker);
+      return this.saveDialogState(location);
+    }
   };
   Map.prototype.openBubbleView = function(marker) {
     var bubbleView, current_dialog, map, mark, markers, same_location, _i, _len;
@@ -1258,13 +1324,7 @@ Game = (function() {
     });
     return this.current_playerView.render();
   };
-  Game.prototype.initNav = function() {
-    return $("#nav li").hover(function() {
-      return $(this).find("div").show();
-    }, function() {
-      return $(this).find("div").hide();
-    });
-  };
+  Game.prototype.initNav = function() {};
   return Game;
 })();
 $(function() {

@@ -30,6 +30,7 @@ describe "Cities" do
     data.size.should == 1
     city = data.first
     city.symbolize_keys!
+    city[:id].should == @city.id
     city[:name].should == @florence[:name]
     
     test_resources city[:production]

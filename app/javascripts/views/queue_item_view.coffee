@@ -20,7 +20,9 @@ class QueueItemView extends Backbone.View
     Spinner.spin()
     attrs = this.model.attributes
     console.log attrs
-    post = { _method: 'delete', player_id: attrs.player_id, structure_id: attrs.structure_id, unit_id: attrs.unit_id }
+    # TODO: check if it's a structure or not and assign id
+    object_id = attrs.structure_id
+    post = { _method: 'delete', player_id: attrs.player_id, object_id: object_id, unit_id: attrs.unit_id }
     $.post("/players/me/cities/#{attrs.city_id}/queues/#{attrs.type}", post, (data)  =>
       $(this.el).parent().html ""
       Spinner.hide()

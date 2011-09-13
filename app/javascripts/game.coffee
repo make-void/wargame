@@ -71,8 +71,8 @@ class Game
 
 
   initNav: ->
-    $("#nav li").hover( ->
-      $(this).find("div").show()
-    , ->
-      $(this).find("div").hide()    
-    )
+    # $("#nav li").hover( ->
+    #   $(this).find("div").show()
+    # , ->
+    #   $(this).find("div").hide()    
+    # )

@@ -285,16 +285,16 @@ body.game
           padding: 0 5px
         span.level
           padding: 0
-      p.name span
-        font-size: 0.8em
-      .cost
-        p 
-          display: inline
-          position: relative
-          top: -7px
-        img
-          margin: 0 6px 0 0
-          width: 30px
+    
+    
+.cost, .resources, .production
+  p 
+    display: inline
+    position: relative
+    top: -7px
+  img
+    width: 30px
+    margin: 0 6px 0 0
 
 .tool
   label, input
@@ -352,18 +352,39 @@ body.game
     -moz-border-radius-topright: $dradius
     -webkit-border-top-right-radius: $dradius
     border-top: none
-    ul
+    div, ul
       display: block
       position: static
       border: 0
-      top: 0
-      left: 0
+      margin: 0 
+      padding: 0
+      background: transparent
+    ul
       li
         float: none
         padding: 0px
         border: 0
         font-size: 1.4em
         
+
+  .cities li 
+    margin-top: 10px
+    border: 2px solid #FFF
+    padding: 5px
+    display: block
+    width: 90%
+    +rounded(7px)
+    p.name
+      font-weight: bold
+      margin-bottom: 5px
+    p.subtitle
+      font-weight: bold
+      margin-bottom: 5px
+    span.res
+      font-size: 0.9em
+    &:hover
+      border: 2px solid #999
+      background: #DDD
 
 #player
   float: right

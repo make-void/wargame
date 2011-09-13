@@ -2,6 +2,8 @@
 unless console
   console = {} 
   console.log = {}
+  console.debug = {}
+  console.error = {}
 
 
 # map utils
@@ -82,8 +84,7 @@ Utils.haml = (selector, object) ->
   # console.log "selector: ", selector
   # console.log "rendering: ", object.attributes
   haml object.attributes
-  
-
+    
 Utils.clone_object = (object) ->
   console.log("cloning: ", object)
   return eval("#{JSON.stringify(object)}")

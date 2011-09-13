@@ -21,4 +21,9 @@ StructsDialog  = GenericDialog.extend(
       
       Spinner.hide()
     )
+    
+  
+  renderCosts: ->
+    console.log "costs: ", $(this.el).find(".cost")
+    
 )

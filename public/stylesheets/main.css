@@ -402,15 +402,14 @@ body.game h1 {
     padding: 0 5px; }
   .dialog ul li p span.level {
     padding: 0; }
-  .dialog ul li p.name span {
-    font-size: 0.8em; }
-  .dialog ul li .cost p {
-    display: inline;
-    position: relative;
-    top: -7px; }
-  .dialog ul li .cost img {
-    margin: 0 6px 0 0;
-    width: 30px; }
+
+.cost p, .resources p, .production p {
+  display: inline;
+  position: relative;
+  top: -7px; }
+.cost img, .resources img, .production img {
+  width: 30px;
+  margin: 0 6px 0 0; }
 
 .tool label, .tool input {
   display: inline; }
@@ -473,17 +472,38 @@ body.game h1 {
     -moz-border-radius-topright: 10px;
     -webkit-border-top-right-radius: 10px;
     border-top: none; }
-    #nav div ul {
+    #nav div div, #nav div ul {
       display: block;
       position: static;
       border: 0;
-      top: 0;
-      left: 0; }
-      #nav div ul li {
-        float: none;
-        padding: 0px;
-        border: 0;
-        font-size: 1.4em; }
+      margin: 0;
+      padding: 0;
+      background: transparent; }
+    #nav div ul li {
+      float: none;
+      padding: 0px;
+      border: 0;
+      font-size: 1.4em; }
+  #nav .cities li {
+    margin-top: 10px;
+    border: 2px solid white;
+    padding: 5px;
+    display: block;
+    width: 90%;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px; }
+    #nav .cities li p.name {
+      font-weight: bold;
+      margin-bottom: 5px; }
+    #nav .cities li p.subtitle {
+      font-weight: bold;
+      margin-bottom: 5px; }
+    #nav .cities li span.res {
+      font-size: 0.9em; }
+    #nav .cities li:hover {
+      border: 2px solid #999999;
+      background: #dddddd; }
 
 #player {
   float: right;

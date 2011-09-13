@@ -55,6 +55,8 @@ CityDialog  = GenericDialog.extend(
       when "city_structs"
         model = new Structs { definitions: game.struct_def.definitions }
         @current_tab = new StructsDialog model: model
+        @current_tab.renderCosts()
+        @current_tab
       when "city_units"
         model = new Units { definitions: game.unit_def.definitions }
         @current_tab = new UnitsDialog model: model
@@ -62,10 +64,10 @@ CityDialog  = GenericDialog.extend(
         model = new Techs { definitions: game.tech_def.definitions }
         @current_tab = new TechsDialog model: model
       when "city_infos"
-        @current_tab = over = new CityInfos model: @model
+        @current_tab = new CityInfos model: @model
         this.initializeOverview()
         this.initializeQueue()        
-        over
+        @current_tab
       when "debug"
         @current_tab = new DebugDialog model: @model # { attributes: {} } # @model
         

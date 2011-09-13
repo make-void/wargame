@@ -3,7 +3,13 @@
 
 %script{ type: "text/template", id: "cityView-tmpl" }
   :plain
-    city
+    %div
+      %p.name= name
+      %span.subtitle resources:
+      .resources
+      %span.subtitle production:
+      .production
+      something in queue?
     
     
 %script{ type: "text/template", id: "armyView-tmpl" }
@@ -11,16 +17,16 @@
     army
     
     
-%script{ type: "text/template", id: "citiesView-tmpl" }
-  :plain
-    %p List
-    %ul
-    
-
-%script{ type: "text/template", id: "armiesView-tmpl" }
-  :plain
-    %p List
-    %ul
+-# %script{ type: "text/template", id: "citiesView-tmpl" }
+-#   :plain
+-#     %p List
+-#     %ul
+-#     
+-# 
+-# %script{ type: "text/template", id: "armiesView-tmpl" }
+-#   :plain
+-#     %p List
+-#     %ul
 
 
 %script{ type: "text/template", id: "armyOverview-tmpl" }
@@ -126,6 +132,17 @@
     .queue
       ...
 
+%script{ type: "text/template", id: "resourcesView-tmpl"}
+  :plain
+    %div
+      %p= gold
+      %img{ src: "/images/icons/gold.png"}
+      %p= steel
+      %img{ src: "/images/icons/steel.png"}
+      %p= oil
+      %img{ src: "/images/icons/oil.png"}
+
+
 %script{ type: "text/template", id: "city_structsDialog-tmpl" }
   :plain
     %ul.structures
@@ -142,12 +159,7 @@
               production:
               %span= struct.base_production
           %div.cost
-            %p= struct.gold_cost
-            %img{ src: "/images/icons/gold.png"}
-            %p= struct.steel_cost
-            %img{ src: "/images/icons/steel.png"}
-            %p= struct.oil_cost
-            %img{ src: "/images/icons/oil.png"}
+            
   
 
 // TODO: create UnitDefView
