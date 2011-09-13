@@ -4,21 +4,44 @@ module LG
     
     attr_reader :units, :army
     
-    def initialize( army_id )
-      raise ArgumentError, "Need an ArmyID. Got #{army_id.inspect}" if army_id.nil?
-      @army_id = army_id
-      @army = DB::Army.find(@army_id)
-      @units = View::ArmyUnit.find(:all, conditions: { army_id: @army_id} )
+    
+    def self.all( player )
+      player.armies.find(:all, include: [:units, :location]).map do |army|
+        lg_army = new(army)
+        lg_army.description
+      end
+    end
+    
+    def initialize(army)
+      @army = army        
+      @units = army.units
     end
     
     
-    def description
-      res = {player: @army.player.name, units: {}, moving: @army.is_moving?, location: [@army.location.latitude.to_f, @army.location.longitude.to_f] }
-      @units.each do |x|
-        res[:units][x.name] = x.number
+    def description      
+      loc = army.location
+      army = { 
+        id: @army.id,
+        units: [], 
+        moving: @army.is_moving?, 
+        location: { latitude: loc.latitude.to_f, longitude: loc.longitude.to_f, id: loc.id },
+        speed: @army.speed,
+        # updated_at: @army.updated_at,
+        resources: {
+          gold: @army.gold_stored,
+          steel: @army.gold_stored,
+          oil: @army.gold_stored,
+        },
+      }
+      @units.each do |unit|
+        army[:units] << {
+          number: unit.number,
+          type_id: unit.unit_id,
+          # updated_at: unit.updated_at,
+        }
       end
       
-      return res
+      return army
     end
     
     
@@ -80,8 +103,8 @@ module LG
     end
     
     def refresh!
-      @army = DB::Army.find(@army_id)
-      @units = View::ArmyUnit.find(:all, conditions: { army_id: @army_id})
+      @army = DB::Army.find @army.id
+      @units = View::ArmyUnit.find(:all, conditions: { army_id: @army.id} )
       return true
     end
     

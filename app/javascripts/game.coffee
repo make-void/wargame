@@ -43,9 +43,10 @@ class Game
     armies_view = new ArmiesView()
     
     Cities.fetch()
+    Armies.fetch()
     
     # debug:
-    # $($("#nav li")[1]).find("div").show()
+    $($("#nav li")[2]).find("div").show()
     
     this
 

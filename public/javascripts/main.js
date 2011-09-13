@@ -505,7 +505,6 @@ CityView = (function() {
     "click div": "panMap"
   };
   CityView.prototype.initialize = function() {
-    console.log("modmod: ", this.model);
     this.stored = new Resources(this.model.attributes.storage_space);
     this.storedView = new ResourcesView({
       model: this.stored
@@ -559,6 +558,25 @@ ArmyView = (function() {
   function ArmyView() {
     ArmyView.__super__.constructor.apply(this, arguments);
   }
+  ArmyView.prototype.tagName = "li";
+  ArmyView.prototype.events = {};
+  ArmyView.prototype.initialize = function() {
+    console.log("modmod: ", this.model);
+    this.resources = new Resources(this.model.attributes.resources);
+    return this.resourcesView = new ResourcesView({
+      model: this.resources
+    });
+  };
+  ArmyView.prototype.render = function() {
+    $(this.el).html(Utils.haml("#armyView-tmpl", this.model));
+    this.renderStoredResources();
+    return this;
+  };
+  ArmyView.prototype.renderStoredResources = function() {
+    var content;
+    content = this.resourcesView.render().el;
+    return this.$(".resources").html(content);
+  };
   return ArmyView;
 })();
 ResourcesView = (function() {
@@ -588,12 +606,10 @@ CitiesView = (function() {
   };
   CitiesView.prototype.addOne = function(city) {
     var content, view;
-    console.log("add city", city);
     view = new CityView({
       model: city
     });
     content = view.render().el;
-    console.log("cont", content);
     return this.$(".cities ul").append(content);
   };
   CitiesView.prototype.addAll = function() {
@@ -606,6 +622,24 @@ ArmiesView = (function() {
   function ArmiesView() {
     ArmiesView.__super__.constructor.apply(this, arguments);
   }
+  ArmiesView.prototype.initialize = function() {
+    Armies.bind('add', this.addOne, this);
+    return Armies.bind('reset', this.addAll, this);
+  };
+  ArmiesView.prototype.render = function() {
+    return this;
+  };
+  ArmiesView.prototype.addOne = function(city) {
+    var content, view;
+    view = new ArmyView({
+      model: city
+    });
+    content = view.render().el;
+    return this.$(".armies ul").append(content);
+  };
+  ArmiesView.prototype.addAll = function() {
+    return Armies.each(this.addOne);
+  };
   return ArmiesView;
 })();
 CityMarkerIcon = (function() {
@@ -1303,6 +1337,8 @@ Game = (function() {
     cities_view = new CitiesView();
     armies_view = new ArmiesView();
     Cities.fetch();
+    Armies.fetch();
+    $($("#nav li")[2]).find("div").show();
     return this;
   };
   Game.prototype.initMap = function() {

@@ -484,7 +484,7 @@ body.game h1 {
       padding: 0px;
       border: 0;
       font-size: 1.4em; }
-  #nav .cities li {
+  #nav .cities li, #nav .armies li {
     margin-top: 10px;
     border: 2px solid white;
     padding: 5px;
@@ -493,15 +493,15 @@ body.game h1 {
     -webkit-border-radius: 7px;
     -moz-border-radius: 7px;
     border-radius: 7px; }
-    #nav .cities li p.name {
+    #nav .cities li p.name, #nav .armies li p.name {
       font-weight: bold;
       margin-bottom: 5px; }
-    #nav .cities li p.subtitle {
+    #nav .cities li p.subtitle, #nav .armies li p.subtitle {
       font-weight: bold;
       margin-bottom: 5px; }
-    #nav .cities li span.res {
+    #nav .cities li span.res, #nav .armies li span.res {
       font-size: 0.9em; }
-    #nav .cities li:hover {
+    #nav .cities li:hover, #nav .armies li:hover {
       border: 2px solid #999999;
       background: #dddddd; }
 

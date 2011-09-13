@@ -8,11 +8,9 @@ class CityView extends Backbone.View
   }  
   
   
-  
   initialize: ->
     # _.bindAll this, 'renderResources'
     # this.bind('all',   this.renderResources, this)
-    console.log "modmod: ", this.model
     @stored = new Resources this.model.attributes.storage_space
     @storedView = new ResourcesView model: @stored
     @production = new Resources this.model.attributes.production
