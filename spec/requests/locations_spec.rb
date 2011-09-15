@@ -10,11 +10,11 @@ describe "Locations" do
       @fi = { latitude: 43.7687324, longitude: 11.2569013 }
       @im = { latitude: 43.683333, longitude: 11.25 }
       @the_masterers = { name: "TheMasterers" }
-      @florence = { name: "Florence", ccode: "it" }
-      @impruneta = { name: "Impruneta", ccode: "it" }
+      @florence = { name: "Florence", ccode: "it", pts: 60000 }
+      @impruneta = { name: "Impruneta", ccode: "it", pts: 60000 }
       @location = DB::Location.create! @fi
       @location2 = DB::Location.create! @im
-      @cor3y = { name: "Cor3y", 
+      @cor3y = {    name: "Cor3y", 
                     new_password: "daniel001", 
                     new_password_confirmation: "daniel001", 
                     email: "test1@test.test" }
@@ -31,9 +31,6 @@ describe "Locations" do
       data = json_get url
       
       res = LG::Location.get_near( {}, @im.merge( radius: 50 ) )
-      puts "loc", DB::Location.first.inspect   
-      puts "view", View::CityLocation.all.inspect   
-      puts "data", data.inspect
       
       data[:locations].should be_a(Array)
       data[:locations].size.should == 2 # W T F?!?
@@ -46,8 +43,6 @@ describe "Locations" do
         loc[:id].should  be_a(Integer)
         loc[:id].should_not  be(0) # "".to_i
         
-        puts "------------"
-        puts loc[:type]
         ["city", "army"].should include(loc[:type])
         
         # FIXME: move this in a request with cities to be sure we have a city 
