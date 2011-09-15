@@ -2,12 +2,13 @@ class MapView extends Backbone.View
 
   element: 'map_canvas'
 
-  constructor: (@map) ->
+  initialize: () ->
     @controller = null
     # bounds change events
     @defaultZoom = 5
+    @map = null
     
-  draw: ->
+  draw: ->  
     this.get_center_and_zoom()
     this.doDrawing()
     
@@ -45,10 +46,10 @@ class MapView extends Backbone.View
       localStorage.center_lat = @center_lat
       localStorage.center_lng = @center_lng
 
-    if localStorage.zoom
+    if localStorage.zoom && localStorage.zoom != "undefined"
       @zoom = parseInt localStorage.zoom
     else
-      @zoom = @map.defaultZoom
+      @zoom = @defaultZoom
       localStorage.zoom = @zoom
       
   
@@ -93,7 +94,8 @@ class MapView extends Backbone.View
       zoom = 11
 
     localStorage.zoom = zoom   
-    # $(window).trigger "boundszoom_changed" 
+    # $(window).trigger "boundszoom_changed" \
+    
     if zoom < @controller.markerZoomMin
       @controller.clearMarkers()  
     

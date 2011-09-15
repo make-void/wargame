@@ -3,6 +3,7 @@ class MarkerView
   constructor: (@map, @location) ->
     @marker = null
     @dialog = null
+    @markerIcon = null
     
   draw: ->
     loc = @location.attributes

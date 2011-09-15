@@ -154,8 +154,9 @@ class Map extends Backbone.View
 
   clearMarkers: ->
     for marker in @markers
-      marker.setMap null 
-    @markers = []
+      marker.view.markerIcon.setMap null 
+    @markers = []  
+    @locations = []
   
   clickInfo: ->
     google.maps.event.addListener(@map, 'click', (evt) ->

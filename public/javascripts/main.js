@@ -31,12 +31,15 @@ PlayerView = Backbone.View.extend({
 });
 MapView = (function() {
   __extends(MapView, Backbone.View);
+  function MapView() {
+    MapView.__super__.constructor.apply(this, arguments);
+  }
   MapView.prototype.element = 'map_canvas';
-  function MapView(map) {
-    this.map = map;
+  MapView.prototype.initialize = function() {
     this.controller = null;
     this.defaultZoom = 5;
-  }
+    return this.map = null;
+  };
   MapView.prototype.draw = function() {
     this.get_center_and_zoom();
     this.doDrawing();
@@ -74,10 +77,10 @@ MapView = (function() {
       localStorage.center_lat = this.center_lat;
       localStorage.center_lng = this.center_lng;
     }
-    if (localStorage.zoom) {
+    if (localStorage.zoom && localStorage.zoom !== "undefined") {
       return this.zoom = parseInt(localStorage.zoom);
     } else {
-      this.zoom = this.map.defaultZoom;
+      this.zoom = this.defaultZoom;
       return localStorage.zoom = this.zoom;
     }
   };
@@ -204,6 +207,7 @@ MarkerView = (function() {
     this.location = location;
     this.marker = null;
     this.dialog = null;
+    this.markerIcon = null;
   }
   MarkerView.prototype.draw = function() {
     var anchor, army_icon, army_image, icon, latLng, loc, marker, zIndex;
@@ -1293,9 +1297,10 @@ Map = (function() {
     _ref = this.markers;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       marker = _ref[_i];
-      marker.setMap(null);
+      marker.view.markerIcon.setMap(null);
     }
-    return this.markers = [];
+    this.markers = [];
+    return this.locations = [];
   };
   Map.prototype.clickInfo = function() {
     return google.maps.event.addListener(this.map, 'click', function(evt) {});
