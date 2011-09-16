@@ -172,6 +172,7 @@
       :each struct in definitions
         %li
           %a.btn.upgrade{ href: "javascript:void(0)" } Upgrade
+          %img.thumb{ src: "/images/thumbs/structs/"+struct.name.filenamize()+".png"  }
           %p.name
             = struct.name
             %span level:
@@ -192,6 +193,7 @@
       :each unit in definitions
         %li
           %a.btn.recruit{ href: "javascript:void(0)" } Recruit
+          %img.thumb{ src: "/images/thumbs/units/"+unit.name.filenamize()+".png"  }
           %p.name= unit.name
           %p.type= unit.unit_type
           %p.stats
@@ -227,6 +229,7 @@
       :each tech in definitions
         %li
           %a.btn.upgrade{ href: "javascript:void(0)" } Research
+          %img.thumb{ src: "/images/thumbs/techs/"+tech.name.filenamize()+".png"  }
           %p.name= tech.name
           %p.desc= tech.description
           %div.cost

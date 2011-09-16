@@ -29,6 +29,7 @@ Array::last = ->
 
 String::pluralize = -> 
   this+"s"
+  
 String::singularize = -> 
   if this[-1] && this[-1].toLowerCase() == "s" then this[0..-2] else this
 
@@ -36,6 +37,9 @@ String::singularize = ->
 
 String::capitalize = -> 
   "#{this[0].toUpperCase()}#{this[1..-1]}"
+
+String::filenamize = ->
+  this.toLowerCase().replace(/\s/g, '_')
 
 # coords
 

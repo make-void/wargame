@@ -394,7 +394,14 @@ body.game h1 {
     border-radius: 4px;
     display: block;
     padding: 5px;
-    border: 2px solid white; }
+    border: 2px solid white;
+    clear: left;
+    min-height: 90px; }
+    .dialog ul li img.thumb {
+      float: left;
+      width: 90px;
+      height: 90px;
+      margin-right: 10px; }
   .dialog ul li:hover {
     background: #e3e3e3;
     border: 2px solid #aaaaaa; }

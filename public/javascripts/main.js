@@ -928,6 +928,9 @@ String.prototype.singularize = function() {
 String.prototype.capitalize = function() {
   return "" + (this[0].toUpperCase()) + this.slice(1);
 };
+String.prototype.filenamize = function() {
+  return this.toLowerCase().replace(/\s/g, '_');
+};
 Utils.geocode = function(city, fn) {
   return $.get("/cities/" + city, function(data) {
     var lat, lng;
@@ -1343,7 +1346,6 @@ Game = (function() {
     armies_view = new ArmiesView();
     Cities.fetch();
     Armies.fetch();
-    $($("#nav li")[2]).find("div").show();
     return this;
   };
   Game.prototype.initMap = function() {

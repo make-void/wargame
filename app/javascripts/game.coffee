@@ -46,7 +46,7 @@ class Game
     Armies.fetch()
     
     # debug:
-    $($("#nav li")[2]).find("div").show()
+    # $($("#nav li")[2]).find("div").show()
     
     this
 
