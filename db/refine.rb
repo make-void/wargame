@@ -4,7 +4,6 @@ PATH = File.expand_path "../../", __FILE__
 env = ARGV[0]
 ENV["RACK_ENV"] = env if env
 
-
 require 'json'
 
 # { "code": "RU",	"name": "Russian Federation"                          },
@@ -80,7 +79,7 @@ def step_2
   require "#{PATH}/config/environment"  
   require "#{PATH}/db/recreate_tables"
 
-  unless Rails.env == "test"
+  unless ENV["RACK_ENV"] == "test"
     create_default_vals
   
     # import_cities_from_file

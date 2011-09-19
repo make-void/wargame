@@ -50,7 +50,9 @@
 -#   :plain
 -#     %p List
 -#     %ul
-
+%script{ type: "text/template", id: "cityOverview-tmpl" }
+  :plain
+    city overview...
 
 %script{ type: "text/template", id: "armyOverview-tmpl" }
   :plain
@@ -70,8 +72,8 @@
     .running
       running:
       = running
-      %p started at:
-      = started_at
+      %p started:
+      = started
     .structure_id
       struct:
       = structure_id

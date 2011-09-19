@@ -1254,7 +1254,7 @@ Map = (function() {
     };
     if (!this.current_dialog || is_different_from(this.current_dialog)) {
       this.current_dialog = this.openBubbleView(marker);
-      return this.saveDialogState(location);
+      return this.saveDialogState(marker.model);
     }
   };
   Map.prototype.openBubbleView = function(marker) {

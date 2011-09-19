@@ -1,5 +1,5 @@
 module TasksUtils
-  
+
   def mysql_env
     ENV["RACK_ENV"] || "development"
   end

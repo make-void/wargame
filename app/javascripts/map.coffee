@@ -107,7 +107,7 @@ class Map extends Backbone.View
       dialog_attrs.id != marker_attrs.id || dialog_attrs.id == marker_attrs.id && dialog_attrs.type != marker.type
     if !@current_dialog || is_different_from(@current_dialog)
       @current_dialog = this.openBubbleView(marker)
-      this.saveDialogState(location)
+      this.saveDialogState(marker.model)
       
   openBubbleView: (marker) ->      
     map = @map
