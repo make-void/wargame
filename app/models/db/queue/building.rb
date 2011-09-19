@@ -2,7 +2,7 @@ module DB
   module Queue
     class Building < ActiveRecord::Base
       set_table_name "wg_struct_queue" 
-      set_primary_keys "player_id", "structure_id", "city_id"
+      set_primary_keys "player_id", "structure_id", "city_id", "level"
       
       belongs_to :city, :class_name => "DB::City", :foreign_key => :city_id
       belongs_to :player, :class_name => "DB::Player", :foreign_key => :player_id
@@ -26,13 +26,14 @@ module DB
       def finish!
         return false unless self.finished?
         v = { number: self.number, building: self.definition }
-        self.destroy
+        self.update_attribute finished: true
         return v
       end
       
       #returns true if finished
       def finished?
         return false unless self.started?
+        return true if self.finished
         return ( self.finished_at.time <= Time.now )
       end
       

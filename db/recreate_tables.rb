@@ -434,6 +434,7 @@ CREATE TABLE `wg_unit_struct_req_defs` (
 qs << "
 CREATE TABLE `wg_unit_queue` (
   /* TABLE FOR UNIT BUILD QUEUE IMPLEMENTATION */
+  `unit_queue_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, /* No Unique Key at All */
   
   `unit_id` BIGINT UNSIGNED NOT NULL,
   `city_id` BIGINT UNSIGNED NOT NULL,
@@ -441,12 +442,14 @@ CREATE TABLE `wg_unit_queue` (
   
   `number` int(11) NOT NULL,
   `running` tinyint(1) UNSIGNED DEFAULT 0,
+  `finished` tinyint(1) UNSIGNED DEFAULT 0,
 
    /* ENTRY DATA */
   `started_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
   `time_needed` int(11) NOT NULL,
   
-  PRIMARY KEY (`player_id`,`unit_id`,`city_id`),
+  PRIMARY KEY (`unit_queue_id`),
   
   FOREIGN KEY (`unit_id`) REFERENCES wg_unit_defs(`unit_id`) 
     ON DELETE RESTRICT,
@@ -467,12 +470,14 @@ CREATE TABLE `wg_tech_queue` (
 
   `level` int(11) NOT NULL,
   `running` tinyint(1) UNSIGNED DEFAULT 0,
-
+  `finished` tinyint(1) UNSIGNED DEFAULT 0,
+  
    /* ENTRY DATA */
   `started_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
   `time_needed` int(11) NOT NULL,
   
-  PRIMARY KEY (`player_id`,`tech_id`,`city_id`),
+  PRIMARY KEY (`player_id`,`tech_id`,`level`), /* You can research globally only onceper lever a tech */
   
   FOREIGN KEY (`tech_id`,`player_id`) REFERENCES wg_techs(`tech_id`,`player_id`) 
     ON DELETE RESTRICT,
@@ -493,12 +498,14 @@ CREATE TABLE `wg_struct_queue` (
 
   `level` int(11) NOT NULL,
   `running` tinyint(1) UNSIGNED DEFAULT 0,
+  `finished` tinyint(1) UNSIGNED DEFAULT 0,
 
    /* ENTRY DATA */
   `started_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
   `time_needed` int(11) NOT NULL,
   
-  PRIMARY KEY (`player_id`,`structure_id`,`city_id`),
+  PRIMARY KEY (`player_id`,`structure_id`,`city_id`,`level`), /* You can build a struct only once per level in every city */
   
   FOREIGN KEY (`structure_id`,`city_id`) REFERENCES wg_struct(`structure_id`,`city_id`)
     ON DELETE RESTRICT,

@@ -121,13 +121,13 @@ module LG
       end
       
       def get_unit_queue
-        @unit_queue.items = DB::Queue::Unit.find(:all, :conditions => { player_id: @player.player_id, city_id: @city.city_id}, :order => "started_at")
+        @unit_queue.items = DB::Queue::Unit.find(:all, :conditions => { player_id: @player.player_id, city_id: @city.city_id, finished: false }, :order => "created_at")
       end
       def get_building_queue
-        @building_queue.items = DB::Queue::Building.find(:all, :conditions => { player_id: @player.player_id, city_id: @city.city_id}, :order => "started_at")
+        @building_queue.items = DB::Queue::Building.find(:all, :conditions => { player_id: @player.player_id, city_id: @city.city_id, finished: false }, :order => "created_at")
       end
       def get_research_queue
-        @research_queue.items = DB::Queue::Tech.find(:all, :conditions => { player_id: @player.player_id, city_id: @city.city_id}, :order => "started_at")
+        @research_queue.items = DB::Queue::Tech.find(:all, :conditions => { player_id: @player.player_id, city_id: @city.city_id, finished: false }, :order => "created_at")
       end
       
     end

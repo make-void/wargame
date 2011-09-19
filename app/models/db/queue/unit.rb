@@ -2,7 +2,7 @@ module DB
   module Queue
     class Unit < ActiveRecord::Base
       set_table_name "wg_unit_queue" 
-      set_primary_keys "player_id", "unit_id", "city_id"
+      set_primary_keys "unit_queue_id"
       
       belongs_to :city, :class_name => "DB::City", :foreign_key => :city_id
       belongs_to :player, :class_name => "DB::Player", :foreign_key => :player_id
@@ -51,11 +51,11 @@ module DB
 
           self.update_attributes(
             #Set new Time
-            :started_at => update_time,
+            started_at: update_time,
             #Update Time Needed
-            :time_needed => LG::Unit.production_time( self.definition, unit_production_level )  * ( self.number - units_done ),
+            time_needed: LG::Unit.production_time( self.definition, unit_production_level )  * ( self.number - units_done ),
             #Update Number of Units Missing
-            :number => ( self.number - units_done )
+            number: ( self.number - units_done )
           )
           
           return { number: units_done, unit: self.definition, status: { time_needed: self.time_needed, number: self.number, finished: false } }
@@ -69,13 +69,14 @@ module DB
       def finish!
         return false unless self.finished?
         v = { number: self.number, unit: self.definition, status: { time_needed: 0, number: 0, finished: true } }
-        self.destroy
+        self.update_attribute finished: true
         return v
       end
       
       #returns true if finished
       def finished?
         return false unless self.started?
+        return true if self.finished
         return ( self.finished_at.time <= Time.now )
       end
       

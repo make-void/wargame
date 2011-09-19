@@ -71,7 +71,7 @@ module LG
         
         # if @items.empty? #first item in queue!
         # first_item = (DB_CLASS.where(queue_datas).count <= 1)
-        started_at = if DB_CLASS.where(queue_datas).count <= 1
+        started = if DB_CLASS.where(queue_datas).count <= 1
           upgrade = DB::Research::Upgrade.find_building_speed_research city_object.player_id 
           queue_object.start upgrade
           true
@@ -83,7 +83,7 @@ module LG
         
         city_object.remove_resources cost #Pay the Price!
 
-        { message: "Building #{level_or_number} #{object.name}", started_at: started_at, time_needed: time_needed } 
+        { message: "Building #{level_or_number} #{object.name}", started: started, time_needed: time_needed } 
       end
       
       
