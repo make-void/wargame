@@ -248,7 +248,7 @@ module DefaultValues
                  oil_cost: 0,
                  max_level: 20
 
-     DB::Research::Definition.create! name: "Infrantry Armor Upgrade",
+     DB::Research::Definition.create! name: "Infantry Armor Upgrade",
                  description: "to-be-added" ,
                  gold_cost: 250,
                  steel_cost: 1000,
@@ -269,7 +269,7 @@ module DefaultValues
                  oil_cost: 400,
                  max_level: 20
 
-     DB::Research::Definition.create! name: "Construction Industry Tecniques",
+     DB::Research::Definition.create! name: "Construction Industry Techniques",
                  description: "to-be-added",
                  gold_cost: 1200,
                  steel_cost: 1500,
@@ -303,7 +303,7 @@ module DefaultValues
      DB::Research::Requirement::Building.create! :tech_id => 3, :req_structure_id => 8, :level => 2
      #Vehicle Armor => 2 Research Center
      DB::Research::Requirement::Building.create! :tech_id => 4, :req_structure_id => 8, :level => 2
-     #Construction Industry Tecniques => 10 Research Center
+     #Construction Industry Techniques => 10 Research Center
      DB::Research::Requirement::Building.create! :tech_id => 5, :req_structure_id => 8, :level => 10
      #Espionage => 1 Research Center
      DB::Research::Requirement::Building.create! :tech_id => 6, :req_structure_id => 8, :level => 4
