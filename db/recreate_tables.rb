@@ -170,7 +170,9 @@ CREATE TABLE `wg_unit_defs` (
   `oil_cost` int(11) NOT NULL DEFAULT 0,
 
 
-  PRIMARY KEY (`unit_id`)
+  PRIMARY KEY (`unit_id`),
+  
+  KEY (`unit_id`, `unit_type`)
     
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
@@ -440,6 +442,8 @@ CREATE TABLE `wg_unit_queue` (
   `city_id` BIGINT UNSIGNED NOT NULL,
   `player_id` BIGINT UNSIGNED NOT NULL,
   
+  `unit_type` char(8) COLLATE utf8_unicode_ci NOT NULL,
+  
   `number` int(11) NOT NULL,
   `running` tinyint(1) UNSIGNED DEFAULT 0,
   `finished` tinyint(1) UNSIGNED DEFAULT 0,
@@ -451,7 +455,7 @@ CREATE TABLE `wg_unit_queue` (
   
   PRIMARY KEY (`unit_queue_id`),
   
-  FOREIGN KEY (`unit_id`) REFERENCES wg_unit_defs(`unit_id`) 
+  FOREIGN KEY (`unit_id`, `unit_type`) REFERENCES wg_unit_defs(`unit_id`, `unit_type`) 
     ON DELETE RESTRICT,
     
   FOREIGN KEY (`city_id`,`player_id`) REFERENCES wg_cities(`city_id`,`player_id`) 

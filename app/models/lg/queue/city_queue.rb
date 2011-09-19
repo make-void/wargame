@@ -79,8 +79,11 @@ module LG
         get_queue :all
         structs = building_queue.items.map{ |bq| bq.attributes.merge(type: "struct") }
         techs   = research_queue.items.map{ |bq| bq.attributes.merge(type: "tech") }
-        units   = unit_queue.items.map{ |bq| bq.attributes.merge(type: "unit") }
-        structs + techs + units
+        results = structs + techs
+        DB::Unit::Definition::UNIT_TYPES.each do |x| #Refactor? for Now, he merges the 2 queues for units...
+          results + unit_queue.items[x].map{ |bq| bq.attributes.merge(type: "unit") }
+        end
+        return results
       end
       
       def has_errors? ; errors.size != 0 ; end
@@ -108,11 +111,11 @@ module LG
         raise ArgumentError, "Need Type in #{QUEUE_TYPES.inspect}, got #{type}" unless QUEUE_TYPES.include?(type)
         case type
           when :all
-            get_unit_queue()
+            get_unit_queues()
             get_building_queue()
             get_research_queue()
           when :unit
-            get_unit_queue()
+            get_unit_queues()
           when :building
             get_building_queue()
           when :research 
@@ -120,7 +123,7 @@ module LG
         end
       end
       
-      def get_unit_queue
+      def get_unit_queues
         @unit_queue.items = DB::Queue::Unit.find(:all, :conditions => { player_id: @player.player_id, city_id: @city.city_id, finished: false }, :order => "created_at")
       end
       def get_building_queue

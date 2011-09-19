@@ -21,6 +21,8 @@ module DB # Database
         2 => "Infantry Killer"
       }
       
+      UNIT_TYPES = ["Infantry", "Vehicle"]
+      
       PRODUCTION_CENTRE_ID = {
         "Infantry" => DB::Structure::Definition.unit_production_building_id("Infantry"),
         "Vehicle" => DB::Structure::Definition.unit_production_building_id("Vehicle")

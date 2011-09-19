@@ -15,7 +15,7 @@ module Modules
     
     module InstanceMethods
       def items=( db_entries_array )
-        raise ArgumentError, "Need an array of DB::Queue::Unit. Got #{db_entries_array.map{|x| x.class}.uniq.inspect}" if db_entries_array != [] && db_entries_array.map{|x| x.class}.uniq != [self.class::DB_CLASS]
+        raise ArgumentError, "Need an array of #{self.class::DB_CLASS}. Got #{db_entries_array.map{|x| x.class}.uniq.inspect}" if db_entries_array != [] && db_entries_array.map{|x| x.class}.uniq != [self.class::DB_CLASS]
         @items = db_entries_array
       end
       
@@ -42,7 +42,6 @@ module Modules
                                                       :player_id => city_object.player_id,
                                                       :structure_id => b_req.req_structure_id
                                                     })
-          
           got_level = building.nil? ? 0 : building.level
           
           if got_level < b_req.level
@@ -68,8 +67,7 @@ module Modules
                                                     })
           
           got_level = research.nil? ? 0 : research.level
-          
-          if research.level < b_req.level
+          if got_level < t_req.level
             errors.push(
               { 
                 message: "Research '#{t_req.required_object.name}' is level #{got_level}. Need: #{t_req.level}", 

@@ -17,7 +17,8 @@ module DB
       def start( research_center_level, start_time = nil )
         self.update_attributes( 
           :started_at => start_time || Time.now, 
-          :time_needed => LG::Research.time( self.definition, self.level, research_center_level ) 
+          :time_needed => LG::Research.time( self.definition, self.level, research_center_level ),
+          :running => true
         )
       end
       

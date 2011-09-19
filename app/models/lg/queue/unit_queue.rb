@@ -6,8 +6,22 @@ module LG
       
       attr_reader :items
       
-      def active_element
-        return @items.select{|x| x.active? }.first
+      def initialize
+        @items = {}
+      end
+      
+      def active_elements
+        DB::Unit::Definition::UNIT_TYPES.map do |type|
+          @items[type].select{|x| x.active? }.first
+        end
+      end
+      
+      #Ovverride Items...
+      def items=( db_entries_array )
+         raise ArgumentError, "Need an array of #{self.class::DB_CLASS}. Got #{db_entries_array.map{|x| x.class}.uniq.inspect}" if db_entries_array != [] && db_entries_array.map{|x| x.class}.uniq != [self.class::DB_CLASS]
+         DB::Unit::Definition::UNIT_TYPES.each do |type|
+           @items[type] = db_entries_array.select{|x| x.unit_type = type}
+         end
       end
       
       def add_item(city_object, object, level_or_number)    
@@ -16,6 +30,7 @@ module LG
         cost = LG::Unit.cost(object, level_or_number)
         
         return_values = { cost: cost, errors: [], action: nil }
+        
         if self.city_has_money?(city_object, cost) #defined in Queue Module
           
           reqs = check_requisites( city_object, object ) #defined in Queue Module
@@ -38,6 +53,7 @@ module LG
              a = DB_CLASS.create :unit_id => object.unit_id,
                                  :city_id => city_object.city_id,
                                  :player_id => city_object.player_id,
+                                 :unit_type => object.unit_type,
                                  :number => level_or_number,
                                  :time_needed => LG::Unit.production_time( object, production_building_level)
              
@@ -46,6 +62,7 @@ module LG
                                            { 
                                              city_id: queue_datas[:city_id], 
                                              player_id: queue_datas[:player_id], 
+                                             unit_type: object.unit_type,
                                              finished: false 
                                            }
                              ).count <= 1
@@ -55,7 +72,7 @@ module LG
                started = false
              end
              
-             @items.push(a)
+             @items[object.unit_type].push(a)
              
              city_object.remove_resources( cost ) #Pay The Price
              return_values[:action] = { message: "Training #{level_or_number} #{object.name}", started: started }

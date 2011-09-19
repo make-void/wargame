@@ -55,8 +55,8 @@ module LG
                #if @items.empty? #first item in queue!
                if DB_CLASS.find(:all, conditions: 
                                              { 
-                                               city_id: queue_datas[:city_id], 
-                                               player_id: queue_datas[:player_id], 
+                                               city_id: city_object.city_id, 
+                                               player_id: city_object.player_id, 
                                                finished: false 
                                              }
                                ).count <= 1
@@ -94,10 +94,10 @@ module LG
           return build_base_object( hash_values )
           
         end
-        def get_base_object( tech_id, player_id )
+        def get_base_object( hash_values )
           return DB::Research::Upgrade.find(:first, :conditions => hash_values )
         end
-        def build_base_object( tech_id, player_id )
+        def build_base_object( hash_values )
           return DB::Research::Upgrade.create( hash_values.merge({:level => 0}))
         end
       

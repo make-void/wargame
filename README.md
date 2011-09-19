@@ -28,6 +28,9 @@ gg!
 
 ### TODO:
 
+- a) Rejectare items finiti negli oggetti queue in CityQueue --> Should be done. Test
+- b) fare in modo che ci siano 2 unit queue, una per veicoli e una per soldati (2 edifici diversi!)
+
 - signup
 - choose city
 - production

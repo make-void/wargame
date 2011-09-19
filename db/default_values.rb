@@ -295,13 +295,18 @@ module DefaultValues
       ##########################
       #  RESEARCH REQUIREMENTS #
       ##########################
-
+     #Infantry Weapon => 1 Research Center
+     DB::Research::Requirement::Building.create! :tech_id => 1, :req_structure_id => 8, :level => 1
+     #Infantry Armor => 1 Research Center
+     DB::Research::Requirement::Building.create! :tech_id => 2, :req_structure_id => 8, :level => 1
      #Vehicle Weapon => 2 Research Center
      DB::Research::Requirement::Building.create! :tech_id => 3, :req_structure_id => 8, :level => 2
      #Vehicle Armor => 2 Research Center
      DB::Research::Requirement::Building.create! :tech_id => 4, :req_structure_id => 8, :level => 2
      #Construction Industry Tecniques => 10 Research Center
      DB::Research::Requirement::Building.create! :tech_id => 5, :req_structure_id => 8, :level => 10
+     #Espionage => 1 Research Center
+     DB::Research::Requirement::Building.create! :tech_id => 6, :req_structure_id => 8, :level => 4
      #Engine Power => 5 Research Center, 2 Factory
      DB::Research::Requirement::Building.create! :tech_id => 7, :req_structure_id => 7, :level => 2
      DB::Research::Requirement::Building.create! :tech_id => 7, :req_structure_id => 8, :level => 5
@@ -332,7 +337,8 @@ module DefaultValues
      ##########################
      #   UNITS REQUIREMENTS   #
      ##########################
-
+     #Soldier => 2 Barrak
+     DB::Unit::Requirement::Building.create! :unit_id => 1, :req_structure_id => 6, :level => 1
      #Special Forces => 4 Barrak
      DB::Unit::Requirement::Building.create! :unit_id => 2, :req_structure_id => 6, :level => 4
      #Granatier => 6 Barrak, 2 Factory

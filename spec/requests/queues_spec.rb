@@ -55,7 +55,7 @@ describe "Queues" do
     type_id = DB::Structure::Definition.last.id
     data = json_post "/players/me/cities/#{@city.id}/queues/#{type}/#{type_id}"
     data[:time_needed].should > 0
-    data[:started_at].should be_a(Boolean) # TODO: write matcher be_a_timestring
+    data[:started].should be_a(Boolean) # TODO: write matcher be_a_timestring
   end
   
   it "destroy" do
