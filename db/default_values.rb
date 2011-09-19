@@ -321,8 +321,8 @@ module DefaultValues
      DB::Structure::Requirement::Building.create! :structure_id => 5, :req_structure_id => 2, :level => 3
      DB::Structure::Requirement::Building.create! :structure_id => 5, :req_structure_id => 3, :level => 3
      #Bunker => 8 Barrak, 5 Factory
-     DB::Structure::Requirement::Building.create! :structure_id => 8 , :req_structure_id => 6, :level => 8
-     DB::Structure::Requirement::Building.create! :structure_id => 8 , :req_structure_id => 7, :level => 5
+     DB::Structure::Requirement::Building.create! :structure_id => 9 , :req_structure_id => 6, :level => 8
+     DB::Structure::Requirement::Building.create! :structure_id => 9 , :req_structure_id => 7, :level => 5
      
      #Barrak => 1 Infantry Weapon
      DB::Structure::Requirement::Tech.create! :structure_id => 6, :req_tech_id => 1, :level => 1
@@ -337,7 +337,7 @@ module DefaultValues
      ##########################
      #   UNITS REQUIREMENTS   #
      ##########################
-     #Soldier => 2 Barrak
+     #Soldier => 1 Barrak
      DB::Unit::Requirement::Building.create! :unit_id => 1, :req_structure_id => 6, :level => 1
      #Special Forces => 4 Barrak
      DB::Unit::Requirement::Building.create! :unit_id => 2, :req_structure_id => 6, :level => 4
