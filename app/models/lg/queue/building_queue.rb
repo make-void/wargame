@@ -70,13 +70,18 @@ module LG
         
         
         # if @items.empty? #first item in queue!
-        # first_item = (DB_CLASS.where(queue_datas).count <= 1)
-        started = if DB_CLASS.where(queue_datas).count <= 1
+        if DB_CLASS.find(:all, conditions: 
+                                      { 
+                                        city_id: queue_datas[:city_id], 
+                                        player_id: queue_datas[:player_id], 
+                                        finished: false 
+                                      }
+                        ).count <= 1
           upgrade = DB::Research::Upgrade.find_building_speed_research city_object.player_id 
           queue_object.start upgrade
-          true
+          started = true
         else
-          false
+          started = false
         end
         
         @items.push queue_object if @items

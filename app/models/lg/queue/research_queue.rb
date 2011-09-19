@@ -52,7 +52,14 @@ module LG
                                                                         research_centre_level
                                                                       )
 
-               if @items.empty? #first item in queue!
+               #if @items.empty? #first item in queue!
+               if DB_CLASS.find(:all, conditions: 
+                                             { 
+                                               city_id: queue_datas[:city_id], 
+                                               player_id: queue_datas[:player_id], 
+                                               finished: false 
+                                             }
+                               ).count <= 1
                  a.start( research_centre_level )
                  started = true
                else

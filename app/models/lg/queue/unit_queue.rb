@@ -41,7 +41,14 @@ module LG
                                  :number => level_or_number,
                                  :time_needed => LG::Unit.production_time( object, production_building_level)
              
-             if @items.empty? #first item in queue!
+             #if @items.empty? #first item in queue!
+             if DB_CLASS.find(:all, conditions: 
+                                           { 
+                                             city_id: queue_datas[:city_id], 
+                                             player_id: queue_datas[:player_id], 
+                                             finished: false 
+                                           }
+                             ).count <= 1
                a.start
                started = true
              else
