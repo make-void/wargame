@@ -53,6 +53,19 @@ module DB # Database
       )
     end
     
+    def add_resources( hash )
+      self.gold_stored = self.gold_stored + hash[:gold]
+      self.steel_stored = self.steel_stored + hash[:steel]
+      self.oil_stored = self.oil_stored + hash[:oil]
+      
+      self.gold_stored  = self.gold_storage_space  if self.gold_stored  > self.gold_storage_space
+      self.steel_stored = self.steel_storage_space if self.steel_stored > self.steel_storage_space
+      self.oil_stored   = self.oil_storage_space   if self.oil_stored   > self.oil_storage_space
+      
+      self.save
+      return true
+    end
+    
     private
     
     #Called at every find on this City Object, when the Object is Initialized
