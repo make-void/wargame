@@ -83,8 +83,8 @@ module LG
         return return_values
       end
       
-      def destroy( city_object, object, level_or_number )
-        #TODO -> Implement
+      def destroy!( city_object, object, level_or_number )
+        #TODO -> To Be Implemented!
         
         #TODO -> Remove Item From Queue & DB
         #TODO -> Add Back to city enought money BASED ON THE NUMBER OF SOLDIERS NOT CREATED!

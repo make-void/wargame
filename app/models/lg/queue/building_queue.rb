@@ -46,13 +46,29 @@ module LG
         return_values      
       end
       
-      def destroy( city_object, object, level_or_number )
-        #TODO -> Implement
+      def destroy!( city_object, object, level_or_number )
         
-        #TODO -> Remove Item From Queue & DB
-        #TODO -> Add Back to city enought money
+        queue_entry = DB_CLASS.find(:first, conditions: {
+          city_id: city_object.city_id,
+          structure_id: object.structure_id,
+          level: level_or_number,
+          finished: false
+        })
         
-        return true
+        unless queue_entry.nil? || queue_entry.finished?
+          cost = LG::Structures.cost(object, level_or_number)
+          city_object.add_resources cost #Add Back to city enought money
+          queue_entry.destroy #Remove Item From DB
+          
+          #Remove Item from Items. We can be sure that structure (id 1 level 2) can be safely removed
+          #because we cannot set in queue structure (id 1 level 2) && structure (id 1 level 3).
+          #If we want to enable that, removing (id 1 level 2) should triggher removal of (id 1 level 3) first
+          @items.reject!{|x| ( x.city_id == city_object.city_id ) && ( x.structure_id == object.structure_id ) }
+          return true
+        else
+          return false
+        end
+        
       end
       
       private

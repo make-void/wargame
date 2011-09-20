@@ -39,17 +39,17 @@ module LG
        return @errors if has_errors? #To Be Sure all is Fine!
        raise ArgumentError, "Need Type in #{(QUEUE_TYPES - [:all]).inspect}, got #{type}" unless (QUEUE_TYPES - [:all]).include?(type)
        raise ArgumentError, "Need level to be a Number. got #{level_or_number.inspect}" unless level_or_number.is_a?(Numeric)
-       
+
        case type
          when :unit
            object = DB::Unit::Definition.find(object_id)
-           return @unit_queue.destroy(@city, object, level_or_number )
+           return @unit_queue.destroy!(@city, object, level_or_number )
          when :building
            object = DB::Structure::Definition.find(object_id)
-           return @building_queue.destroy(@city, object, level_or_number )
+           return @building_queue.destroy!(@city, object, level_or_number )
          when :research 
            object = DB::Research::Definition.find(object_id)
-           return @research_queue.destroy(@city, object, level_or_number ) 
+           return @research_queue.destroy!(@city, object, level_or_number ) 
        end
       end
       

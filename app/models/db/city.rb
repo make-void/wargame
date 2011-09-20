@@ -57,11 +57,8 @@ module DB # Database
       self.gold_stored = self.gold_stored + hash[:gold]
       self.steel_stored = self.steel_stored + hash[:steel]
       self.oil_stored = self.oil_stored + hash[:oil]
-      
-      self.gold_stored  = self.gold_storage_space  if self.gold_stored  > self.gold_storage_space
-      self.steel_stored = self.steel_storage_space if self.steel_stored > self.steel_storage_space
-      self.oil_stored   = self.oil_storage_space   if self.oil_stored   > self.oil_storage_space
-      
+
+      reset_to_storage()
       self.save
       return true
     end
@@ -87,6 +84,10 @@ module DB # Database
       self.steel_stored = self.steel_stored  + ( self.steel_production * hours)
       self.oil_stored   = self.oil_stored    + ( self.oil_production * hours)
             
+      reset_to_storage()
+    end
+    
+    def reset_to_storage
       self.gold_stored  = self.gold_storage_space  if self.gold_stored  > self.gold_storage_space
       self.steel_stored = self.steel_storage_space if self.steel_stored > self.steel_storage_space
       self.oil_stored   = self.oil_storage_space   if self.oil_stored   > self.oil_storage_space

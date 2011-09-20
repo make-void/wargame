@@ -23,9 +23,7 @@ class QueuesController < ApplicationController
     city = DB::City.find params[:city_id]
     type = params[:type_id]
     structure = { city_id: city.id, structure_id: params[:id], player_id: @player.id}
-    # queue = DB::Queue::Building.create! structure.merge( level: 0, time_needed: 0 )
-    # queue = DB::Queue::Building.first
-    # queue.start 1
+
     queue = LG::Queue::BuildingQueue.new
     definition = DB::Structure::Definition.first
     level = 1
@@ -35,8 +33,11 @@ class QueuesController < ApplicationController
   end
   
   def destroy
-    queue_item = LG::Queue::CityQueue.get params[:city_id], params[:player_id]
     
+    #TODO -> For units, he should give back the unique surrogate key unit_queue_id, cause there is no unicity
+    
+    queue_item = LG::Queue::CityQueue.get params[:city_id], params[:player_id]
+        
     type = sanitize_queue_type params[:type].to_sym
     success = queue_item.destroy_queue_item type, params[:object_id], params[:level_or_number].to_i
     response = if success

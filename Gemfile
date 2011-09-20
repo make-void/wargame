@@ -16,6 +16,8 @@ gem "haml"
 gem "sass"
 
 
+gem 'resque'
+
 gem 'newrelic_rpm'
 
 gem "voidtools", git: "https://github.com/makevoid/voidtools"
