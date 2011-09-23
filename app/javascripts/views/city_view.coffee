@@ -7,7 +7,6 @@ class CityView extends Backbone.View
     "click div": "panMap"
   }  
   
-  
   initialize: ->
     # _.bindAll this, 'renderResources'
     # this.bind('all',   this.renderResources, this)
@@ -17,16 +16,11 @@ class CityView extends Backbone.View
     @productionView = new ResourcesView model: @production
 
   panMap: ->
-    console.log "panning"
-    window.last_panned_loc = loc = this.model.attributes.location
+    window.last_panned_loc = loc = this.model.attributes.location # FIXME: use @last_panned_loc and pass it to openDialog
     window.game.map.center(loc.latitude, loc.longitude)
-    
-    
-    console.log loc.id
     MapEvents.bind("markers_loaded", this.openDialog)
     
   openDialog: ->
-    console.log "loaded"
     loc = window.last_panned_loc
     for marker in window.game.map.markers
       if marker.model.id == loc.id

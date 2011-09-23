@@ -520,15 +520,12 @@ CityView = (function() {
   };
   CityView.prototype.panMap = function() {
     var loc;
-    console.log("panning");
     window.last_panned_loc = loc = this.model.attributes.location;
     window.game.map.center(loc.latitude, loc.longitude);
-    console.log(loc.id);
     return MapEvents.bind("markers_loaded", this.openDialog);
   };
   CityView.prototype.openDialog = function() {
     var loc, marker, _i, _len, _ref;
-    console.log("loaded");
     loc = window.last_panned_loc;
     _ref = window.game.map.markers;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -563,7 +560,9 @@ ArmyView = (function() {
     ArmyView.__super__.constructor.apply(this, arguments);
   }
   ArmyView.prototype.tagName = "li";
-  ArmyView.prototype.events = {};
+  ArmyView.prototype.events = {
+    "click div": "panMap"
+  };
   ArmyView.prototype.initialize = function() {
     console.log("modmod: ", this.model);
     this.resources = new Resources(this.model.attributes.resources);
@@ -580,6 +579,24 @@ ArmyView = (function() {
     var content;
     content = this.resourcesView.render().el;
     return this.$(".resources").html(content);
+  };
+  ArmyView.prototype.panMap = function() {
+    var loc;
+    window.last_panned_loc = loc = this.model.attributes.location;
+    window.game.map.center(loc.latitude, loc.longitude);
+    return MapEvents.bind("markers_loaded", this.openDialog);
+  };
+  ArmyView.prototype.openDialog = function() {
+    var loc, marker, _i, _len, _ref;
+    loc = window.last_panned_loc;
+    _ref = window.game.map.markers;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      marker = _ref[_i];
+      if (marker.model.id === loc.id) {
+        window.game.map.doInitDialog(marker);
+      }
+    }
+    return MapEvents.unbind("markers_loaded", this.openDialog);
   };
   return ArmyView;
 })();
