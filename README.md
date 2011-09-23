@@ -16,6 +16,7 @@
 - rails server
 
 gg!
+
 ### BUGFIX:
 
 - su iOs e Android quando scrolli la mappa non carica le location (ne la mappa?) se non lasci il dito (gestire eventi multitouch)
