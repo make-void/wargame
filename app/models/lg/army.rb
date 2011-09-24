@@ -44,7 +44,8 @@ module LG
       return army
     end
     
-    
+    # LG::Army.all( DB::Player.find(2) ).first.debug_moving_tick
+    # LG::Army.new( DB::Army.find(3) ).debug_moving_tick
     def debug_moving_tick( seconds = 3600 ) #TODO -> Add estimated time to res result, and make all the methods CLASS methods in the Geolocation class...
       
       distance_traveled = self.speed * (seconds/3600.to_f) #KM
@@ -58,8 +59,8 @@ module LG
     end
     
     def speed
-      veicles = @units.select{|x| x.unit_type == "Vehicle" }
-      infantry = @units.select{|x| x.unit_type == "Infantry" }
+      veicles = @units.select{|x| x.definition.unit_type == "Vehicle" }
+      infantry = @units.select{|x| x.definition.unit_type == "Infantry" }
       
       
       transport_capacity = 0
@@ -69,9 +70,9 @@ module LG
       infantry.each{|x| infantry_number += x.number }
       
       if transport_capacity >= infantry_number
-        return veicles.map(&:speed).min
+        return veicles.map{|u| u.definition.movement_speed }.min
       else
-        return infantry.map(&:speed).min
+        return infantry.map{|u| u.definition.movement_speed }.min
       end  
     end
     

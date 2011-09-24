@@ -60,8 +60,9 @@ module DefaultValuesDev
       army_3 = DB::Army.create! location_id: impruneta.id,
                       player_id: cor3y.id,
                       is_moving: 1,
-                      destination_id: paris.id
+                      destination_id: scandicci.id
     end
+    
 
   #ARMY 1
     DB::Unit::ArmyUnit.create! unit_id: 1,

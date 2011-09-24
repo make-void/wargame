@@ -150,6 +150,7 @@ CREATE TABLE `wg_armies` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 "
 
+
 qs << "
 CREATE TABLE `wg_unit_defs` (
   `unit_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
