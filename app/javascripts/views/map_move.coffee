@@ -3,22 +3,22 @@ class MapMove extends MapAction # (View)
     # TODO: change cursor
     @line = null
     @active = true
+    @from = location.attributes
     @destination = null
     @endMarker = null
     super
-    loc = location.attributes
     google.maps.event.addListener(@map, "mousemove", (evt) => 
-      this.draw(loc, evt)
+      this.draw(evt)
     )
     this.deactivationHook()
 
-  draw: (loc, evt) ->
+  draw: (evt) ->
     
     if @active
       @destination = evt.latLng
       
       points = [
-        new google.maps.LatLng(loc.latitude, loc.longitude),
+        new google.maps.LatLng(@from.latitude, @from.longitude),
         @destination
       ]
       
@@ -46,3 +46,6 @@ class MapMove extends MapAction # (View)
       # icon: "http://#{window.http_host}/images/map_icons/crosshair.png"
       icon: "http://#{window.http_host}/images/map_icons/point_red.png"
     })
+    console.log "deact map: ", @map.controller
+    console.log "deeestinatiooon: ", @destination
+    @map.controller.armyMoved @from, @destination

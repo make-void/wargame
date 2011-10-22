@@ -46,15 +46,23 @@ locations:
 
 - manca la serbia!!
 
-db:
+ux todo:
 
-- test mongodb vs mysql geocoder
+- implementare scrolling x dispositivi touch (js)
+
+
+db todo:
+
+- resque queues!
 - check acqua
-- csv citta
-  - population da wolfram
-- resque queues?
+- feature: inserisci citta' venezia: http://www.wolframalpha.com/input/?i=population+venezia + google geocode "venezia"
+
 - citta' alla ogame non alla travian
 
+db done:
+
+- test mongodb vs mysql geocoder [mysql geocoder!]
+- csv citta 
 
 ### feature ideas:
 
@@ -63,7 +71,9 @@ qua possiamo buttare giu tutto quello che ci viene in mente, quando avremmo fini
 
 UX:
 
+
 - implementare lo scrolling della mappa via freccette
+
 
 
 ### setup coffeescript:

@@ -406,23 +406,22 @@ MapAttack = (function() {
 MapMove = (function() {
   __extends(MapMove, MapAction);
   function MapMove(location) {
-    var loc;
     this.line = null;
     this.active = true;
+    this.from = location.attributes;
     this.destination = null;
     this.endMarker = null;
     MapMove.__super__.constructor.apply(this, arguments);
-    loc = location.attributes;
     google.maps.event.addListener(this.map, "mousemove", __bind(function(evt) {
-      return this.draw(loc, evt);
+      return this.draw(evt);
     }, this));
     this.deactivationHook();
   }
-  MapMove.prototype.draw = function(loc, evt) {
+  MapMove.prototype.draw = function(evt) {
     var points;
     if (this.active) {
       this.destination = evt.latLng;
-      points = [new google.maps.LatLng(loc.latitude, loc.longitude), this.destination];
+      points = [new google.maps.LatLng(this.from.latitude, this.from.longitude), this.destination];
       if (this.line) {
         this.line.setMap(null);
       }
@@ -442,11 +441,14 @@ MapMove = (function() {
   };
   MapMove.prototype.deactivate = function() {
     this.active = false;
-    return this.endMarker = new google.maps.Marker({
+    this.endMarker = new google.maps.Marker({
       position: this.destination,
       map: this.map,
       icon: "http://" + window.http_host + "/images/map_icons/point_red.png"
     });
+    console.log("deact map: ", this.map.controller);
+    console.log("deeestinatiooon: ", this.destination);
+    return this.map.controller.armyMoved(this.from, this.destination);
   };
   return MapMove;
 })();
@@ -1171,6 +1173,18 @@ Map = (function() {
     this.markers = [];
     this.map = null;
   }
+  Map.prototype.armyMoved = function(start, dest) {
+    var army, _i, _len, _results;
+    console.log("moving from start: " + start.latitude + " " + start.longitude);
+    window.dest = dest;
+    console.log("to dest: " + (dest.lat()) + " " + (dest.lng()));
+    _results = [];
+    for (_i = 0, _len = Armies.length; _i < _len; _i++) {
+      army = Armies[_i];
+      _results.push(console.log("complete pseudo code"));
+    }
+    return _results;
+  };
   Map.prototype.draw = function() {
     var mapView;
     mapView = new MapView();

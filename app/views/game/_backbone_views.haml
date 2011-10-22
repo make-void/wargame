@@ -73,7 +73,7 @@
       running:
       = running
       %p started:
-      = started
+      > started
     .structure_id
       struct:
       = structure_id
@@ -114,7 +114,17 @@
       %p.player.name= player.name
       commands
       .commands
-        
+      
+      Status:
+      .status
+        %p
+          Ready
+        %p
+          Moving at 20km/h to [
+          %span.location location
+          ]
+        %p
+          Attacking city [city]
       
 %script{ type: "text/template", id: "cityDialog-tmpl" }
   :plain

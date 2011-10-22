@@ -10,7 +10,21 @@ class Map extends Backbone.View
     @locations = []
     @markers = []
     @map = null
+  
+  # move into player or gamestate
+  
+  armyMoved: (start, dest) ->
+    console.log "moving from start: #{start.latitude} #{start.longitude}"
+    window.dest = dest
+    console.log "to dest: #{dest.lat()} #{dest.lng()}"
     
+    for army in Armies
+      console.log "complete pseudo code"
+      # if army.attributes.location == start
+      #   army.set({ location: dest })
+    
+  
+  
   # public
   
   draw: ->
